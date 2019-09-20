@@ -67,8 +67,6 @@
         </maven.release.repository.url>
         <org.slf4j.simpleLogger.log.io.fabric8>debug</org.slf4j.simpleLogger.log.io.fabric8>
         <org.slf4j.simpleLogger.log.org.jboss.weld>debug</org.slf4j.simpleLogger.log.org.jboss.weld>
-        <sonar.sources>${project.basedir}/src/main/</sonar.sources>
-        <sonar.exclusions>src/main/java/org/entando/entando/attic/*.*</sonar.exclusions>
     </properties>
     <issueManagement>
         <system>Github</system>
@@ -294,7 +292,7 @@
                 <version>0.8.2</version>
                 <configuration>
                     <excludes>
-                        <exclude>src/main/java/org/entando/entando/attic/*.*</exclude>
+                        <exclude>src/main/java/org/entando/attic/*.*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -331,17 +329,6 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-            </plugin>
-  
-          <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.5.0.1254</version>
-                <configuration>
-                    <mojoExecution>
-
-                    </mojoExecution>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
