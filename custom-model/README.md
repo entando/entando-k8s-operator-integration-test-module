@@ -3,3 +3,4 @@
 Entando's Custom Resource Definition model for Kubernetes. Used in our custom controllers as well as our Kubernetes infrastructure
 
 Use this project when integrating Entando and Kubernetes.
+This project will also be shared across multiple Kubernetes Controllers
