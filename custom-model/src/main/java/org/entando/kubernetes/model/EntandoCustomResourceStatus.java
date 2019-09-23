@@ -35,6 +35,7 @@ public class EntandoCustomResourceStatus {
                 .anyMatch(s -> s.hasFailed());
     }
 
+    @Deprecated
     public void addJeeServerStatus(WebServerStatus status) {
         webServerStatuses.add(status);
     }
@@ -72,4 +73,7 @@ public class EntandoCustomResourceStatus {
         return hasFailed() ? EntandoDeploymentPhase.FAILED : EntandoDeploymentPhase.SUCCESSFUL;
     }
 
+    public void addWebServerStatus(WebServerStatus status) {
+        this.webServerStatuses.add(status);
+    }
 }

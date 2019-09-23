@@ -2,7 +2,6 @@ package org.entando.kubernetes.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.KubernetesResource;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimStatus;
 import io.fabric8.kubernetes.api.model.PodStatus;
@@ -10,7 +9,7 @@ import io.fabric8.kubernetes.api.model.ServiceStatus;
 import io.fabric8.kubernetes.api.model.apps.DeploymentStatus;
 import java.util.List;
 
-public class AbstractServerStatus implements KubernetesResource<HasMetadata> {
+public class AbstractServerStatus implements KubernetesResource {
 
     private String qualifier;
     private ServiceStatus serviceStatus;
@@ -19,6 +18,14 @@ public class AbstractServerStatus implements KubernetesResource<HasMetadata> {
     private EntandoControllerFailure entandoControllerFailure;
     private List<PersistentVolumeClaimStatus> persistentVolumeClaimStatuses;
     private PodStatus initPodStatus;
+
+    protected AbstractServerStatus() {
+        //For json deserialization
+    }
+
+    protected AbstractServerStatus(String qualifier) {
+        this.qualifier = qualifier;
+    }
 
     @JsonProperty
     public ServiceStatus getServiceStatus() {

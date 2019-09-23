@@ -84,14 +84,15 @@ public class EntandoAppSpec {
         return ofNullable(replicas);
     }
 
-    public static final class EntandoAppSpecBuilder {
+    //TODO move to top level
+    public static class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
 
         private JeeServer jeeServer;
         private DbmsImageVendor dbms;
-        private String ingressHostName = "127.0.0.1.nip.io";
-        private Boolean tlsEnabled = false;
-        private String entandoImageVersion = "5.2.0-SNAPSHOT";
-        private Integer replicas = 1;
+        private String ingressHostName;
+        private Boolean tlsEnabled;
+        private String entandoImageVersion;
+        private Integer replicas;
         private String keycloakServerNamespace;
         private String keycloakServerName;
 
@@ -100,45 +101,59 @@ public class EntandoAppSpec {
 
         }
 
+        @Deprecated
+        @SuppressWarnings("PMD")
+        //Because it is deprecated
         public EntandoAppSpecBuilder(JeeServer jeeServer, DbmsImageVendor dbms) {
             withJeeServer(jeeServer);
             withDbms(dbms);
         }
 
-        public EntandoAppSpecBuilder withJeeServer(JeeServer jeeServer) {
+        public EntandoAppSpecBuilder(EntandoAppSpec spec) {
+            this.keycloakServerNamespace = spec.getKeycloakServerNamespace();
+            this.keycloakServerName = spec.getKeycloakServerName();
+            this.replicas = spec.getReplicas().orElse(null);
+            this.entandoImageVersion = spec.getEntandoImageVersion().orElse(null);
+            this.tlsEnabled = spec.getTlsEnabled().orElse(null);
+            this.dbms = spec.getDbms().orElse(null);
+            this.jeeServer = spec.getJeeServer().orElse(null);
+            this.ingressHostName = spec.getIngressHostName().orElse(null);
+        }
+
+        public N withJeeServer(JeeServer jeeServer) {
             this.jeeServer = jeeServer;
-            return this;
+            return (N) this;
         }
 
-        public EntandoAppSpecBuilder withDbms(DbmsImageVendor dbms) {
+        public N withDbms(DbmsImageVendor dbms) {
             this.dbms = dbms;
-            return this;
+            return (N) this;
         }
 
-        public EntandoAppSpecBuilder withIngressHostName(String ingressHostName) {
+        public N withIngressHostName(String ingressHostName) {
             this.ingressHostName = ingressHostName;
-            return this;
+            return (N) this;
         }
 
-        public EntandoAppSpecBuilder withTlsEnabled(Boolean tlsEnabled) {
+        public N withTlsEnabled(Boolean tlsEnabled) {
             this.tlsEnabled = tlsEnabled;
-            return this;
+            return (N) this;
         }
 
-        public EntandoAppSpecBuilder withEntandoImageVersion(String entandoImageVersion) {
+        public N withEntandoImageVersion(String entandoImageVersion) {
             this.entandoImageVersion = entandoImageVersion;
-            return this;
+            return (N) this;
         }
 
-        public EntandoAppSpecBuilder withKeycloakServer(String namespace, String name) {
+        public N withKeycloakServer(String namespace, String name) {
             this.keycloakServerName = name;
             this.keycloakServerNamespace = namespace;
-            return this;
+            return (N) this;
         }
 
-        public EntandoAppSpecBuilder withReplicas(Integer replicas) {
+        public N withReplicas(Integer replicas) {
             this.replicas = replicas;
-            return this;
+            return (N) this;
         }
 
         public EntandoAppSpec build() {

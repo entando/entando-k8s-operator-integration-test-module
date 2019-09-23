@@ -7,4 +7,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonDeserialize
 public class DbServerStatus extends AbstractServerStatus {
 
+    public DbServerStatus() {
+        super();
+    }
+
+    public DbServerStatus(String qualifier) {
+        super(qualifier);
+    }
 }

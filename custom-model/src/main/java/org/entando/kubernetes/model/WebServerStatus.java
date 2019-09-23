@@ -10,6 +10,14 @@ public class WebServerStatus extends AbstractServerStatus {
 
     private IngressStatus ingressStatus;
 
+    public WebServerStatus() {
+        super();
+    }
+
+    public WebServerStatus(String qualifier) {
+        super(qualifier);
+    }
+
     public IngressStatus getIngressStatus() {
         return ingressStatus;
     }

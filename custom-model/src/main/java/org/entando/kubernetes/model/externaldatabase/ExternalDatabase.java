@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
 import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
@@ -12,6 +13,7 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 @JsonDeserialize
 public class ExternalDatabase extends CustomResource implements EntandoCustomResource {
 
+    public static final String CRD_NAME = "externaldatabases.entando.org";
     @JsonProperty
     private ExternalDatabaseSpec spec;
     @JsonProperty
@@ -25,6 +27,16 @@ public class ExternalDatabase extends CustomResource implements EntandoCustomRes
     public ExternalDatabase(ExternalDatabaseSpec spec) {
         this();
         this.spec = spec;
+    }
+
+    public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec) {
+        this(spec);
+        super.setMetadata(metadata);
+    }
+
+    public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec, EntandoCustomResourceStatus status) {
+        this(metadata, spec);
+        entandoStatus = status;
     }
 
     @JsonIgnore

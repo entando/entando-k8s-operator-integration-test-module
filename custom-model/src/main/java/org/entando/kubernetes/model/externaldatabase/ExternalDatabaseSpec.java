@@ -22,8 +22,7 @@ public class ExternalDatabaseSpec {
         super();
     }
 
-    public ExternalDatabaseSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName,
-            String secretName) {
+    public ExternalDatabaseSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
         this.dbms = dbms.toValue();
         this.host = host;
         this.secretName = secretName;

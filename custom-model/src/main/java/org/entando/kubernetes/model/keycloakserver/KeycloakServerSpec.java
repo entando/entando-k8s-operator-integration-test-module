@@ -33,6 +33,12 @@ public class KeycloakServerSpec {
         this.tlsEnabled = tnsEnabled;
     }
 
+    public KeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
+            Boolean tlsEnabled, int replicas) {
+        this(imageName, dbms, ingressHostName, entandoImageVersion, tlsEnabled);
+        this.replicas = replicas;
+    }
+
     @JsonIgnore
     public Optional<String> getImageName() {
         return Optional.ofNullable(imageName);

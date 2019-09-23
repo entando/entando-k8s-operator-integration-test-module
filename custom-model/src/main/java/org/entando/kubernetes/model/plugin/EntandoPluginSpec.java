@@ -139,15 +139,17 @@ public class EntandoPluginSpec implements KubernetesResource {
 
     @JsonIgnore
     public List<String> getConnectionConfigNames() {
-        return this.connectionConfigNames;
+        return connectionConfigNames;
     }
 
-    public static class EntandoPluginSpecBuilder {
+    @SuppressWarnings("PMD.TooManyMethods")
+    //TODO remove deprecated methods
+    public static class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
 
-        private final List<String> connectionConfigNames = new ArrayList<>();
-        private final List<ExpectedRole> roles = new ArrayList<>();
-        private final List<Permission> permissions = new ArrayList<>();
-        private final Map<String, Object> parameters = new ConcurrentHashMap<>();
+        private final List<String> connectionConfigNames;
+        private final List<ExpectedRole> roles;
+        private final List<Permission> permissions;
+        private final Map<String, Object> parameters;
         private String entandoAppName;
         private String entandoAppNamespace;
         private String image;
@@ -159,56 +161,96 @@ public class EntandoPluginSpec implements KubernetesResource {
         private String healthCheckPath;
         private PluginSecurityLevel securityLevel;
 
-        public EntandoPluginSpecBuilder withDbms(DbmsImageVendor dbms) {
+        public EntandoPluginSpecBuilder() {
+            //default constructor required
+            connectionConfigNames = new ArrayList<>();
+            roles = new ArrayList<>();
+            permissions = new ArrayList<>();
+            parameters = new ConcurrentHashMap<>();
+        }
+
+        public EntandoPluginSpecBuilder(EntandoPluginSpec spec) {
+            this.connectionConfigNames = new ArrayList<>(spec.getConnectionConfigNames());
+            this.roles = new ArrayList<>(spec.getRoles());
+            this.permissions = new ArrayList<>(spec.getPermissions());
+            this.parameters = new ConcurrentHashMap<>(spec.getParameters());
+            this.entandoAppName = spec.getEntandoAppName();
+            this.entandoAppNamespace = spec.getEntandoAppNamespace();
+            this.image = spec.getImage();
+            this.replicas = spec.getReplicas();
+            this.dbms = spec.getDbms().orElse(null);
+            this.ingressPath = spec.getIngressPath();
+            this.keycloakServerName = spec.getKeycloakServerName();
+            this.keycloakServerNamespace = spec.getKeycloakServerNamespace();
+            this.healthCheckPath = spec.getHealthCheckPath();
+            this.securityLevel = spec.getSecurityLevel().orElse(null);
+        }
+
+        public N withDbms(DbmsImageVendor dbms) {
             this.dbms = dbms;
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withIngressPath(String ingressPath) {
+        public N withIngressPath(String ingressPath) {
             this.ingressPath = ingressPath;
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withConnectionConfigNamed(String name) {
+        public N addNewConnectionConfigName(String name) {
             connectionConfigNames.add(name);
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withImage(String image) {
+        public N withImage(String image) {
             this.image = image;
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withSecurityLevel(PluginSecurityLevel level) {
+        public N withSecurityLevel(PluginSecurityLevel level) {
             this.securityLevel = level;
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withKeycloakServer(String namespace, String name) {
+        public N withKeycloakServer(String namespace, String name) {
             this.keycloakServerName = name;
             this.keycloakServerNamespace = namespace;
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withEntandoApp(String namespace, String name) {
+        public N withEntandoApp(String namespace, String name) {
             this.entandoAppName = name;
             this.entandoAppNamespace = namespace;
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withReplicas(Integer replicas) {
+        public N withReplicas(Integer replicas) {
             this.replicas = replicas;
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withRole(String code, String name) {
+        @Deprecated
+        public N withRole(String code, String name) {
+            return addNewRole(code, name);
+        }
+
+        public N addNewRole(String code, String name) {
             roles.add(new ExpectedRole(code, name));
-            return this;
+            return (N) this;
         }
 
-        public EntandoPluginSpecBuilder withPermission(String clientId, String role) {
+        @Deprecated
+        public N withPermission(String clientId, String role) {
+            return addNewPermission(clientId, role);
+        }
+
+        public N addNewPermission(String clientId, String role) {
             permissions.add(new Permission(clientId, role));
-            return this;
+            return (N) this;
+        }
+
+        public N addNewParameter(String name, Object value) {
+            this.parameters.put(name, value);
+            return (N) this;
         }
 
         public EntandoPluginSpec build() {
@@ -217,9 +259,33 @@ public class EntandoPluginSpec implements KubernetesResource {
                     connectionConfigNames);
         }
 
-        public EntandoPluginSpecBuilder withHealthCheckPath(String healthCheckPath) {
+        public N withHealthCheckPath(String healthCheckPath) {
             this.healthCheckPath = healthCheckPath;
-            return this;
+            return (N) this;
+        }
+
+        public N withConnectionConfigNames(List<String> strings) {
+            this.connectionConfigNames.clear();
+            this.connectionConfigNames.addAll(strings);
+            return (N) this;
+        }
+
+        public N withRoles(List<ExpectedRole> roles) {
+            this.roles.clear();
+            this.roles.addAll(roles);
+            return (N) this;
+        }
+
+        public N withPermissions(List<Permission> permissions) {
+            this.permissions.clear();
+            this.permissions.addAll(permissions);
+            return (N) this;
+        }
+
+        public N withParameters(Map<String, Object> parameters) {
+            this.parameters.clear();
+            this.parameters.putAll(parameters);
+            return (N) this;
         }
     }
 }
