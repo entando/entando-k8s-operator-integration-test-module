@@ -3,11 +3,9 @@ package org.entando.kubernetes.model.keycloakserver;
 import io.fabric8.kubernetes.api.builder.Function;
 import java.util.Optional;
 import org.entando.kubernetes.model.AbstractServerStatus;
-import org.entando.kubernetes.model.DbServerStatus;
 import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
-import org.entando.kubernetes.model.WebServerStatus;
 
 public class DoneableKeycloakServer extends KeycloakServerFluent<DoneableKeycloakServer> implements
         DoneableEntandoCustomResource<DoneableKeycloakServer, KeycloakServer> {
@@ -23,11 +21,7 @@ public class DoneableKeycloakServer extends KeycloakServerFluent<DoneableKeycloa
 
     @Override
     public DoneableKeycloakServer withStatus(AbstractServerStatus status) {
-        if (status instanceof DbServerStatus) {
-            this.status.addDbServerStatus((DbServerStatus) status);
-        } else {
-            this.status.addWebServerStatus((WebServerStatus) status);
-        }
+        this.status.putServerStatus(status);
         return this;
     }
 
@@ -39,6 +33,7 @@ public class DoneableKeycloakServer extends KeycloakServerFluent<DoneableKeycloa
 
     @Override
     public KeycloakServer done() {
-        return function.apply(new KeycloakServer(spec.build(), metadata.build(), status));
+        KeycloakServer keycloakServer = new KeycloakServer(spec.build(), metadata.build(), status);
+        return function.apply(keycloakServer);
     }
 }

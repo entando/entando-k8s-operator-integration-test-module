@@ -10,6 +10,8 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @EnableRuleMigrationSupport
 @Tag("inter-process")
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
+//Because PMD doesn't know they are inherited
 public class ExternalDatabaseIntegratedTest extends AbstractExternalDatabaseTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();

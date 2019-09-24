@@ -1,7 +1,9 @@
 package org.entando.kubernetes.model.app;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
@@ -13,12 +15,14 @@ import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
 @JsonDeserialize
+@JsonInclude(Include.NON_NULL)
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class EntandoApp extends CustomResource implements HasIngress, RequiresKeycloak {
 
     public static final String CRD_NAME = "entandoapps.entando.org";
-    @JsonProperty
+
     private EntandoAppSpec spec;
-    @JsonProperty
     private EntandoCustomResourceStatus entandoStatus;
 
     public EntandoApp() {
@@ -40,7 +44,6 @@ public class EntandoApp extends CustomResource implements HasIngress, RequiresKe
         this.entandoStatus = status;
     }
 
-    @JsonIgnore
     public EntandoAppSpec getSpec() {
         return spec;
     }
@@ -49,7 +52,6 @@ public class EntandoApp extends CustomResource implements HasIngress, RequiresKe
         this.spec = spec;
     }
 
-    @JsonIgnore
     @Override
     public EntandoCustomResourceStatus getStatus() {
         return this.entandoStatus == null ? this.entandoStatus = new EntandoCustomResourceStatus() : entandoStatus;
@@ -61,26 +63,21 @@ public class EntandoApp extends CustomResource implements HasIngress, RequiresKe
     }
 
     @Override
-    @JsonIgnore
     public Optional<String> getIngressHostName() {
         return getSpec().getIngressHostName();
     }
 
     @Override
-    @JsonIgnore
     public Optional<Boolean> getTlsEnabled() {
         return getSpec().getTlsEnabled();
     }
 
     @Override
-    @JsonIgnore
     public String getKeycloakServerNamespace() {
         return getSpec().getKeycloakServerNamespace();
     }
 
     @Override
-    @JsonIgnore
-
     public String getKeycloakServerName() {
         return getSpec().getKeycloakServerName();
     }

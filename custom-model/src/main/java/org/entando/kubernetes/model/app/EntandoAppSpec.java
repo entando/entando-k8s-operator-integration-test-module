@@ -2,29 +2,30 @@ package org.entando.kubernetes.model.app;
 
 import static java.util.Optional.ofNullable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.JeeServer;
 
+@JsonSerialize
+@JsonDeserialize
+@JsonInclude(Include.NON_NULL)
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class EntandoAppSpec {
 
-    @JsonProperty
-    private String jeeServer;
-    @JsonProperty
-    private String dbms;
-    @JsonProperty
+    private JeeServer jeeServer;
+    private DbmsImageVendor dbms;
     private String ingressHostName;
-    @JsonProperty
     private Boolean tlsEnabled;
-    @JsonProperty
     private String entandoImageVersion;
-    @JsonProperty
     private Integer replicas; // TODO distinguish between dbReplicas and jeeServer replicas
-    @JsonProperty
     private String keycloakServerNamespace;
-    @JsonProperty
     private String keycloakServerName;
 
     public EntandoAppSpec() {
@@ -34,8 +35,8 @@ public class EntandoAppSpec {
     public EntandoAppSpec(JeeServer jeeServer, DbmsImageVendor dbms, String ingressHostName,
             int replicas, String entandoImageVersion, Boolean tlsEnabled, String keycloakServerNamespace,
             String keycloakServerName) {
-        this.jeeServer = ofNullable(jeeServer).map(JeeServer::toValue).orElse(null);
-        this.dbms = ofNullable(dbms).map(DbmsImageVendor::toValue).orElse(null);
+        this.jeeServer = jeeServer;
+        this.dbms = dbms;
         this.ingressHostName = ingressHostName;
         this.replicas = replicas;
         this.entandoImageVersion = entandoImageVersion;
@@ -44,42 +45,34 @@ public class EntandoAppSpec {
         this.keycloakServerName = keycloakServerName;
     }
 
-    @JsonIgnore
     public String getKeycloakServerNamespace() {
         return keycloakServerNamespace;
     }
 
-    @JsonIgnore
     public String getKeycloakServerName() {
         return keycloakServerName;
     }
 
-    @JsonIgnore
     public Optional<JeeServer> getJeeServer() {
-        return ofNullable(JeeServer.forValue(jeeServer));
+        return ofNullable(jeeServer);
     }
 
-    @JsonIgnore
     public Optional<String> getEntandoImageVersion() {
         return ofNullable(entandoImageVersion);
     }
 
-    @JsonIgnore
     public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(DbmsImageVendor.forValue(dbms));
+        return ofNullable(dbms);
     }
 
-    @JsonIgnore
     public Optional<String> getIngressHostName() {
         return ofNullable(ingressHostName);
     }
 
-    @JsonIgnore
     public Optional<Boolean> getTlsEnabled() {
         return ofNullable(tlsEnabled);
     }
 
-    @JsonIgnore
     public Optional<Integer> getReplicas() {
         return ofNullable(replicas);
     }

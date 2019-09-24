@@ -1,7 +1,9 @@
 package org.entando.kubernetes.model.externaldatabase;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
@@ -11,12 +13,14 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 
 @JsonSerialize
 @JsonDeserialize
+@JsonInclude(Include.NON_NULL)
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class ExternalDatabase extends CustomResource implements EntandoCustomResource {
 
     public static final String CRD_NAME = "externaldatabases.entando.org";
-    @JsonProperty
+
     private ExternalDatabaseSpec spec;
-    @JsonProperty
     private EntandoCustomResourceStatus entandoStatus;
 
     public ExternalDatabase() {
@@ -39,7 +43,6 @@ public class ExternalDatabase extends CustomResource implements EntandoCustomRes
         entandoStatus = status;
     }
 
-    @JsonIgnore
     public ExternalDatabaseSpec getSpec() {
         return spec;
     }
@@ -48,7 +51,6 @@ public class ExternalDatabase extends CustomResource implements EntandoCustomRes
         this.spec = spec;
     }
 
-    @JsonIgnore
     @Override
     public EntandoCustomResourceStatus getStatus() {
         return this.entandoStatus == null ? this.entandoStatus = new EntandoCustomResourceStatus() : this.entandoStatus;

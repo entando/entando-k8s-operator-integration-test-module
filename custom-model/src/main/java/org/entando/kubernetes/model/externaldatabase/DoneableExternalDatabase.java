@@ -4,11 +4,9 @@ import io.fabric8.kubernetes.api.builder.Function;
 import io.fabric8.kubernetes.api.model.Doneable;
 import java.util.Optional;
 import org.entando.kubernetes.model.AbstractServerStatus;
-import org.entando.kubernetes.model.DbServerStatus;
 import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
-import org.entando.kubernetes.model.WebServerStatus;
 
 public class DoneableExternalDatabase extends ExternalDatabaseFluent<DoneableExternalDatabase> implements Doneable<ExternalDatabase>,
         DoneableEntandoCustomResource<DoneableExternalDatabase, ExternalDatabase> {
@@ -29,11 +27,7 @@ public class DoneableExternalDatabase extends ExternalDatabaseFluent<DoneableExt
 
     @Override
     public DoneableExternalDatabase withStatus(AbstractServerStatus status) {
-        if (status instanceof DbServerStatus) {
-            this.status.addDbServerStatus((DbServerStatus) status);
-        } else {
-            this.status.addWebServerStatus((WebServerStatus) status);
-        }
+        this.status.putServerStatus(status);
         return this;
     }
 

@@ -27,4 +27,5 @@ spec:
               type: string
             dbms:
               type: string
+              pattern: '^(mysql|oracle|postgresql|none)$'
         entandoStatus: {}

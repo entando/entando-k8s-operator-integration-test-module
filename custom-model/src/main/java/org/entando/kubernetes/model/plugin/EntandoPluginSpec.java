@@ -2,9 +2,12 @@ package org.entando.kubernetes.model.plugin;
 
 import static java.util.Optional.ofNullable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.KubernetesResource;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,36 +16,26 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsImageVendor;
 
+@JsonSerialize
 @JsonDeserialize
+@JsonInclude(Include.NON_NULL)
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class EntandoPluginSpec implements KubernetesResource {
 
-    @JsonProperty
     private String entandoAppName;
-    @JsonProperty
     private String entandoAppNamespace;
-    @JsonProperty
     private String image;
-    @JsonProperty
-    private int replicas = 1;
-    @JsonProperty
-    private String dbms;
-    @JsonProperty
+    private Integer replicas = 1;
+    private DbmsImageVendor dbms;
     private String securityLevel;
-    @JsonProperty
     private List<String> connectionConfigNames = new ArrayList<>();
-    @JsonProperty
     private List<ExpectedRole> roles = new ArrayList<>();
-    @JsonProperty
     private List<Permission> permissions = new ArrayList<>();
-    @JsonProperty
     private Map<String, Object> parameters = new ConcurrentHashMap<>();
-    @JsonProperty
     private String ingressPath;
-    @JsonProperty
     private String keycloakServerNamespace;
-    @JsonProperty
     private String keycloakServerName;
-    @JsonProperty
     private String healthCheckPath;
 
     public EntandoPluginSpec() {
@@ -52,14 +45,14 @@ public class EntandoPluginSpec implements KubernetesResource {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     //Because the typical builder pattern requires a full constructor
     public EntandoPluginSpec(String entandoAppNamespace, String entandoAppName, String image, DbmsImageVendor dbms,
-            int replicas, String ingressPath, String keycloakServerNamespace, String keycloakServerName,
+            Integer replicas, String ingressPath, String keycloakServerNamespace, String keycloakServerName,
             String healthCheckPath, PluginSecurityLevel securityLevel, List<ExpectedRole> roles, List<Permission> permissions,
             Map<String, Object> parameters, List<String> connectionConfigNames) {
         this();
         this.entandoAppNamespace = entandoAppNamespace;
         this.entandoAppName = entandoAppName;
         this.image = image;
-        this.dbms = dbms.toValue();
+        this.dbms = dbms;
         this.replicas = replicas;
         this.ingressPath = ingressPath;
         this.keycloakServerNamespace = keycloakServerNamespace;
@@ -72,72 +65,58 @@ public class EntandoPluginSpec implements KubernetesResource {
         this.securityLevel = ofNullable(securityLevel).map(PluginSecurityLevel::toName).orElse(null);
     }
 
-    @JsonIgnore
     public Map<String, Object> getParameters() {
         return parameters;
     }
 
-    @JsonIgnore
     public Optional<PluginSecurityLevel> getSecurityLevel() {
         return ofNullable(PluginSecurityLevel.forName(securityLevel));
     }
 
-    @JsonIgnore
     public String getEntandoAppNamespace() {
         return entandoAppNamespace;
     }
 
-    @JsonIgnore
     public String getImage() {
         return image;
     }
 
-    @JsonIgnore
-    public int getReplicas() {
+    public Integer getReplicas() {
         return replicas;
     }
 
-    @JsonIgnore
     public String getEntandoAppName() {
         return entandoAppName;
     }
 
-    @JsonIgnore
     public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(DbmsImageVendor.forValue(dbms));
+        return ofNullable(dbms);
     }
 
-    @JsonIgnore
     public List<ExpectedRole> getRoles() {
         return roles;
     }
 
-    @JsonIgnore
     public List<Permission> getPermissions() {
         return permissions;
     }
 
-    @JsonIgnore
     public String getIngressPath() {
         return ingressPath;
     }
 
-    @JsonIgnore
     public String getHealthCheckPath() {
         return healthCheckPath;
     }
 
-    @JsonIgnore
     public String getKeycloakServerNamespace() {
         return keycloakServerNamespace;
     }
 
-    @JsonIgnore
     public String getKeycloakServerName() {
         return keycloakServerName;
     }
 
-    @JsonIgnore
     public List<String> getConnectionConfigNames() {
         return connectionConfigNames;
     }

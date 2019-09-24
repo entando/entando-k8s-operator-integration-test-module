@@ -22,7 +22,7 @@ public abstract class AbstractEntandoAppTest {
     protected static final String MY_APP = "my-app";
     private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
     private static final String MYINGRESS_COM = "myingress.com";
-    private static final String MYKEYCLOAKNAMESPACE = "mykeycloaknamespace";
+    private static final String MYKEYCLOAKNAMESPACE = "mykeycloakn123-amespace-asdf";
     private static final String MY_KEYCLOAK = "my-keycloak";
     private static final String MY_VALUE = "my-value";
     private static final String MY_LABEL = "my-label";

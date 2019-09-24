@@ -117,6 +117,8 @@ public abstract class AbstractKeycloakServerTest {
                 .withTlsEnabled(true)
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
+                .withStatus(new WebServerStatus("some-other-qualifier"))
+                .withStatus(new WebServerStatus("some-qualifier"))
                 .withStatus(new DbServerStatus("another-qualifier"))
                 .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
@@ -129,6 +131,7 @@ public abstract class AbstractKeycloakServerTest {
         assertThat(actual.getSpec().getTlsEnabled().get(), is(true));
         assertThat(actual.getMetadata().getName(), is(MY_KEYCLOAK));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 

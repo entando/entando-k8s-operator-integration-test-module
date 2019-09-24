@@ -1,21 +1,25 @@
 package org.entando.kubernetes.model.externaldatabase;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 
+@JsonSerialize
+@JsonDeserialize
+@JsonInclude(Include.NON_NULL)
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class ExternalDatabaseSpec {
 
-    @JsonProperty
     private String dbms;
-    @JsonProperty
     private String host;
-    @JsonProperty
     private Integer port;
-    @JsonProperty
     private String databaseName;
-    @JsonProperty
     private String secretName;
 
     public ExternalDatabaseSpec() {
@@ -30,27 +34,22 @@ public class ExternalDatabaseSpec {
         this.databaseName = databaseName;
     }
 
-    @JsonIgnore
     public DbmsImageVendor getDbms() {
         return DbmsImageVendor.forValue(dbms);
     }
 
-    @JsonIgnore
     public String getHost() {
         return host;
     }
 
-    @JsonIgnore
     public String getSecretName() {
         return secretName;
     }
 
-    @JsonIgnore
     public Optional<Integer> getPort() {
         return Optional.ofNullable(port);
     }
 
-    @JsonIgnore
     public String getDatabaseName() {
         return databaseName;
     }
