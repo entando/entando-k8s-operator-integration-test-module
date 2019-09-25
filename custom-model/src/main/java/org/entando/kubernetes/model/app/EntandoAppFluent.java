@@ -6,7 +6,6 @@ import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.ObjectMetaFluentImpl;
-import org.entando.kubernetes.model.app.EntandoAppSpec.EntandoAppSpecBuilder;
 
 public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends BaseFluent<A> implements Fluent<A> {
 

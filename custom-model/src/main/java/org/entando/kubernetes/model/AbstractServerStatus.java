@@ -93,8 +93,7 @@ public abstract class AbstractServerStatus {
     public boolean hasFailed() {
         return entandoControllerFailure != null;
         //TODO incorporate pod status here
-        //|| podStatus !=null && podStatus.getContainerStatuses().stream().anyMatch(containerStatus -> containerStatus.getState()
-        // .getTerminated().);
+        //Requires PodResult class from entando-k8s-operator
     }
 
     @JsonProperty

@@ -58,7 +58,7 @@ public abstract class AbstractEntandoAppTest {
     @Test
     public void testCreateEntandoApp() {
         //Given
-        EntandoApp externalDatabase = new EntandoAppBuilder()
+        EntandoApp entandoApp = new EntandoAppBuilder()
                 .withNewMetadata().withName(MY_APP)
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
@@ -73,7 +73,7 @@ public abstract class AbstractEntandoAppTest {
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        entandoApps().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
         //When
         EntandoAppList list = entandoApps().inNamespace(MY_NAMESPACE).list();
         EntandoApp actual = list.getItems().get(0);
