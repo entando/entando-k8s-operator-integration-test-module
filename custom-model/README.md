@@ -112,6 +112,8 @@ to the Kubernetes server
 
 ## HTTP 404 errors on 'edit' running against the Fabric8 Kubernetes Mock server
 
+
 During our testing efforts, we have encountered a bug in the Fabric8 Kubernetes Mock server. When running an
 `edit` operation against a custom resource whilst using the Mock server, it does not seem to find to resource
 in question. It can however be found using the `list` operation. Currently there is no workaround for this problem.
+
