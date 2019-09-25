@@ -43,7 +43,7 @@ public class EntandoPluginSpec implements KubernetesResource {
     }
 
     /**
-     * Only for use from the builder
+     * Only for use from the builder.
      */
 
     @SuppressWarnings("PMD.ExcessiveParameterList")

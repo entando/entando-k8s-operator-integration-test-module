@@ -33,7 +33,7 @@ public class EntandoAppSpec {
     }
 
     /**
-     * Only for use from the builder
+     * Only for use from the builder.
      */
     EntandoAppSpec(JeeServer jeeServer, DbmsImageVendor dbms, String ingressHostName,
             int replicas, String entandoImageVersion, Boolean tlsEnabled, String keycloakServerNamespace,
