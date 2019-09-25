@@ -34,7 +34,7 @@ public class EntandoCustomResourceStatus {
     }
 
     public boolean hasFailed() {
-        return serverStatuses.values().stream().anyMatch(s -> s.hasFailed());
+        return serverStatuses.values().stream().anyMatch(AbstractServerStatus::hasFailed);
     }
 
     public void putServerStatus(AbstractServerStatus status) {
