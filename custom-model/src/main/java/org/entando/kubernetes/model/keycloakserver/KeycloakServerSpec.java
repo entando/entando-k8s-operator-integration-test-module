@@ -1,69 +1,73 @@
 package org.entando.kubernetes.model.keycloakserver;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 
+@JsonInclude(Include.NON_NULL)
+@JsonSerialize
+@JsonDeserialize
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class KeycloakServerSpec {
 
-    @JsonProperty
     private String imageName;
-    @JsonProperty
-    private String dbms;
-    @JsonProperty
+    //Seems K8S doesn't support enums: https://github.com/kubernetes/kubernetes/issues/62325
+    private DbmsImageVendor dbms;
     private String ingressHostName;
-    @JsonProperty
     private String entandoImageVersion;
-    @JsonProperty
     private Boolean tlsEnabled;
-    @JsonProperty
-    private int replicas = 1;
+    private Integer replicas = 1;
 
     public KeycloakServerSpec() {
         super();
     }
 
     public KeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName,
-            String entandoImageVersion, boolean tnsEnabled) {
+            String entandoImageVersion, Boolean tnsEnabled) {
         this.imageName = imageName;
-        this.dbms = dbms.toValue();
+        this.dbms = dbms;
         this.ingressHostName = ingressHostName;
         this.entandoImageVersion = entandoImageVersion;
         this.tlsEnabled = tnsEnabled;
     }
 
-    @JsonIgnore
+    public KeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
+            Boolean tlsEnabled, int replicas) {
+        this(imageName, dbms, ingressHostName, entandoImageVersion, tlsEnabled);
+        this.replicas = replicas;
+    }
+
     public Optional<String> getImageName() {
         return Optional.ofNullable(imageName);
     }
 
-    @JsonIgnore
     public Optional<DbmsImageVendor> getDbms() {
-        return Optional.ofNullable(DbmsImageVendor.forValue(dbms));
+        return Optional.ofNullable(dbms);
     }
 
-    @JsonIgnore
     public Optional<String> getIngressHostName() {
         return Optional.ofNullable(ingressHostName);
     }
 
-    @JsonIgnore
     public Optional<Boolean> getTlsEnabled() {
         return Optional.ofNullable(tlsEnabled);
     }
 
-    @JsonIgnore
     public Optional<String> getEntandoImageVersion() {
         return Optional.ofNullable(entandoImageVersion);
     }
 
-    @JsonIgnore
-    public int getReplicas() {
+    public Integer getReplicas() {
         return replicas;
     }
 
-    public void setReplicas(int replicas) {
+    public void setReplicas(Integer replicas) {
         this.replicas = replicas;
     }
 }

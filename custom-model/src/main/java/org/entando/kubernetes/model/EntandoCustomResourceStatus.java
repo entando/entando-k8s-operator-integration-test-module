@@ -1,21 +1,24 @@
 package org.entando.kubernetes.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @JsonSerialize
 @JsonDeserialize
+@JsonInclude(Include.NON_NULL)
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class EntandoCustomResourceStatus {
 
-    @JsonProperty
-    private List<DbServerStatus> dbServerStatus = new ArrayList<>();
-    @JsonProperty
-    private List<WebServerStatus> webServerStatuses = new ArrayList<>();
-    @JsonProperty(defaultValue = "requested")
+    private final Map<String, AbstractServerStatus> serverStatuses = new ConcurrentHashMap<>();
+
     private EntandoDeploymentPhase entandoDeploymentPhase;
 
     public EntandoCustomResourceStatus() {
@@ -31,41 +34,19 @@ public class EntandoCustomResourceStatus {
     }
 
     public boolean hasFailed() {
-        return dbServerStatus.stream().anyMatch(s -> s.hasFailed()) || webServerStatuses.stream()
-                .anyMatch(s -> s.hasFailed());
+        return serverStatuses.values().stream().anyMatch(AbstractServerStatus::hasFailed);
     }
 
-    public void addJeeServerStatus(WebServerStatus status) {
-        webServerStatuses.add(status);
-    }
-
-    public void addDbServerStatus(DbServerStatus status) {
-        dbServerStatus.add(status);
-    }
-
-    public List<DbServerStatus> getDbServerStatus() {
-        return dbServerStatus;
-    }
-
-    public void setDbServerStatus(List<DbServerStatus> dbServerStatus) {
-        this.dbServerStatus = dbServerStatus;
-    }
-
-    public List<WebServerStatus> getWebServerStatuses() {
-        return webServerStatuses;
-    }
-
-    public void setWebServerStatuses(
-            List<WebServerStatus> webServerStatuses) {
-        this.webServerStatuses = webServerStatuses;
+    public void putServerStatus(AbstractServerStatus status) {
+        serverStatuses.put(status.getQualifier(), status);
     }
 
     public Optional<DbServerStatus> forDbQualifiedBy(String qualifier) {
-        return getDbServerStatus().stream().filter(s -> s.getQualifier().equals(qualifier)).findFirst();
+        return Optional.ofNullable((DbServerStatus) serverStatuses.get(qualifier));
     }
 
     public Optional<WebServerStatus> forServerQualifiedBy(String qualifier) {
-        return getWebServerStatuses().stream().filter(s -> s.getQualifier().equals(qualifier)).findFirst();
+        return Optional.ofNullable((WebServerStatus) serverStatuses.get(qualifier));
     }
 
     public EntandoDeploymentPhase calculateFinalPhase() {

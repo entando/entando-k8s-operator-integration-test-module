@@ -18,8 +18,10 @@ spec:
           properties:
             jeeServer:
               type: string
+              pattern: '^(wildfly|eap|tomcat|jetty)$'
             dbms:
               type: string
+              pattern: '^(mysql|oracle|postgresql|none)$'
             tlsEnabled:
               type: boolean
             ingressHostName:
@@ -33,5 +35,11 @@ spec:
               type: integer
               minimum: 1
               maximum: 10
+            keycloakServerName:
+              type: string
+              pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
+            keycloakServerNamespace:
+              type: string
+              pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
         entandoStatus: {}
 

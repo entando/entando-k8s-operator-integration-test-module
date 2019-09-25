@@ -26,8 +26,15 @@ spec:
               type: string
             healthCheckPath:
               type: string
+            keycloakServerName:
+              type: string
+              pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
+            keycloakServerNamespace:
+              type: string
+              pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
             dbms:
               type: string
+              pattern: '^(mysql|oracle|postgresql|none)?$'
             securityLevel:
               type: string
             parameters:
