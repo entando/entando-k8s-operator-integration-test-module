@@ -1,22 +1,18 @@
 package org.entando.kubernetes.model;
 
+import static org.entando.kubernetes.model.externaldatabase.ExternalDatabaseOperationFactory.produceAllExternalDatabases;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
-import java.util.List;
 import org.entando.kubernetes.model.externaldatabase.DoneableExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseBuilder;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseList;
-import org.entando.kubernetes.model.inprocesstest.ExternalDatabaseMockedTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public abstract class AbstractExternalDatabaseTest {
+public abstract class AbstractExternalDatabaseTest implements CustomResourceTestUtil {
 
     protected static final String MY_NAMESPACE = "my-namespace";
     protected static final String MY_EXTERNAL_DATABASE = "my-external-database";
@@ -24,37 +20,14 @@ public abstract class AbstractExternalDatabaseTest {
     private static final String MYHOST_COM = "myhost.com";
     private static final int PORT_1521 = 1521;
     private static final String MY_DB_SECRET = "my-db-secret";
-    private static CustomResourceDefinition externalDatabaseCrd;
-
-    private static CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList,
-            DoneableExternalDatabase> produceAllExternalDatabases(
-            KubernetesClient client) {
-        synchronized (ExternalDatabaseMockedTest.class) {
-            externalDatabaseCrd = client.customResourceDefinitions().withName(ExternalDatabase.CRD_NAME).get();
-            if (externalDatabaseCrd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("crd/ExternalDatabaseCRD.yaml")).get();
-                externalDatabaseCrd = (CustomResourceDefinition) list.get(0);
-                // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                externalDatabaseCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(externalDatabaseCrd);
-            }
-
-        }
-        return (CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase>) client
-                .customResources(externalDatabaseCrd, ExternalDatabase.class, ExternalDatabaseList.class, DoneableExternalDatabase.class);
-    }
 
     @BeforeEach
     public void deleteExternalDatabase() throws InterruptedException {
-        externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).delete();
-        while (externalDatabases().inNamespace(MY_NAMESPACE).list().getItems().size() > 0) {
-            Thread.sleep(100);
-        }
+        prepareNamespace(externalDatabases(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateExternalDatabase() {
+    public void testCreateExternalDatabase() throws InterruptedException {
         //Given
         ExternalDatabase externalDatabase = new ExternalDatabaseBuilder()
                 .withNewMetadata().withName(MY_EXTERNAL_DATABASE)
@@ -82,10 +55,8 @@ public abstract class AbstractExternalDatabaseTest {
         assertThat(actual.getMetadata().getName(), is(MY_EXTERNAL_DATABASE));
     }
 
-    protected abstract KubernetesClient getClient();
-
     @Test
-    public void testEditExternalDatabase() {
+    public void testEditExternalDatabase() throws InterruptedException {
         //Given
         ExternalDatabase externalDatabase = new ExternalDatabaseBuilder()
                 .withNewMetadata().withName(MY_EXTERNAL_DATABASE)
@@ -128,10 +99,10 @@ public abstract class AbstractExternalDatabaseTest {
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected abstract DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase);
+    protected abstract DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) throws InterruptedException;
 
-    protected CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases() {
-        return produceAllExternalDatabases(
-                getClient());
+    protected CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases()
+            throws InterruptedException {
+        return produceAllExternalDatabases(getClient());
     }
 }

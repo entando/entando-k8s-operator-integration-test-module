@@ -1,4 +1,4 @@
-package org.entando.kubernetes.model.keycloakserver;
+package org.entando.kubernetes.model.infrastructure;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -12,44 +12,45 @@ import java.util.Optional;
 import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.HasIngress;
+import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class KeycloakServer extends CustomResource implements HasIngress, EntandoCustomResource {
+public class EntandoClusterInfrastructure extends CustomResource implements HasIngress, EntandoCustomResource, RequiresKeycloak {
 
-    public static final String CRD_NAME = "entandokeycloakservers.entando.org";
+    public static final String CRD_NAME = "entandoclusterinfrastructures.entando.org";
 
-    private KeycloakServerSpec spec;
+    private EntandoClusterInfrastructureSpec spec;
     private EntandoCustomResourceStatus entandoStatus;
 
-    public KeycloakServer() {
-        super("EntandoKeycloakServer");
+    public EntandoClusterInfrastructure() {
+        super();
         setApiVersion("entando.org/v1alpha1");
     }
 
-    public KeycloakServer(KeycloakServerSpec spec) {
+    public EntandoClusterInfrastructure(EntandoClusterInfrastructureSpec spec) {
         this();
         this.spec = spec;
     }
 
-    public KeycloakServer(KeycloakServerSpec spec, ObjectMeta metadata, EntandoCustomResourceStatus status) {
+    public EntandoClusterInfrastructure(EntandoClusterInfrastructureSpec spec, ObjectMeta metadata, EntandoCustomResourceStatus status) {
         this(metadata, spec);
         this.entandoStatus = status;
     }
 
-    public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec) {
+    public EntandoClusterInfrastructure(ObjectMeta metadata, EntandoClusterInfrastructureSpec spec) {
         this(spec);
         super.setMetadata(metadata);
     }
 
-    public KeycloakServerSpec getSpec() {
+    public EntandoClusterInfrastructureSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(KeycloakServerSpec spec) {
+    public void setSpec(EntandoClusterInfrastructureSpec spec) {
         this.spec = spec;
     }
 
@@ -71,5 +72,10 @@ public class KeycloakServer extends CustomResource implements HasIngress, Entand
     @Override
     public Optional<String> getTlsSecretName() {
         return getSpec().getTlsSecretName();
+    }
+
+    @Override
+    public Optional<String> getKeycloakSecretToUse() {
+        return spec.getKeycloakSecretToUse();
     }
 }

@@ -1,9 +1,9 @@
 package org.entando.kubernetes.model;
 
-public interface RequiresKeycloak extends EntandoCustomResource {
+import java.util.Optional;
 
-    String getKeycloakServerNamespace();
+public interface RequiresKeycloak {
 
-    String getKeycloakServerName();
+    Optional<String> getKeycloakSecretToUse();
 
 }

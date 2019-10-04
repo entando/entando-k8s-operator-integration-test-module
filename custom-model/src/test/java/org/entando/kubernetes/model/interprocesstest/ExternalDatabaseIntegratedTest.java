@@ -17,12 +17,12 @@ public class ExternalDatabaseIntegratedTest extends AbstractExternalDatabaseTest
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 
     @Override
-    protected KubernetesClient getClient() {
+    public KubernetesClient getClient() {
         return client;
     }
 
     @Override
-    protected DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) {
+    protected DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) throws InterruptedException {
         externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
         return externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).edit();
     }

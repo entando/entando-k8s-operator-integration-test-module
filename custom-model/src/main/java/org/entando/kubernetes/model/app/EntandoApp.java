@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
 import java.util.Optional;
+import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
@@ -18,7 +19,7 @@ import org.entando.kubernetes.model.RequiresKeycloak;
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoApp extends CustomResource implements HasIngress, RequiresKeycloak {
+public class EntandoApp extends CustomResource implements HasIngress, RequiresKeycloak, EntandoCustomResource {
 
     public static final String CRD_NAME = "entandoapps.entando.org";
 
@@ -68,17 +69,12 @@ public class EntandoApp extends CustomResource implements HasIngress, RequiresKe
     }
 
     @Override
-    public Optional<Boolean> getTlsEnabled() {
-        return getSpec().getTlsEnabled();
+    public Optional<String> getTlsSecretName() {
+        return getSpec().getTlsSecretName();
     }
 
     @Override
-    public String getKeycloakServerNamespace() {
-        return getSpec().getKeycloakServerNamespace();
-    }
-
-    @Override
-    public String getKeycloakServerName() {
-        return getSpec().getKeycloakServerName();
+    public Optional<String> getKeycloakSecretToUse() {
+        return getSpec().getKeycloakSecretToUse();
     }
 }

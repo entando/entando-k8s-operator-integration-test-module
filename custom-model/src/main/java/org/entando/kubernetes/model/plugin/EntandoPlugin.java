@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
+import java.util.Optional;
 import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.RequiresKeycloak;
@@ -63,12 +64,7 @@ public class EntandoPlugin extends CustomResource implements EntandoCustomResour
     }
 
     @Override
-    public String getKeycloakServerNamespace() {
-        return spec.getKeycloakServerNamespace();
-    }
-
-    @Override
-    public String getKeycloakServerName() {
-        return spec.getKeycloakServerName();
+    public Optional<String> getKeycloakSecretToUse() {
+        return spec.getKeycloakSecretToUse();
     }
 }

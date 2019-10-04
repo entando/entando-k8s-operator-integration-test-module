@@ -10,23 +10,26 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.JeeServer;
+import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoAppSpec {
+public class EntandoAppSpec implements RequiresKeycloak, HasIngress {
 
-    private JeeServer jeeServer;
+    private JeeServer standardServerImage;
+    private String customServerImage;
     private DbmsImageVendor dbms;
     private String ingressHostName;
-    private Boolean tlsEnabled;
+    private String tlsSecretName;
     private String entandoImageVersion;
-    private Integer replicas; // TODO distinguish between dbReplicas and jeeServer replicas
-    private String keycloakServerNamespace;
-    private String keycloakServerName;
+    private Integer replicas; // TODO distinguish between dbReplicas and standardServerImage replicas
+    private String keycloakSecretToUse;
+    private String clusterInfrastructureToUse;
 
     public EntandoAppSpec() {
         super();
@@ -35,29 +38,35 @@ public class EntandoAppSpec {
     /**
      * Only for use from the builder.
      */
-    EntandoAppSpec(JeeServer jeeServer, DbmsImageVendor dbms, String ingressHostName,
-            int replicas, String entandoImageVersion, Boolean tlsEnabled, String keycloakServerNamespace,
-            String keycloakServerName) {
-        this.jeeServer = jeeServer;
+    EntandoAppSpec(JeeServer standardServerImage, String customServerImage, DbmsImageVendor dbms, String ingressHostName, int replicas,
+            String entandoImageVersion,
+            String tlsSecretName, String keycloakSecretToUse, String clusterInfrastructureToUse) {
+        this.standardServerImage = standardServerImage;
+        this.customServerImage = customServerImage;
         this.dbms = dbms;
         this.ingressHostName = ingressHostName;
         this.replicas = replicas;
         this.entandoImageVersion = entandoImageVersion;
-        this.tlsEnabled = tlsEnabled;
-        this.keycloakServerNamespace = keycloakServerNamespace;
-        this.keycloakServerName = keycloakServerName;
+        this.tlsSecretName = tlsSecretName;
+        this.keycloakSecretToUse = keycloakSecretToUse;
+        this.clusterInfrastructureToUse = clusterInfrastructureToUse;
     }
 
-    public String getKeycloakServerNamespace() {
-        return keycloakServerNamespace;
+    @Override
+    public Optional<String> getKeycloakSecretToUse() {
+        return ofNullable(keycloakSecretToUse);
     }
 
-    public String getKeycloakServerName() {
-        return keycloakServerName;
+    public Optional<String> getClusterInfrastructureTouse() {
+        return ofNullable(clusterInfrastructureToUse);
     }
 
-    public Optional<JeeServer> getJeeServer() {
-        return ofNullable(jeeServer);
+    public Optional<JeeServer> getStandardServerImage() {
+        return ofNullable(standardServerImage);
+    }
+
+    public Optional<String> getCustomServerImage() {
+        return ofNullable(customServerImage);
     }
 
     public Optional<String> getEntandoImageVersion() {
@@ -68,12 +77,14 @@ public class EntandoAppSpec {
         return ofNullable(dbms);
     }
 
+    @Override
     public Optional<String> getIngressHostName() {
         return ofNullable(ingressHostName);
     }
 
-    public Optional<Boolean> getTlsEnabled() {
-        return ofNullable(tlsEnabled);
+    @Override
+    public Optional<String> getTlsSecretName() {
+        return ofNullable(tlsSecretName);
     }
 
     public Optional<Integer> getReplicas() {

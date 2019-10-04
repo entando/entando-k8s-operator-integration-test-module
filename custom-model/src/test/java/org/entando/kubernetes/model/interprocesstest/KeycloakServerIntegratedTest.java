@@ -20,18 +20,18 @@ public class KeycloakServerIntegratedTest extends AbstractKeycloakServerTest {
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 
     @Override
-    protected KubernetesClient getClient() {
+    public KubernetesClient getClient() {
         return client;
     }
 
     @Override
-    protected DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) {
+    protected DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) throws InterruptedException {
         keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
         return keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit();
     }
 
     @Test
-    public void multipleStatuses() {
+    public void multipleStatuses() throws InterruptedException {
         super.testCreateKeycloakServer();
         keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit().withPhase(EntandoDeploymentPhase.STARTED).done();
         DbServerStatus dbStatus = new DbServerStatus("db-qualifier");

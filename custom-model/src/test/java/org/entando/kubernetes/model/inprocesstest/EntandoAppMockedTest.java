@@ -24,7 +24,7 @@ public class EntandoAppMockedTest extends AbstractEntandoAppTest {
     }
 
     @Override
-    protected KubernetesClient getClient() {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
