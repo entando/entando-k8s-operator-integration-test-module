@@ -20,7 +20,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     private static final String MY_APP = "my-app";
 
     @BeforeEach
-    public void deleteentandoAppPluginLinks() throws InterruptedException {
+    public void deleteEntandoAppPluginLinks() throws InterruptedException {
         prepareNamespace(entandoAppPluginLinks(), MY_APP_NAMESPACE);
     }
 
