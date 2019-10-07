@@ -40,7 +40,7 @@ public class EntandoPlugin extends CustomResource implements EntandoCustomResour
         super.setMetadata(metadata);
     }
 
-    public EntandoPlugin(EntandoPluginSpec spec, ObjectMeta metaData, EntandoCustomResourceStatus status) {
+    public EntandoPlugin(ObjectMeta metaData, EntandoPluginSpec spec, EntandoCustomResourceStatus status) {
         this(metaData, spec);
         this.entandoStatus = status;
     }

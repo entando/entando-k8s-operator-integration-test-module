@@ -36,7 +36,8 @@ public class EntandoClusterInfrastructure extends CustomResource implements HasI
         this.spec = spec;
     }
 
-    public EntandoClusterInfrastructure(EntandoClusterInfrastructureSpec spec, ObjectMeta metadata, EntandoCustomResourceStatus status) {
+    public EntandoClusterInfrastructure(ObjectMeta metadata, EntandoClusterInfrastructureSpec spec,
+            EntandoCustomResourceStatus status) {
         this(metadata, spec);
         this.entandoStatus = status;
     }

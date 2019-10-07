@@ -35,7 +35,7 @@ public class DoneableEntandoClusterInfrastructure extends
 
     @Override
     public EntandoClusterInfrastructure done() {
-        EntandoClusterInfrastructure entandoClusterInfrastructure = new EntandoClusterInfrastructure(spec.build(), metadata.build(),
+        EntandoClusterInfrastructure entandoClusterInfrastructure = new EntandoClusterInfrastructure(metadata.build(), spec.build(),
                 status);
         return function.apply(entandoClusterInfrastructure);
     }

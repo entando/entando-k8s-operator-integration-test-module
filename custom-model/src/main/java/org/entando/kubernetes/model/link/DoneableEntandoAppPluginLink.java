@@ -33,7 +33,7 @@ public class DoneableEntandoAppPluginLink extends EntandoAppPluginLinkFluent<Don
 
     @Override
     public EntandoAppPluginLink done() {
-        return function.apply(new EntandoAppPluginLink(spec.build(), metadata.build(), entandoStatus));
+        return function.apply(new EntandoAppPluginLink(metadata.build(), spec.build(), entandoStatus));
     }
 
 }

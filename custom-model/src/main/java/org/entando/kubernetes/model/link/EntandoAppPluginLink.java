@@ -32,7 +32,7 @@ public class EntandoAppPluginLink extends CustomResource implements EntandoCusto
         this.spec = spec;
     }
 
-    public EntandoAppPluginLink(EntandoAppPluginLinkSpec spec, ObjectMeta meta, EntandoCustomResourceStatus entandoStatus) {
+    public EntandoAppPluginLink(ObjectMeta meta, EntandoAppPluginLinkSpec spec, EntandoCustomResourceStatus entandoStatus) {
         this(spec, meta);
         this.entandoStatus = entandoStatus;
     }

@@ -35,7 +35,7 @@ public class KeycloakServer extends CustomResource implements HasIngress, Entand
         this.spec = spec;
     }
 
-    public KeycloakServer(KeycloakServerSpec spec, ObjectMeta metadata, EntandoCustomResourceStatus status) {
+    public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec, EntandoCustomResourceStatus status) {
         this(metadata, spec);
         this.entandoStatus = status;
     }

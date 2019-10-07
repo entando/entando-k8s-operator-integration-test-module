@@ -33,6 +33,6 @@ public class DoneableEntandoPlugin extends EntandoPluginFluent<DoneableEntandoPl
 
     @Override
     public EntandoPlugin done() {
-        return function.apply(new EntandoPlugin(spec.build(), metadata.build(), entandoStatus));
+        return function.apply(new EntandoPlugin(metadata.build(), spec.build(), entandoStatus));
     }
 }
