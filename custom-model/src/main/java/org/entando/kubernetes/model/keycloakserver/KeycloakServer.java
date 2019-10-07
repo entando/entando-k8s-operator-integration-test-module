@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
 import java.util.Optional;
+import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.HasIngress;
 
@@ -17,7 +18,7 @@ import org.entando.kubernetes.model.HasIngress;
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class KeycloakServer extends CustomResource implements HasIngress {
+public class KeycloakServer extends CustomResource implements HasIngress, EntandoCustomResource {
 
     public static final String CRD_NAME = "entandokeycloakservers.entando.org";
 
@@ -34,7 +35,7 @@ public class KeycloakServer extends CustomResource implements HasIngress {
         this.spec = spec;
     }
 
-    public KeycloakServer(KeycloakServerSpec spec, ObjectMeta metadata, EntandoCustomResourceStatus status) {
+    public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec, EntandoCustomResourceStatus status) {
         this(metadata, spec);
         this.entandoStatus = status;
     }
@@ -68,7 +69,7 @@ public class KeycloakServer extends CustomResource implements HasIngress {
     }
 
     @Override
-    public Optional<Boolean> getTlsEnabled() {
-        return getSpec().getTlsEnabled();
+    public Optional<String> getTlsSecretName() {
+        return getSpec().getTlsSecretName();
     }
 }

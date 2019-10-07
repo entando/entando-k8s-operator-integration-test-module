@@ -5,41 +5,42 @@ import org.entando.kubernetes.model.JeeServer;
 
 public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
 
-    private JeeServer jeeServer;
+    private JeeServer standardServerImage;
     private DbmsImageVendor dbms;
     private String ingressHostName;
-    private Boolean tlsEnabled;
+    private String tlsSecretName;
     private String entandoImageVersion;
     private Integer replicas;
-    private String keycloakServerNamespace;
-    private String keycloakServerName;
+    private String keycloakSecretToUse;
+    private String clusterInfrastructureToUse;
+    private String customServerImage;
 
     public EntandoAppSpecBuilder() {
         //Needed for JSON Deserialization
 
     }
 
-    @Deprecated
-    @SuppressWarnings("PMD")
-    //Because it is deprecated
-    public EntandoAppSpecBuilder(JeeServer jeeServer, DbmsImageVendor dbms) {
-        withJeeServer(jeeServer);
-        withDbms(dbms);
-    }
-
     public EntandoAppSpecBuilder(EntandoAppSpec spec) {
-        this.keycloakServerNamespace = spec.getKeycloakServerNamespace();
-        this.keycloakServerName = spec.getKeycloakServerName();
+        this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.replicas = spec.getReplicas().orElse(null);
         this.entandoImageVersion = spec.getEntandoImageVersion().orElse(null);
-        this.tlsEnabled = spec.getTlsEnabled().orElse(null);
+        this.tlsSecretName = spec.getTlsSecretName().orElse(null);
         this.dbms = spec.getDbms().orElse(null);
-        this.jeeServer = spec.getJeeServer().orElse(null);
+        this.standardServerImage = spec.getStandardServerImage().orElse(null);
         this.ingressHostName = spec.getIngressHostName().orElse(null);
+        this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
+        this.customServerImage = spec.getCustomServerImage().orElse(null);
     }
 
-    public N withJeeServer(JeeServer jeeServer) {
-        this.jeeServer = jeeServer;
+    public N withStandardServerImage(JeeServer jeeServer) {
+        this.standardServerImage = jeeServer;
+        this.customServerImage = jeeServer == null ? this.customServerImage : null;
+        return (N) this;
+    }
+
+    public N withCustomServerImage(String customServerImage) {
+        this.customServerImage = customServerImage;
+        this.standardServerImage = customServerImage == null ? standardServerImage : null;
         return (N) this;
     }
 
@@ -53,8 +54,8 @@ public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
         return (N) this;
     }
 
-    public N withTlsEnabled(Boolean tlsEnabled) {
-        this.tlsEnabled = tlsEnabled;
+    public N withTlsSecretName(String tlsSecretName) {
+        this.tlsSecretName = tlsSecretName;
         return (N) this;
     }
 
@@ -63,9 +64,13 @@ public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
         return (N) this;
     }
 
-    public N withKeycloakServer(String namespace, String name) {
-        this.keycloakServerName = name;
-        this.keycloakServerNamespace = namespace;
+    public N withKeycloakSecretToUse(String name) {
+        this.keycloakSecretToUse = name;
+        return (N) this;
+    }
+
+    public N withClusterInfrastructureToUse(String name) {
+        this.clusterInfrastructureToUse = name;
         return (N) this;
     }
 
@@ -75,7 +80,7 @@ public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
     }
 
     public EntandoAppSpec build() {
-        return new EntandoAppSpec(this.jeeServer, this.dbms, this.ingressHostName, this.replicas,
-                this.entandoImageVersion, this.tlsEnabled, keycloakServerNamespace, keycloakServerName);
+        return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.replicas,
+                this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse);
     }
 }

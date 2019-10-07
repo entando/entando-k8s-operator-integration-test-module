@@ -15,13 +15,13 @@ public class EntandoAppIntegratedTest extends AbstractEntandoAppTest {
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 
     @Override
-    protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) {
+    protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) throws InterruptedException {
         entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
         return entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit();
     }
 
     @Override
-    protected KubernetesClient getClient() {
+    public KubernetesClient getClient() {
         return client;
     }
 

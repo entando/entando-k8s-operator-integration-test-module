@@ -20,8 +20,8 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
     private int replicas = 1;
     private DbmsImageVendor dbms;
     private String ingressPath;
-    private String keycloakServerNamespace;
-    private String keycloakServerName;
+    private String keycloakSecretToUse;
+    private String clusterInfrastructureToUse;
     private String healthCheckPath;
     private PluginSecurityLevel securityLevel;
 
@@ -44,10 +44,15 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
         this.replicas = spec.getReplicas();
         this.dbms = spec.getDbms().orElse(null);
         this.ingressPath = spec.getIngressPath();
-        this.keycloakServerName = spec.getKeycloakServerName();
-        this.keycloakServerNamespace = spec.getKeycloakServerNamespace();
+        this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.healthCheckPath = spec.getHealthCheckPath();
         this.securityLevel = spec.getSecurityLevel().orElse(null);
+        this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
+    }
+
+    public N withClusterInfrastructureToUse(String name) {
+        this.clusterInfrastructureToUse = name;
+        return (N) this;
     }
 
     public N withDbms(DbmsImageVendor dbms) {
@@ -75,9 +80,8 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
         return (N) this;
     }
 
-    public N withKeycloakServer(String namespace, String name) {
-        this.keycloakServerName = name;
-        this.keycloakServerNamespace = namespace;
+    public N withKeycloakSecretToUse(String name) {
+        this.keycloakSecretToUse = name;
         return (N) this;
     }
 
@@ -119,8 +123,8 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
 
     public EntandoPluginSpec build() {
         return new EntandoPluginSpec(entandoAppNamespace, entandoAppName, image, dbms, replicas, ingressPath,
-                keycloakServerNamespace, keycloakServerName, healthCheckPath, securityLevel, roles, permissions, parameters,
-                connectionConfigNames);
+                keycloakSecretToUse, healthCheckPath, securityLevel, roles, permissions, parameters,
+                connectionConfigNames, clusterInfrastructureToUse);
     }
 
     public N withHealthCheckPath(String healthCheckPath) {

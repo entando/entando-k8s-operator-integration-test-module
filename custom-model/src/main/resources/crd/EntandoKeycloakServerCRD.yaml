@@ -21,8 +21,8 @@ spec:
             dbms:
               type: string
               pattern: '^(mysql|oracle|postgresql|none)$'
-            tlsEnabled:
-              type: boolean
+            tlsSecretName:
+              type: string
             ingressHostName:
               type: string
               pattern: '^([A-Za-z0-9-]{1,63}\.)+[[A-Za-z0-9-]{1,63}$'

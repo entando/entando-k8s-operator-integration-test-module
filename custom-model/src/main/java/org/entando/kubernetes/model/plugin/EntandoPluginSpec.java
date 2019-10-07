@@ -8,35 +8,35 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.fabric8.kubernetes.api.model.KubernetesResource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoPluginSpec implements KubernetesResource {
+public class EntandoPluginSpec implements RequiresKeycloak {
 
     private String entandoAppName;
     private String entandoAppNamespace;
     private String image;
     private Integer replicas = 1;
     private DbmsImageVendor dbms;
-    private String securityLevel;
+    private PluginSecurityLevel securityLevel;
     private List<String> connectionConfigNames = new ArrayList<>();
     private List<ExpectedRole> roles = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
     private Map<String, Object> parameters = new ConcurrentHashMap<>();
     private String ingressPath;
-    private String keycloakServerNamespace;
-    private String keycloakServerName;
+    private String keycloakSecretToUse;
     private String healthCheckPath;
+    private String clusterInfrastructureToUse;
 
     public EntandoPluginSpec() {
         //Needed for JSON Deserialization
@@ -49,9 +49,9 @@ public class EntandoPluginSpec implements KubernetesResource {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     //Because the typical builder pattern requires a full constructor
     EntandoPluginSpec(String entandoAppNamespace, String entandoAppName, String image, DbmsImageVendor dbms,
-            Integer replicas, String ingressPath, String keycloakServerNamespace, String keycloakServerName,
+            Integer replicas, String ingressPath, String keycloakSecretToUse,
             String healthCheckPath, PluginSecurityLevel securityLevel, List<ExpectedRole> roles, List<Permission> permissions,
-            Map<String, Object> parameters, List<String> connectionConfigNames) {
+            Map<String, Object> parameters, List<String> connectionConfigNames, String clusterInfrastructureToUse) {
         this();
         this.entandoAppNamespace = entandoAppNamespace;
         this.entandoAppName = entandoAppName;
@@ -59,14 +59,14 @@ public class EntandoPluginSpec implements KubernetesResource {
         this.dbms = dbms;
         this.replicas = replicas;
         this.ingressPath = ingressPath;
-        this.keycloakServerNamespace = keycloakServerNamespace;
-        this.keycloakServerName = keycloakServerName;
+        this.keycloakSecretToUse = keycloakSecretToUse;
         this.healthCheckPath = healthCheckPath;
         this.roles = roles;
         this.permissions = permissions;
         this.parameters = parameters;
         this.connectionConfigNames = connectionConfigNames;
-        this.securityLevel = ofNullable(securityLevel).map(PluginSecurityLevel::toName).orElse(null);
+        this.securityLevel = securityLevel;
+        this.clusterInfrastructureToUse = clusterInfrastructureToUse;
     }
 
     public Map<String, Object> getParameters() {
@@ -74,7 +74,7 @@ public class EntandoPluginSpec implements KubernetesResource {
     }
 
     public Optional<PluginSecurityLevel> getSecurityLevel() {
-        return ofNullable(PluginSecurityLevel.forName(securityLevel));
+        return ofNullable(securityLevel);
     }
 
     public String getEntandoAppNamespace() {
@@ -113,12 +113,13 @@ public class EntandoPluginSpec implements KubernetesResource {
         return healthCheckPath;
     }
 
-    public String getKeycloakServerNamespace() {
-        return keycloakServerNamespace;
+    @Override
+    public Optional<String> getKeycloakSecretToUse() {
+        return ofNullable(keycloakSecretToUse);
     }
 
-    public String getKeycloakServerName() {
-        return keycloakServerName;
+    public Optional<String> getClusterInfrastructureTouse() {
+        return ofNullable(clusterInfrastructureToUse);
     }
 
     public List<String> getConnectionConfigNames() {

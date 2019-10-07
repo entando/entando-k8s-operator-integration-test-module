@@ -1,3 +1,7 @@
+[![Build Status](https://jenkins.entandocloud.com/buildStatus/icon?job=de-entando-k8s-custom-model-master)](https://jenkins.entandocloud.com/view/Digital%20Exchange/job/de-entando-k8s-custom-model-master/)
+[![Coverage Status](https://coveralls.io/repos/github/entando/entando-k8s-custom-model/badge.svg?branch=master)](https://coveralls.io/github/entando/entando-k8s-custom-model?branch=master)
+
+
 # entando-k8s-custom-model
 Entando's Custom Resource Definition model for Kubernetes. Used in our custom controllers as well as our Kubernetes 
 infrastructure. Use this project when integrating Entando and Kubernetes.

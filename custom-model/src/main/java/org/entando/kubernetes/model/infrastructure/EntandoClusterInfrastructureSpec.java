@@ -1,4 +1,4 @@
-package org.entando.kubernetes.model.keycloakserver;
+package org.entando.kubernetes.model.infrastructure;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -9,46 +9,42 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.HasIngress;
+import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
 @JsonDeserialize
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class KeycloakServerSpec implements HasIngress {
+public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIngress {
 
-    private String imageName;
     private DbmsImageVendor dbms;
     private String ingressHostName;
     private String entandoImageVersion;
     private String tlsSecretName;
+    private String keycloakSecretToUse;
     private Integer replicas = 1;
     @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
     //because 'default' is a reserved word
     private boolean isDefault;
 
-    public KeycloakServerSpec() {
+    public EntandoClusterInfrastructureSpec() {
         super();
     }
 
-    public KeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName,
-            String entandoImageVersion, String tlsSecretName) {
-        this.imageName = imageName;
+    public EntandoClusterInfrastructureSpec(DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
+            String tlsSecretName, Integer replicas, String keycloakSecretToUse, boolean isDefault) {
         this.dbms = dbms;
         this.ingressHostName = ingressHostName;
         this.entandoImageVersion = entandoImageVersion;
         this.tlsSecretName = tlsSecretName;
-    }
-
-    public KeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
-            String tlsSecretName, int replicas, boolean isDefault) {
-        this(imageName, dbms, ingressHostName, entandoImageVersion, tlsSecretName);
+        this.keycloakSecretToUse = keycloakSecretToUse;
         this.replicas = replicas;
         this.isDefault = isDefault;
     }
 
-    public Optional<String> getImageName() {
-        return Optional.ofNullable(imageName);
+    public boolean isDefault() {
+        return isDefault;
     }
 
     public Optional<DbmsImageVendor> getDbms() {
@@ -77,7 +73,8 @@ public class KeycloakServerSpec implements HasIngress {
         this.replicas = replicas;
     }
 
-    public boolean isDefault() {
-        return isDefault;
+    @Override
+    public Optional<String> getKeycloakSecretToUse() {
+        return Optional.ofNullable(keycloakSecretToUse);
     }
 }

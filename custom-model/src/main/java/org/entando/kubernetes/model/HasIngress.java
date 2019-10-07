@@ -2,9 +2,9 @@ package org.entando.kubernetes.model;
 
 import java.util.Optional;
 
-public interface HasIngress extends EntandoCustomResource {
+public interface HasIngress {
 
     Optional<String> getIngressHostName();
 
-    Optional<Boolean> getTlsEnabled();
+    Optional<String> getTlsSecretName();
 }

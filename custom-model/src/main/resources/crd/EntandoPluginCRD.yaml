@@ -26,10 +26,10 @@ spec:
               type: string
             healthCheckPath:
               type: string
-            keycloakServerName:
+            keycloakSecretToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
-            keycloakServerNamespace:
+            clusterInfrastructureToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
             dbms:

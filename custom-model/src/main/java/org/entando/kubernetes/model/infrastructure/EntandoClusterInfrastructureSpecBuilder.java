@@ -1,38 +1,38 @@
-package org.entando.kubernetes.model.keycloakserver;
+package org.entando.kubernetes.model.infrastructure;
 
 import org.entando.kubernetes.model.DbmsImageVendor;
 
-public class KeycloakServerSpecBuilder<N extends KeycloakServerSpecBuilder> {
+public class EntandoClusterInfrastructureSpecBuilder<N extends EntandoClusterInfrastructureSpecBuilder> {
 
-    private String imageName;
     private DbmsImageVendor dbms;
     private String ingressHostName;
     private String entandoImageVersion;
     private String tlsSecretName;
     private int replicas = 1;
+    private String keycloakSecretToUse;
     private boolean isDefault;
 
-    public KeycloakServerSpecBuilder(KeycloakServerSpec spec) {
-        this.imageName = spec.getImageName().orElse(null);
+    public EntandoClusterInfrastructureSpecBuilder(EntandoClusterInfrastructureSpec spec) {
         this.dbms = spec.getDbms().orElse(null);
         this.ingressHostName = spec.getIngressHostName().orElse(null);
         this.entandoImageVersion = spec.getEntandoImageVersion().orElse(null);
         this.tlsSecretName = spec.getTlsSecretName().orElse(null);
         this.replicas = spec.getReplicas();
+        this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.isDefault = spec.isDefault();
     }
 
-    public KeycloakServerSpecBuilder() {
+    public EntandoClusterInfrastructureSpecBuilder() {
         //required default constructor
+    }
+
+    public N withKeycloakSecretToUse(String keycloakSecretToUse) {
+        this.keycloakSecretToUse = keycloakSecretToUse;
+        return (N) this;
     }
 
     public N withDefault(boolean isDefault) {
         this.isDefault = isDefault;
-        return (N) this;
-    }
-
-    public N withImageName(String imageName) {
-        this.imageName = imageName;
         return (N) this;
     }
 
@@ -61,8 +61,9 @@ public class KeycloakServerSpecBuilder<N extends KeycloakServerSpecBuilder> {
         return (N) this;
     }
 
-    public KeycloakServerSpec build() {
-        return new KeycloakServerSpec(imageName, dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas, isDefault);
+    public EntandoClusterInfrastructureSpec build() {
+        return new EntandoClusterInfrastructureSpec(dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas,
+                keycloakSecretToUse, isDefault);
     }
 
 }

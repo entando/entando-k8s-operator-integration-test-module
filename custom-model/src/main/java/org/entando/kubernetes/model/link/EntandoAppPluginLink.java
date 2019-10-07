@@ -1,4 +1,4 @@
-package org.entando.kubernetes.model.plugin;
+package org.entando.kubernetes.model.link;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -8,63 +8,51 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
-import java.util.Optional;
 import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoPlugin extends CustomResource implements EntandoCustomResource, RequiresKeycloak {
+public class EntandoAppPluginLink extends CustomResource implements EntandoCustomResource {
 
-    public static final String CRD_NAME = "entandoplugins.entando.org";
-
-    private EntandoPluginSpec spec;
+    public static final String CRD_NAME = "entandoapppluginlinks.entando.org";
     private EntandoCustomResourceStatus entandoStatus;
+    private EntandoAppPluginLinkSpec spec;
 
-    public EntandoPlugin() {
+    public EntandoAppPluginLink() {
         super();
         setApiVersion("entando.org/v1alpha1");
     }
 
-    public EntandoPlugin(EntandoPluginSpec spec) {
+    public EntandoAppPluginLink(EntandoAppPluginLinkSpec spec) {
         this();
         this.spec = spec;
     }
 
-    public EntandoPlugin(ObjectMeta metadata, EntandoPluginSpec spec) {
+    public EntandoAppPluginLink(ObjectMeta meta, EntandoAppPluginLinkSpec spec, EntandoCustomResourceStatus entandoStatus) {
+        this(meta, spec);
+        this.entandoStatus = entandoStatus;
+    }
+
+    public EntandoAppPluginLink(ObjectMeta meta, EntandoAppPluginLinkSpec spec) {
         this(spec);
-        super.setMetadata(metadata);
+        super.setMetadata(meta);
     }
 
-    public EntandoPlugin(ObjectMeta metaData, EntandoPluginSpec spec, EntandoCustomResourceStatus status) {
-        this(metaData, spec);
-        this.entandoStatus = status;
-    }
-
-    public EntandoPluginSpec getSpec() {
+    public EntandoAppPluginLinkSpec getSpec() {
         return spec;
-    }
-
-    public void setSpec(EntandoPluginSpec spec) {
-        this.spec = spec;
     }
 
     @Override
     public EntandoCustomResourceStatus getStatus() {
-        return entandoStatus == null ? entandoStatus = new EntandoCustomResourceStatus() : entandoStatus;
+        return entandoStatus;
     }
 
     @Override
     public void setStatus(EntandoCustomResourceStatus status) {
         this.entandoStatus = status;
-    }
-
-    @Override
-    public Optional<String> getKeycloakSecretToUse() {
-        return spec.getKeycloakSecretToUse();
     }
 }

@@ -15,13 +15,13 @@ public class EntandoPluginIntegratedTest extends AbstractEntandoPluginTest {
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 
     @Override
-    protected DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin) {
+    protected DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin) throws InterruptedException {
         entandoPlugins().inNamespace(MY_NAMESPACE).create(entandoPlugin);
         return entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).edit();
     }
 
     @Override
-    protected KubernetesClient getClient() {
+    public KubernetesClient getClient() {
         return client;
     }
 

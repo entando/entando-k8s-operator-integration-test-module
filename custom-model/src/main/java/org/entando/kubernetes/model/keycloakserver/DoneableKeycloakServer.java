@@ -33,7 +33,7 @@ public class DoneableKeycloakServer extends KeycloakServerFluent<DoneableKeycloa
 
     @Override
     public KeycloakServer done() {
-        KeycloakServer keycloakServer = new KeycloakServer(spec.build(), metadata.build(), status);
+        KeycloakServer keycloakServer = new KeycloakServer(metadata.build(), spec.build(), status);
         return function.apply(keycloakServer);
     }
 }

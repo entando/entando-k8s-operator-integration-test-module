@@ -2,9 +2,9 @@ package org.entando.kubernetes.model.inprocesstest;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
-import org.entando.kubernetes.model.AbstractEntandoAppTest;
-import org.entando.kubernetes.model.app.DoneableEntandoApp;
-import org.entando.kubernetes.model.app.EntandoApp;
+import org.entando.kubernetes.model.AbstractEntandoAppPluginLinkTest;
+import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
+import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
@@ -13,14 +13,14 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 @Tag("in-process")
 @SuppressWarnings("PMD.TestClassWithoutTestCases")
 //Because PMD doesn't know they are inherited
-public class EntandoAppMockedTest extends AbstractEntandoAppTest {
+public class EntandoAppPluginLinkMockedTest extends AbstractEntandoAppPluginLinkTest {
 
     @Rule
     public KubernetesServer server = new KubernetesServer(false, true);
 
     @Override
-    protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) {
-        return new DoneableEntandoApp(entandoApp, builtEntandoApp -> builtEntandoApp);
+    protected DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoPlugin) {
+        return new DoneableEntandoAppPluginLink(entandoPlugin, builtEntandoAppPluginLink -> builtEntandoAppPluginLink);
     }
 
     @Override

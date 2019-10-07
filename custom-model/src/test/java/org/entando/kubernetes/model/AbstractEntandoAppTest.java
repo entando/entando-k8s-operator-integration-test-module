@@ -1,62 +1,37 @@
 package org.entando.kubernetes.model;
 
+import static org.entando.kubernetes.model.app.EntandoAppOperationFactory.produceAllEntandoApps;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
-import java.util.List;
 import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.app.EntandoAppList;
-import org.entando.kubernetes.model.inprocesstest.EntandoAppMockedTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public abstract class AbstractEntandoAppTest {
+public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
+    public static final String MY_CUSTOM_SERVER_IMAGE = "somenamespace/someimage:3.2.2";
+    public static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
     protected static final String MY_NAMESPACE = "my-namespace";
     protected static final String MY_APP = "my-app";
     private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
     private static final String MYINGRESS_COM = "myingress.com";
-    private static final String MYKEYCLOAKNAMESPACE = "mykeycloakn123-amespace-asdf";
-    private static final String MY_KEYCLOAK = "my-keycloak";
+    private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
     private static final String MY_VALUE = "my-value";
     private static final String MY_LABEL = "my-label";
-    private static CustomResourceDefinition entandoAppCrd;
-
-    private static CustomResourceOperationsImpl<EntandoApp, EntandoAppList,
-            DoneableEntandoApp> produceAllEntandoApps(
-            KubernetesClient client) {
-        synchronized (EntandoAppMockedTest.class) {
-            entandoAppCrd = client.customResourceDefinitions().withName(EntandoApp.CRD_NAME).get();
-            if (entandoAppCrd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("crd/EntandoAppCRD.yaml")).get();
-                entandoAppCrd = (CustomResourceDefinition) list.get(0);
-                // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                entandoAppCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(entandoAppCrd);
-            }
-
-        }
-        return (CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp>) client
-                .customResources(entandoAppCrd, EntandoApp.class, EntandoAppList.class, DoneableEntandoApp.class);
-    }
+    private static final String MY_TLS_SECRET = "my-tls-secret";
 
     @BeforeEach
-    public void deleteExternalDatabase() throws InterruptedException {
-        entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).delete();
-        while (entandoApps().inNamespace(MY_NAMESPACE).list().getItems().size() > 0) {
-            Thread.sleep(100);
-        }
+    public void deleteEntandoApps() throws InterruptedException {
+        prepareNamespace(entandoApps(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateEntandoApp() {
+    public void testCreateEntandoApp() throws InterruptedException {
         //Given
         EntandoApp entandoApp = new EntandoAppBuilder()
                 .withNewMetadata().withName(MY_APP)
@@ -64,12 +39,14 @@ public abstract class AbstractEntandoAppTest {
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsImageVendor.MYSQL)
+                .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
-                .withJeeServer(JeeServer.WILDFLY)
+                .withStandardServerImage(JeeServer.WILDFLY)
                 .withReplicas(5)
-                .withTlsEnabled(true)
+                .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
-                .withKeycloakServer(MYKEYCLOAKNAMESPACE, MY_KEYCLOAK)
+                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
+                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
@@ -81,20 +58,20 @@ public abstract class AbstractEntandoAppTest {
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
-        assertThat(actual.getSpec().getKeycloakServerName(), is(MY_KEYCLOAK));
-        assertThat(actual.getSpec().getKeycloakServerNamespace(), is(MYKEYCLOAKNAMESPACE));
-        assertThat(actual.getTlsEnabled().get(), is(true));
+        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
-        assertThat(actual.getKeycloakServerName(), is(MY_KEYCLOAK));
-        assertThat(actual.getKeycloakServerNamespace(), is(MYKEYCLOAKNAMESPACE));
-        assertThat(actual.getSpec().getJeeServer().get(), is(JeeServer.WILDFLY));
+        assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getStandardServerImage().get(), is(JeeServer.WILDFLY));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getTlsEnabled().get(), is(true));
+        assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
+        assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
+        assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
     }
 
     @Test
-    public void testEditEntandoApp() {
+    public void testEditEntandoApp() throws InterruptedException {
         //Given
         EntandoApp entandoApp = new EntandoAppBuilder()
                 .withNewMetadata()
@@ -104,11 +81,13 @@ public abstract class AbstractEntandoAppTest {
                 .withNewSpec()
                 .withDbms(DbmsImageVendor.POSTGRESQL)
                 .withEntandoImageVersion("6.2.0-SNAPSHOT")
-                .withJeeServer(JeeServer.WILDFLY)
+                .withCustomServerImage("asdfasdf/asdf:2")
+                .withStandardServerImage(JeeServer.WILDFLY)
                 .withReplicas(4)
-                .withTlsEnabled(false)
+                .withTlsSecretName("another-tls-secret")
                 .withIngressHostName("anotheringress.com")
-                .withKeycloakServer("anotherkeycloaknamespace", "another-keycloak")
+                .withKeycloakSecretToUse("another-keycloak-secret")
+                .withClusterInfrastructureToUse("some-cluster-infrastructure")
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
@@ -120,11 +99,13 @@ public abstract class AbstractEntandoAppTest {
                 .editSpec()
                 .withDbms(DbmsImageVendor.MYSQL)
                 .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
-                .withJeeServer(JeeServer.WILDFLY)
+                .withStandardServerImage(JeeServer.WILDFLY)
+                .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withReplicas(5)
-                .withTlsEnabled(true)
+                .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
-                .withKeycloakServer(MYKEYCLOAKNAMESPACE, MY_KEYCLOAK)
+                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
+                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
                 .withStatus(new DbServerStatus("another-qualifier"))
@@ -134,20 +115,19 @@ public abstract class AbstractEntandoAppTest {
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
-        assertThat(actual.getSpec().getKeycloakServerName(), is(MY_KEYCLOAK));
-        assertThat(actual.getSpec().getKeycloakServerNamespace(), is(MYKEYCLOAKNAMESPACE));
-        assertThat(actual.getSpec().getJeeServer().get(), is(JeeServer.WILDFLY));
+        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getStandardServerImage().isPresent(), is(false));//overridden by customServerImage
+        assertThat(actual.getSpec().getCustomServerImage().get(), is(MY_CUSTOM_SERVER_IMAGE));
+        assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getTlsEnabled().get(), is(true));
+        assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
     }
 
-    protected abstract DoneableEntandoApp editEntandoApp(EntandoApp entandoApp);
+    protected abstract DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) throws InterruptedException;
 
-    protected CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp> entandoApps() {
-        return produceAllEntandoApps(
-                getClient());
+    protected CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp> entandoApps() throws InterruptedException {
+        return produceAllEntandoApps(getClient());
     }
 
-    protected abstract KubernetesClient getClient();
 }

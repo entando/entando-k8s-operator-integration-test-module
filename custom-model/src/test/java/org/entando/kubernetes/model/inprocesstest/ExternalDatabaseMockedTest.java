@@ -19,7 +19,7 @@ public class ExternalDatabaseMockedTest extends AbstractExternalDatabaseTest {
     public KubernetesServer server = new KubernetesServer(false, true);
 
     @Override
-    protected NamespacedKubernetesClient getClient() {
+    public NamespacedKubernetesClient getClient() {
         return this.server.getClient();
     }
 
