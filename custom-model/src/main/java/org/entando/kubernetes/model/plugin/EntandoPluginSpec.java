@@ -23,13 +23,13 @@ import org.entando.kubernetes.model.RequiresKeycloak;
         setterVisibility = Visibility.NONE)
 public class EntandoPluginSpec implements RequiresKeycloak {
 
-    private String entandoAppName;
-    private String entandoAppNamespace;
     private String image;
     private Integer replicas = 1;
     private DbmsImageVendor dbms;
     private PluginSecurityLevel securityLevel;
     private List<String> connectionConfigNames = new ArrayList<>();
+    private String tlsSecretName;
+    private String ingressHostName;
     private List<ExpectedRole> roles = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
     private Map<String, Object> parameters = new ConcurrentHashMap<>();
@@ -48,25 +48,27 @@ public class EntandoPluginSpec implements RequiresKeycloak {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     //Because the typical builder pattern requires a full constructor
-    EntandoPluginSpec(String entandoAppNamespace, String entandoAppName, String image, DbmsImageVendor dbms,
+    EntandoPluginSpec(String image, DbmsImageVendor dbms,
             Integer replicas, String ingressPath, String keycloakSecretToUse,
-            String healthCheckPath, PluginSecurityLevel securityLevel, List<ExpectedRole> roles, List<Permission> permissions,
+            String healthCheckPath, PluginSecurityLevel securityLevel, String tlsSecretName,
+            String ingressHostName, List<ExpectedRole> roles, List<Permission> permissions,
             Map<String, Object> parameters, List<String> connectionConfigNames, String clusterInfrastructureToUse) {
         this();
-        this.entandoAppNamespace = entandoAppNamespace;
-        this.entandoAppName = entandoAppName;
         this.image = image;
         this.dbms = dbms;
         this.replicas = replicas;
         this.ingressPath = ingressPath;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.healthCheckPath = healthCheckPath;
+        this.tlsSecretName = tlsSecretName;
+        this.ingressHostName = ingressHostName;
         this.roles = roles;
         this.permissions = permissions;
         this.parameters = parameters;
         this.connectionConfigNames = connectionConfigNames;
         this.securityLevel = securityLevel;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
+
     }
 
     public Map<String, Object> getParameters() {
@@ -77,20 +79,12 @@ public class EntandoPluginSpec implements RequiresKeycloak {
         return ofNullable(securityLevel);
     }
 
-    public String getEntandoAppNamespace() {
-        return entandoAppNamespace;
-    }
-
     public String getImage() {
         return image;
     }
 
     public Integer getReplicas() {
         return replicas;
-    }
-
-    public String getEntandoAppName() {
-        return entandoAppName;
     }
 
     public Optional<DbmsImageVendor> getDbms() {
@@ -126,4 +120,11 @@ public class EntandoPluginSpec implements RequiresKeycloak {
         return connectionConfigNames;
     }
 
+    public Optional<String> getTlsSecretName() {
+        return ofNullable(tlsSecretName);
+    }
+
+    public Optional<String> getIngressHostName() {
+        return ofNullable(ingressHostName);
+    }
 }

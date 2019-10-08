@@ -12,7 +12,7 @@ import java.util.List;
 public final class EntandoAppPluginLinkOperationFactory {
 
     private static final int NOT_FOUND = 404;
-    private static CustomResourceDefinition EntandoAppPluginLinkCrd;
+    private static CustomResourceDefinition entandoAppPluginLinkCrd;
 
     private EntandoAppPluginLinkOperationFactory() {
     }
@@ -21,14 +21,14 @@ public final class EntandoAppPluginLinkOperationFactory {
             DoneableEntandoAppPluginLink> produceAllEntandoAppPluginLinks(
             KubernetesClient client) throws InterruptedException {
         synchronized (EntandoAppPluginLinkOperationFactory.class) {
-            EntandoAppPluginLinkCrd = client.customResourceDefinitions().withName(EntandoAppPluginLink.CRD_NAME).get();
-            if (EntandoAppPluginLinkCrd == null) {
+            entandoAppPluginLinkCrd = client.customResourceDefinitions().withName(EntandoAppPluginLink.CRD_NAME).get();
+            if (entandoAppPluginLinkCrd == null) {
                 List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
                         .getResourceAsStream("crd/EntandoAppPluginLinkCRD.yaml")).get();
-                EntandoAppPluginLinkCrd = (CustomResourceDefinition) list.get(0);
+                entandoAppPluginLinkCrd = (CustomResourceDefinition) list.get(0);
                 // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                EntandoAppPluginLinkCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(EntandoAppPluginLinkCrd);
+                entandoAppPluginLinkCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
+                client.customResourceDefinitions().create(entandoAppPluginLinkCrd);
             }
 
         }
@@ -36,7 +36,7 @@ public final class EntandoAppPluginLinkOperationFactory {
                 DoneableEntandoAppPluginLink>
                 oper = (CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,
                 DoneableEntandoAppPluginLink>) client
-                .customResources(EntandoAppPluginLinkCrd, EntandoAppPluginLink.class, EntandoAppPluginLinkList.class,
+                .customResources(entandoAppPluginLinkCrd, EntandoAppPluginLink.class, EntandoAppPluginLinkList.class,
                         DoneableEntandoAppPluginLink.class);
         while (notAvailable(oper)) {
             sleep(100);

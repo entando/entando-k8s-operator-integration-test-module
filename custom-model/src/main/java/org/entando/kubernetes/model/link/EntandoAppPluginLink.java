@@ -48,7 +48,7 @@ public class EntandoAppPluginLink extends CustomResource implements EntandoCusto
 
     @Override
     public EntandoCustomResourceStatus getStatus() {
-        return entandoStatus;
+        return entandoStatus == null ? entandoStatus = new EntandoCustomResourceStatus() : entandoStatus;
     }
 
     @Override

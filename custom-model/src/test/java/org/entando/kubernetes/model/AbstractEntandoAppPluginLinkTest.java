@@ -3,6 +3,7 @@ package org.entando.kubernetes.model;
 import static org.entando.kubernetes.model.link.EntandoAppPluginLinkOperationFactory.produceAllEntandoAppPluginLinks;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
@@ -82,6 +83,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
         assertThat(actual.getSpec().getEntandoPluginName(), is(MY_PLUGIN));
         assertThat(actual.getSpec().getEntandoPluginNamespace(), is(MY_PLUGIN_NAMEPSACE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
+        assertThat(actual.getStatus(), is(notNullValue()));
     }
 
     protected abstract DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoAppPluginLink)

@@ -4,6 +4,7 @@ import static org.entando.kubernetes.model.plugin.EntandoPluginOperationFactory.
 import static org.entando.kubernetes.model.plugin.PluginSecurityLevel.STRICT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import java.util.Arrays;
@@ -19,9 +20,11 @@ import org.junit.jupiter.api.Test;
 
 public abstract class AbstractEntandoPluginTest implements CustomResourceTestUtil {
 
-    public static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
     protected static final String MY_NAMESPACE = "my-namespace";
     protected static final String MY_PLUGIN = "my-plugin";
+    private static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
+    private static final String MYHOST_COM = "myhost.com";
+    private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final String IMAGE = "entando/someplugin:1.0.2";
     private static final String SOME_CONNECTION = "some-connection";
     private static final String INGRESS_PATH = "/plugsy";
@@ -33,7 +36,6 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     private static final String PARAMETER_NAME = "env";
     private static final String PARAMETER_VALUE = "B";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
-    private static final String MY_APP = "my-app";
 
     @BeforeEach
     public void deleteEntandoPlugins() throws InterruptedException {
@@ -54,11 +56,12 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withReplicas(5)
                 .withIngressPath(INGRESS_PATH)
                 .withHealthCheckPath(ACTUATOR_HEALTH)
+                .withIngressHostName(MYHOST_COM)
+                .withTlsSecretName(MY_TLS_SECRET)
                 .withPermission(ENTANDO_APP, SUPERUSER)
                 .withRole(ADMIN, ADMINISTRATOR)
                 .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
-                .withEntandoApp(MY_NAMESPACE, MY_APP)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
@@ -73,8 +76,10 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getImage(), is(IMAGE));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
-        assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));
-        assertThat(actual.getSpec().getEntandoAppNamespace(), is(MY_NAMESPACE));
+        assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
+        assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
+        assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
+        assertThat(actual.getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getConnectionConfigNames(), is(Arrays.asList(SOME_CONNECTION)));
         assertThat(actual.getSpec().getPermissions().get(0).getClientId(), is(ENTANDO_APP));
         assertThat(actual.getSpec().getPermissions().get(0).getRole(), is(SUPERUSER));
@@ -87,6 +92,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getReplicas(), is(5));
         assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
+        assertThat(actual.getStatus(), is(notNullValue()));
     }
 
     @Test
@@ -108,7 +114,6 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withRole("user", "User")
                 .addNewParameter(PARAMETER_NAME, "A")
                 .withSecurityLevel(STRICT)
-                .withEntandoApp("somenamespace", "another-app")
                 .withKeycloakSecretToUse("another-keycloak-secret")
                 .withClusterInfrastructureToUse("another-cluster-infrastructure")
                 .endSpec()
@@ -125,11 +130,12 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withConnectionConfigNames(Arrays.asList(SOME_CONNECTION))
                 .withReplicas(5)
                 .withHealthCheckPath(ACTUATOR_HEALTH)
+                .withIngressHostName(MYHOST_COM)
+                .withTlsSecretName(MY_TLS_SECRET)
                 .withPermissions(Arrays.asList(new Permission(ENTANDO_APP, SUPERUSER)))
                 .withRoles(Arrays.asList(new ExpectedRole(ADMIN, ADMINISTRATOR)))
                 .withParameters(Collections.singletonMap(PARAMETER_NAME, PARAMETER_VALUE))
                 .withSecurityLevel(STRICT)
-                .withEntandoApp(MY_NAMESPACE, MY_APP)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
@@ -142,8 +148,10 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getImage(), is(IMAGE));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
-        assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));
-        assertThat(actual.getSpec().getEntandoAppNamespace(), is(MY_NAMESPACE));
+        assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
+        assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
+        assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
+        assertThat(actual.getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getConnectionConfigNames(), is(Arrays.asList(SOME_CONNECTION)));
         assertThat(actual.getSpec().getPermissions().get(0).getClientId(), is(ENTANDO_APP));
         assertThat(actual.getSpec().getPermissions().get(0).getRole(), is(SUPERUSER));

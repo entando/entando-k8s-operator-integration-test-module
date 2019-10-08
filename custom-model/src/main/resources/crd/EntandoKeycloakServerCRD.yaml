@@ -23,6 +23,7 @@ spec:
               pattern: '^(mysql|oracle|postgresql|none)$'
             tlsSecretName:
               type: string
+              pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
             ingressHostName:
               type: string
               pattern: '^([A-Za-z0-9-]{1,63}\.)+[[A-Za-z0-9-]{1,63}$'

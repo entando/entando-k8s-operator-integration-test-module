@@ -21,6 +21,7 @@ public class EntandoAppPluginLinkSpec implements KubernetesResource {
     private String entandoPluginName;
 
     public EntandoAppPluginLinkSpec() {
+        //Required for JSON deserialization
     }
 
     public EntandoAppPluginLinkSpec(String entandoAppNamespace, String entandoAppName, String entandoPluginNamespace,
