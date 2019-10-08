@@ -11,6 +11,7 @@ import io.fabric8.kubernetes.client.CustomResource;
 import java.util.Optional;
 import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
+import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
@@ -18,7 +19,7 @@ import org.entando.kubernetes.model.RequiresKeycloak;
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoPlugin extends CustomResource implements EntandoCustomResource, RequiresKeycloak {
+public class EntandoPlugin extends CustomResource implements EntandoCustomResource, RequiresKeycloak, HasIngress {
 
     public static final String CRD_NAME = "entandoplugins.entando.org";
 
@@ -66,5 +67,15 @@ public class EntandoPlugin extends CustomResource implements EntandoCustomResour
     @Override
     public Optional<String> getKeycloakSecretToUse() {
         return spec.getKeycloakSecretToUse();
+    }
+
+    @Override
+    public Optional<String> getIngressHostName() {
+        return spec.getIngressHostName();
+    }
+
+    @Override
+    public Optional<String> getTlsSecretName() {
+        return spec.getTlsSecretName();
     }
 }

@@ -8,6 +8,7 @@ public class EntandoAppPluginLinkSpecBuilder<N extends EntandoAppPluginLinkSpecB
     private String entandoPluginNamespace;
 
     public EntandoAppPluginLinkSpecBuilder() {
+        //Useful
     }
 
     public EntandoAppPluginLinkSpecBuilder(EntandoAppPluginLinkSpec spec) {
