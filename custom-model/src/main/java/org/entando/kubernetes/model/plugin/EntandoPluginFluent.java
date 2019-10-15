@@ -120,16 +120,13 @@ public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends BaseF
 
         @Override
         public boolean equals(Object other) {
-            if (other instanceof MetadataNestedImpl) {
-                MetadataNestedImpl o = (MetadataNestedImpl) other;
-                return super.equals(o) && o.objectMetaBuilder.equals(objectMetaBuilder);
-            }
-            return false;
+            //By convention the Sonar way. Nothing to add
+            return super.equals(other);
         }
 
         @Override
         public int hashCode() {
-            return super.hashCode() + this.objectMetaBuilder.hashCode();
+            return this.objectMetaBuilder.hashCode();
         }
     }
 
