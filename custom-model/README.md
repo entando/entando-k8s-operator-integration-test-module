@@ -1,7 +1,10 @@
 [![Build Status](https://jenkins.entandocloud.com/buildStatus/icon?job=de-entando-k8s-custom-model-master)](https://jenkins.entandocloud.com/view/Digital%20Exchange/job/de-entando-k8s-custom-model-master/)
-[![Coverage Status](https://coveralls.io/repos/github/entando/entando-k8s-custom-model/badge.svg?branch=master)](https://coveralls.io/github/entando/entando-k8s-custom-model?branch=master)
-
-
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=entando_entando-k8s-custom-model&metric=coverage)](https://sonarcloud.io/dashboard?id=entando_entando-k8s-custom-model)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=entando_entando-k8s-custom-model&metric=code_smells)](https://sonarcloud.io/dashboard?id=entando_entando-k8s-custom-model)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=entando_entando-k8s-custom-model&metric=security_rating)](https://sonarcloud.io/dashboard?id=entando_entando-k8s-custom-model)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=entando_entando-k8s-custom-model&metric=sqale_index)](https://sonarcloud.io/dashboard?id=entando_entando-k8s-custom-model)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=entando_entando-k8s-custom-model&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=entando_entando-k8s-custom-model)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=entando_entando-k8s-custom-model&metric=ncloc)](https://sonarcloud.io/dashboard?id=entando_entando-k8s-custom-model)
 # entando-k8s-custom-model
 Entando's Custom Resource Definition model for Kubernetes. Used in our custom controllers as well as our Kubernetes 
 infrastructure. Use this project when integrating Entando and Kubernetes.
