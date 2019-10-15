@@ -72,7 +72,10 @@ public class EntandoPlugin extends CustomResource implements EntandoCustomResour
 
     @Override
     public EntandoCustomResourceStatus getStatus() {
-        return entandoStatus == null ? entandoStatus = new EntandoCustomResourceStatus() : entandoStatus;
+        if (entandoStatus == null) {
+            entandoStatus = new EntandoCustomResourceStatus();
+        }
+        return entandoStatus;
     }
 
     @Override

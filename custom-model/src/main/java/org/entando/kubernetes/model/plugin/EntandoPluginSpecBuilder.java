@@ -29,7 +29,7 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
     private final List<String> connectionConfigNames;
     private final List<ExpectedRole> roles;
     private final List<Permission> permissions;
-    private final Map<String, Object> parameters;
+    private final Map<String, String> parameters;
     private String image;
     private int replicas = 1;
     private DbmsImageVendor dbms;
@@ -116,6 +116,9 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
         return (N) this;
     }
 
+    /**
+     * @deprecated
+     */
     @Deprecated
     public N withRole(String code, String name) {
         return addNewRole(code, name);
@@ -126,6 +129,9 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
         return (N) this;
     }
 
+    /**
+     * @deprecated
+     */
     @Deprecated
     public N withPermission(String clientId, String role) {
         return addNewPermission(clientId, role);
@@ -136,7 +142,7 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
         return (N) this;
     }
 
-    public N addNewParameter(String name, Object value) {
+    public N addNewParameter(String name, String value) {
         this.parameters.put(name, value);
         return (N) this;
     }
@@ -170,7 +176,7 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
         return (N) this;
     }
 
-    public N withParameters(Map<String, Object> parameters) {
+    public N withParameters(Map<String, String> parameters) {
         this.parameters.clear();
         this.parameters.putAll(parameters);
         return (N) this;

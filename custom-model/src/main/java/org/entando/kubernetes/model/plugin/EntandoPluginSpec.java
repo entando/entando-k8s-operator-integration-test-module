@@ -20,10 +20,13 @@ import static java.util.Optional.ofNullable;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,7 @@ import org.entando.kubernetes.model.RequiresKeycloak;
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoPluginSpec implements RequiresKeycloak {
+public class EntandoPluginSpec implements RequiresKeycloak, Serializable {
 
     private String image;
     private Integer replicas = 1;
@@ -48,7 +51,7 @@ public class EntandoPluginSpec implements RequiresKeycloak {
     private String ingressHostName;
     private List<ExpectedRole> roles = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
-    private Map<String, Object> parameters = new ConcurrentHashMap<>();
+    private Map<String, String> parameters = new ConcurrentHashMap<>();
     private String ingressPath;
     private String keycloakSecretToUse;
     private String healthCheckPath;
@@ -62,13 +65,21 @@ public class EntandoPluginSpec implements RequiresKeycloak {
      * Only for use from the builder.
      */
 
-    @SuppressWarnings("PMD.ExcessiveParameterList")
-    //Because the typical builder pattern requires a full constructor
-    EntandoPluginSpec(String image, DbmsImageVendor dbms,
-            Integer replicas, String ingressPath, String keycloakSecretToUse,
-            String healthCheckPath, PluginSecurityLevel securityLevel, String tlsSecretName,
-            String ingressHostName, List<ExpectedRole> roles, List<Permission> permissions,
-            Map<String, Object> parameters, List<String> connectionConfigNames, String clusterInfrastructureToUse) {
+    @JsonCreator()
+    public EntandoPluginSpec(@JsonProperty("image") String image,
+            @JsonProperty("dbms") DbmsImageVendor dbms,
+            @JsonProperty("replicas") Integer replicas,
+            @JsonProperty("ingressPath") String ingressPath,
+            @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
+            @JsonProperty("healthCheckPath") String healthCheckPath,
+            @JsonProperty("securityLevel") PluginSecurityLevel securityLevel,
+            @JsonProperty("tlsSecretName") String tlsSecretName,
+            @JsonProperty("ingressHostName") String ingressHostName,
+            @JsonProperty("roles") List<ExpectedRole> roles,
+            @JsonProperty("permissions") List<Permission> permissions,
+            @JsonProperty("parameters") Map<String, String> parameters,
+            @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
+            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse) {
         this();
         this.image = image;
         this.dbms = dbms;
@@ -87,7 +98,7 @@ public class EntandoPluginSpec implements RequiresKeycloak {
 
     }
 
-    public Map<String, Object> getParameters() {
+    public Map<String, String> getParameters() {
         return parameters;
     }
 

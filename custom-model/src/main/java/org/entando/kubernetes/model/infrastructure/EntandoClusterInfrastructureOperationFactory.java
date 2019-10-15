@@ -37,16 +37,17 @@ public final class EntandoClusterInfrastructureOperationFactory {
             DoneableEntandoClusterInfrastructure> produceAllEntandoClusterInfrastructures(
             KubernetesClient client) throws InterruptedException {
         synchronized (EntandoClusterInfrastructureOperationFactory.class) {
-            entandoInfrastructureCrd = client.customResourceDefinitions().withName(EntandoClusterInfrastructure.CRD_NAME).get();
             if (entandoInfrastructureCrd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("crd/EntandoClusterInfrastructureCRD.yaml")).get();
-                entandoInfrastructureCrd = (CustomResourceDefinition) list.get(0);
-                // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                entandoInfrastructureCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(entandoInfrastructureCrd);
+                entandoInfrastructureCrd = client.customResourceDefinitions().withName(EntandoClusterInfrastructure.CRD_NAME).get();
+                if (entandoInfrastructureCrd == null) {
+                    List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
+                            .getResourceAsStream("crd/EntandoClusterInfrastructureCRD.yaml")).get();
+                    entandoInfrastructureCrd = (CustomResourceDefinition) list.get(0);
+                    // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
+                    entandoInfrastructureCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
+                    client.customResourceDefinitions().create(entandoInfrastructureCrd);
+                }
             }
-
         }
         CustomResourceOperationsImpl<EntandoClusterInfrastructure, EntandoClusterInfrastructureList,
                 DoneableEntandoClusterInfrastructure>

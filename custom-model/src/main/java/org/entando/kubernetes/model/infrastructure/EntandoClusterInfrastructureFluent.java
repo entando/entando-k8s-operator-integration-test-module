@@ -42,11 +42,11 @@ public class EntandoClusterInfrastructureFluent<A extends EntandoClusterInfrastr
     }
 
     public MetadataNestedImpl<A> editMetadata() {
-        return new MetadataNestedImpl<A>((A) this, this.metadata.build());
+        return new MetadataNestedImpl<>((A) this, this.metadata.build());
     }
 
     public MetadataNestedImpl<A> withNewMetadata() {
-        return new MetadataNestedImpl<A>((A) this);
+        return new MetadataNestedImpl<>((A) this);
     }
 
     public A withMetadata(ObjectMeta metadata) {
@@ -98,27 +98,41 @@ public class EntandoClusterInfrastructureFluent<A extends EntandoClusterInfrastr
             Nested<N> {
 
         private final N parentBuilder;
-        private final ObjectMetaBuilder builder;
+        private final ObjectMetaBuilder objectMetaBuilder;
 
         MetadataNestedImpl(N parentBuilder, ObjectMeta item) {
             super();
             this.parentBuilder = parentBuilder;
-            this.builder = new ObjectMetaBuilder(this, item);
+            this.objectMetaBuilder = new ObjectMetaBuilder(this, item);
         }
 
         MetadataNestedImpl(N parentBuilder) {
             super();
             this.parentBuilder = parentBuilder;
-            this.builder = new ObjectMetaBuilder(this);
+            this.objectMetaBuilder = new ObjectMetaBuilder(this);
         }
 
         @Override
         public N and() {
-            return parentBuilder.withMetadata(this.builder.build());
+            return parentBuilder.withMetadata(this.objectMetaBuilder.build());
         }
 
         public N endMetadata() {
             return this.and();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof MetadataNestedImpl) {
+                MetadataNestedImpl o = (MetadataNestedImpl) other;
+                return super.equals(o) && o.objectMetaBuilder.equals(objectMetaBuilder);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode() + this.objectMetaBuilder.hashCode();
         }
     }
 

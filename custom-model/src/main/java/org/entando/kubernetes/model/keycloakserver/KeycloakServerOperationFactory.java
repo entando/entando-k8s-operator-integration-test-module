@@ -37,16 +37,17 @@ public final class KeycloakServerOperationFactory {
             DoneableKeycloakServer> produceAllKeycloakServers(
             KubernetesClient client) throws InterruptedException {
         synchronized (KeycloakServerOperationFactory.class) {
-            entandoPluginCrd = client.customResourceDefinitions().withName(KeycloakServer.CRD_NAME).get();
             if (entandoPluginCrd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("crd/EntandoKeycloakServerCRD.yaml")).get();
-                entandoPluginCrd = (CustomResourceDefinition) list.get(0);
-                // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                entandoPluginCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(entandoPluginCrd);
+                entandoPluginCrd = client.customResourceDefinitions().withName(KeycloakServer.CRD_NAME).get();
+                if (entandoPluginCrd == null) {
+                    List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
+                            .getResourceAsStream("crd/EntandoKeycloakServerCRD.yaml")).get();
+                    entandoPluginCrd = (CustomResourceDefinition) list.get(0);
+                    // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
+                    entandoPluginCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
+                    client.customResourceDefinitions().create(entandoPluginCrd);
+                }
             }
-
         }
         CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList,
                 DoneableKeycloakServer>

@@ -71,7 +71,10 @@ public class EntandoApp extends CustomResource implements HasIngress, RequiresKe
 
     @Override
     public EntandoCustomResourceStatus getStatus() {
-        return this.entandoStatus == null ? this.entandoStatus = new EntandoCustomResourceStatus() : entandoStatus;
+        if (entandoStatus == null) {
+            this.entandoStatus = new EntandoCustomResourceStatus();
+        }
+        return this.entandoStatus;
     }
 
     @Override
