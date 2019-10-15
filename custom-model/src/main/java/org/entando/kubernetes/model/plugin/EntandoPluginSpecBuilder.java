@@ -117,7 +117,8 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
     }
 
     /**
-     * @deprecated
+     * Legacy method.
+     * @deprecated Use {@link #addNewRole(String, String)}
      */
     @Deprecated
     public N withRole(String code, String name) {
@@ -130,7 +131,8 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
     }
 
     /**
-     * @deprecated
+     * Legacy method.
+     * @deprecated Use {@link #addNewPermission(String, String)}
      */
     @Deprecated
     public N withPermission(String clientId, String role) {
