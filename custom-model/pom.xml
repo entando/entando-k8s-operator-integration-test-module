@@ -335,7 +335,6 @@
                 <configuration>
                     <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
                     <name>National Vulnerability Database Report</name>
-                    <!--<suppressionFile>${basedir}/config/owasp/suppressions.xml</suppressionFile>-->
                     <skip>false</skip>
                     <autoUpdate>true</autoUpdate>
                     <format>XML</format>
