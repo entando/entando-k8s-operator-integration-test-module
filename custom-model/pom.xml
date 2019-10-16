@@ -333,7 +333,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                    <failOnError>true</failOnError>
+                    <failBuildOnCVSS>7</failBuildOnCVSS>
                     <name>National Vulnerability Database Report</name>
                     <skip>false</skip>
                     <autoUpdate>true</autoUpdate>
