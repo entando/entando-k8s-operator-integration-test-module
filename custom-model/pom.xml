@@ -72,6 +72,8 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>entando</sonar.organization>
         <sonar.projectKey>entando_entando-k8s-custom-model</sonar.projectKey>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
     </properties>
     <issueManagement>
         <system>Github</system>
@@ -228,11 +230,6 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.2</version>
-                <configuration>
-                    <excludes>
-                        <exclude>src/main/java/org/entando/attic/*.*</exclude>
-                    </excludes>
-                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
