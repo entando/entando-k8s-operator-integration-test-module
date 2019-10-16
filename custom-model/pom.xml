@@ -297,31 +297,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.12.0</version>
-                <configuration>
-                    <failurePriority>5</failurePriority>
-                    <rulesets>
-                        <ruleset>config/pmd/pmd-ruleset.xml</ruleset>
-                        <ruleset>config/pmd/custom-ruleset.xml</ruleset>
-                    </rulesets>
-                    <maxAllowedViolations>20</maxAllowedViolations>
-                    <failOnViolation>true</failOnViolation>
-                    <includeTests>true</includeTests>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                            <goal>cpd-check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>5.2.2</version>

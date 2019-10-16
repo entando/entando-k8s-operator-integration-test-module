@@ -38,8 +38,8 @@ public class DbServerStatus extends AbstractServerStatus {
         super(qualifier);
     }
 
-@SuppressWarnings("PMD")
-    public void lotsOfnewCode(){
+    @SuppressWarnings("PMD")
+    public void lotsOfnewCode() {
         System.out.println();
         System.out.println();
         System.out.println();
