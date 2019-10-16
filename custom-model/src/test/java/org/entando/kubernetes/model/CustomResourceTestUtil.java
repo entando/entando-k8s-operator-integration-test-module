@@ -16,9 +16,12 @@
 
 package org.entando.kubernetes.model;
 
+import static org.awaitility.Awaitility.await;
+
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import java.time.Duration;
 
 public interface CustomResourceTestUtil {
 
@@ -26,15 +29,19 @@ public interface CustomResourceTestUtil {
         if (getClient().namespaces().withName(namespace).get() == null) {
             getClient().namespaces().createNew().withNewMetadata().withName(namespace).endMetadata().done();
         } else {
-            while (((CustomResourceList) oper.inNamespace(namespace).list()).getItems().size() > 0) {
-                try {
-                    oper.inNamespace(namespace)
-                            .delete(((CustomResourceList) oper.inNamespace(namespace).list()).getItems().get(0));
-                    Thread.sleep(100);
-                } catch (IndexOutOfBoundsException e) {
-                    return;
+            await().atMost(Duration.ofMinutes(2)).until(() -> {
+                if (((CustomResourceList) oper.inNamespace(namespace).list()).getItems().size() > 0) {
+                    try {
+                        oper.inNamespace(namespace)
+                                .delete(((CustomResourceList) oper.inNamespace(namespace).list()).getItems().get(0));
+                        return false;
+                    } catch (IndexOutOfBoundsException e) {
+                        return true;
+                    }
+                } else {
+                    return true;
                 }
-            }
+            });
         }
     }
 

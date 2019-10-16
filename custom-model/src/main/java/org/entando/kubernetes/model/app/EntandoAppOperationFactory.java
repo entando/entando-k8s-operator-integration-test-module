@@ -37,14 +37,16 @@ public final class EntandoAppOperationFactory {
             DoneableEntandoApp> produceAllEntandoApps(
             KubernetesClient client) throws InterruptedException {
         synchronized (EntandoAppOperationFactory.class) {
-            entandoAppCrd = client.customResourceDefinitions().withName(EntandoApp.CRD_NAME).get();
             if (entandoAppCrd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("crd/EntandoAppCRD.yaml")).get();
-                entandoAppCrd = (CustomResourceDefinition) list.get(0);
-                // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                entandoAppCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(entandoAppCrd);
+                entandoAppCrd = client.customResourceDefinitions().withName(EntandoApp.CRD_NAME).get();
+                if (entandoAppCrd == null) {
+                    List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
+                            .getResourceAsStream("crd/EntandoAppCRD.yaml")).get();
+                    entandoAppCrd = (CustomResourceDefinition) list.get(0);
+                    // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
+                    entandoAppCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
+                    client.customResourceDefinitions().create(entandoAppCrd);
+                }
             }
 
         }

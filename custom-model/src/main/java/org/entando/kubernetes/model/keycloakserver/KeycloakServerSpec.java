@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.io.Serializable;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.HasIngress;
@@ -31,7 +32,7 @@ import org.entando.kubernetes.model.HasIngress;
 @JsonDeserialize
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class KeycloakServerSpec implements HasIngress {
+public class KeycloakServerSpec implements HasIngress, Serializable {
 
     private String imageName;
     private DbmsImageVendor dbms;

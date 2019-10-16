@@ -37,16 +37,17 @@ public final class ExternalDatabaseOperationFactory {
             DoneableExternalDatabase> produceAllExternalDatabases(
             KubernetesClient client) throws InterruptedException {
         synchronized (ExternalDatabaseOperationFactory.class) {
-            entandoPluginCrd = client.customResourceDefinitions().withName(ExternalDatabase.CRD_NAME).get();
             if (entandoPluginCrd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("crd/ExternalDatabaseCRD.yaml")).get();
-                entandoPluginCrd = (CustomResourceDefinition) list.get(0);
-                // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                entandoPluginCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(entandoPluginCrd);
+                entandoPluginCrd = client.customResourceDefinitions().withName(ExternalDatabase.CRD_NAME).get();
+                if (entandoPluginCrd == null) {
+                    List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
+                            .getResourceAsStream("crd/ExternalDatabaseCRD.yaml")).get();
+                    entandoPluginCrd = (CustomResourceDefinition) list.get(0);
+                    // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
+                    entandoPluginCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
+                    client.customResourceDefinitions().create(entandoPluginCrd);
+                }
             }
-
         }
         CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList,
                 DoneableExternalDatabase>

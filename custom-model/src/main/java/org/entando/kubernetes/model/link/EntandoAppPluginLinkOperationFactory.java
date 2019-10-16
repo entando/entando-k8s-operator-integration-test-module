@@ -37,16 +37,18 @@ public final class EntandoAppPluginLinkOperationFactory {
             DoneableEntandoAppPluginLink> produceAllEntandoAppPluginLinks(
             KubernetesClient client) throws InterruptedException {
         synchronized (EntandoAppPluginLinkOperationFactory.class) {
-            entandoAppPluginLinkCrd = client.customResourceDefinitions().withName(EntandoAppPluginLink.CRD_NAME).get();
             if (entandoAppPluginLinkCrd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("crd/EntandoAppPluginLinkCRD.yaml")).get();
-                entandoAppPluginLinkCrd = (CustomResourceDefinition) list.get(0);
-                // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                entandoAppPluginLinkCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
-                client.customResourceDefinitions().create(entandoAppPluginLinkCrd);
-            }
+                entandoAppPluginLinkCrd = client.customResourceDefinitions().withName(EntandoAppPluginLink.CRD_NAME).get();
+                if (entandoAppPluginLinkCrd == null) {
+                    List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader()
+                            .getResourceAsStream("crd/EntandoAppPluginLinkCRD.yaml")).get();
+                    entandoAppPluginLinkCrd = (CustomResourceDefinition) list.get(0);
+                    // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
+                    entandoAppPluginLinkCrd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
+                    client.customResourceDefinitions().create(entandoAppPluginLinkCrd);
+                }
 
+            }
         }
         CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,
                 DoneableEntandoAppPluginLink>

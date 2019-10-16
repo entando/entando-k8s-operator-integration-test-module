@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.io.Serializable;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.HasIngress;
@@ -32,7 +33,7 @@ import org.entando.kubernetes.model.RequiresKeycloak;
 @JsonDeserialize
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIngress {
+public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIngress, Serializable {
 
     private DbmsImageVendor dbms;
     private String ingressHostName;

@@ -69,6 +69,7 @@ public enum DbmsImageVendor {
     },
     ORACLE("docker.io/store/oracle/database-enterprise:12.2.0.1", 1521, "sys", "/ORCL",
             "sqlplus sys/Oradoc_db1:${DB_SID}", "org.hibernate.dialect.Oracle10gDialect") {
+        @Override
         public Collection<ConfigVariable> getAdditionalConfig() {
             return Arrays.asList(
                     new ConfigVariable("oracleMavenRepo", "ORACLE_MAVEN_REPO"),

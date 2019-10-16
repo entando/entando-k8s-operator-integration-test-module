@@ -20,10 +20,13 @@ import static java.util.Optional.ofNullable;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.io.Serializable;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.HasIngress;
@@ -31,11 +34,11 @@ import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
-@JsonDeserialize
+@JsonDeserialize()
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoAppSpec implements RequiresKeycloak, HasIngress {
+public class EntandoAppSpec implements RequiresKeycloak, HasIngress, Serializable {
 
     private JeeServer standardServerImage;
     private String customServerImage;
@@ -54,9 +57,16 @@ public class EntandoAppSpec implements RequiresKeycloak, HasIngress {
     /**
      * Only for use from the builder.
      */
-    EntandoAppSpec(JeeServer standardServerImage, String customServerImage, DbmsImageVendor dbms, String ingressHostName, int replicas,
-            String entandoImageVersion,
-            String tlsSecretName, String keycloakSecretToUse, String clusterInfrastructureToUse) {
+    @JsonCreator
+    public EntandoAppSpec(@JsonProperty("standardServerImage") JeeServer standardServerImage,
+            @JsonProperty("customServerImage") String customServerImage,
+            @JsonProperty("dbms") DbmsImageVendor dbms,
+            @JsonProperty("ingressHostName") String ingressHostName,
+            @JsonProperty("replicas") int replicas,
+            @JsonProperty("entandoImageVersion") String entandoImageVersion,
+            @JsonProperty("tlsSecretName") String tlsSecretName,
+            @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
+            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse) {
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.dbms = dbms;

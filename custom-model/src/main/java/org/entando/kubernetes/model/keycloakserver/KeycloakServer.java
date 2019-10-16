@@ -71,7 +71,10 @@ public class KeycloakServer extends CustomResource implements HasIngress, Entand
 
     @Override
     public EntandoCustomResourceStatus getStatus() {
-        return this.entandoStatus == null ? this.entandoStatus = new EntandoCustomResourceStatus() : this.entandoStatus;
+        if (this.entandoStatus == null) {
+            this.entandoStatus = new EntandoCustomResourceStatus();
+        }
+        return this.entandoStatus;
     }
 
     @Override

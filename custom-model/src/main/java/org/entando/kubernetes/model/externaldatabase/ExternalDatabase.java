@@ -69,7 +69,10 @@ public class ExternalDatabase extends CustomResource implements EntandoCustomRes
 
     @Override
     public EntandoCustomResourceStatus getStatus() {
-        return this.entandoStatus == null ? this.entandoStatus = new EntandoCustomResourceStatus() : this.entandoStatus;
+        if (this.entandoStatus == null) {
+            this.entandoStatus = new EntandoCustomResourceStatus();
+        }
+        return this.entandoStatus;
     }
 
     @Override

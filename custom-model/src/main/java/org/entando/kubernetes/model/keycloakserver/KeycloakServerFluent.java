@@ -41,11 +41,11 @@ public class KeycloakServerFluent<A extends KeycloakServerFluent<A>> extends Bas
     }
 
     public MetadataNestedImpl<A> editMetadata() {
-        return new MetadataNestedImpl<A>((A) this, this.metadata.build());
+        return new MetadataNestedImpl<>((A) this, this.metadata.build());
     }
 
     public MetadataNestedImpl<A> withNewMetadata() {
-        return new MetadataNestedImpl<A>((A) this);
+        return new MetadataNestedImpl<>((A) this);
     }
 
     public A withMetadata(ObjectMeta metadata) {
@@ -97,28 +97,40 @@ public class KeycloakServerFluent<A extends KeycloakServerFluent<A>> extends Bas
             Nested<N> {
 
         private final N parentBuilder;
-        private final ObjectMetaBuilder builder;
+        private final ObjectMetaBuilder objectMetaBuilder;
 
         MetadataNestedImpl(N parentBuilder, ObjectMeta item) {
             super();
             this.parentBuilder = parentBuilder;
-            this.builder = new ObjectMetaBuilder(this, item);
+            this.objectMetaBuilder = new ObjectMetaBuilder(this, item);
         }
 
         MetadataNestedImpl(N parentBuilder) {
             super();
             this.parentBuilder = parentBuilder;
-            this.builder = new ObjectMetaBuilder(this);
+            this.objectMetaBuilder = new ObjectMetaBuilder(this);
         }
 
         @Override
         public N and() {
-            return parentBuilder.withMetadata(this.builder.build());
+            return parentBuilder.withMetadata(this.objectMetaBuilder.build());
         }
 
         public N endMetadata() {
             return this.and();
         }
+
+        @Override
+        public boolean equals(Object other) {
+            //By convention the Sonar way. Nothing to add
+            return super.equals(other);
+        }
+
+        @Override
+        public int hashCode() {
+            return this.objectMetaBuilder.hashCode();
+        }
+
     }
 
 }
