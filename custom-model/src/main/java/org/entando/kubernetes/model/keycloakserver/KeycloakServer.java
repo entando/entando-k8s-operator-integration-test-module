@@ -48,12 +48,12 @@ public class KeycloakServer extends CustomResource implements HasIngress, Entand
 
     public KeycloakServer(KeycloakServerSpec spec) {
         this();
-        this.spec = spec;
+        this.setSpec(spec);
     }
 
     public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec, EntandoCustomResourceStatus status) {
         this(metadata, spec);
-        this.entandoStatus = status;
+        this.setStatus(status);
     }
 
     public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec) {
@@ -72,7 +72,7 @@ public class KeycloakServer extends CustomResource implements HasIngress, Entand
     @Override
     public EntandoCustomResourceStatus getStatus() {
         if (this.entandoStatus == null) {
-            this.entandoStatus = new EntandoCustomResourceStatus();
+            this.setStatus(new EntandoCustomResourceStatus());
         }
         return this.entandoStatus;
     }
