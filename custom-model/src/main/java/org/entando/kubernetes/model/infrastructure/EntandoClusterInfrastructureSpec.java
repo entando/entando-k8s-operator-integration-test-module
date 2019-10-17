@@ -51,6 +51,7 @@ public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIn
 
     public EntandoClusterInfrastructureSpec(DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
             String tlsSecretName, Integer replicas, String keycloakSecretToUse, boolean isDefault) {
+        this();
         this.dbms = dbms;
         this.ingressHostName = ingressHostName;
         this.entandoImageVersion = entandoImageVersion;

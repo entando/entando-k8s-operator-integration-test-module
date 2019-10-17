@@ -67,6 +67,7 @@ public class EntandoAppSpec implements RequiresKeycloak, HasIngress, Serializabl
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
             @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse) {
+        this();
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.dbms = dbms;
