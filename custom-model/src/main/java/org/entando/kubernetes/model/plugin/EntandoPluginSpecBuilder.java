@@ -118,6 +118,7 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
 
     /**
      * Legacy method.
+     *
      * @deprecated Use {@link #addNewRole(String, String)}
      */
     @Deprecated
@@ -132,6 +133,7 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
 
     /**
      * Legacy method.
+     *
      * @deprecated Use {@link #addNewPermission(String, String)}
      */
     @Deprecated

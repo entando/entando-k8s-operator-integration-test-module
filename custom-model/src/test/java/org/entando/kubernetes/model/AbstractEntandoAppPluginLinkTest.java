@@ -20,13 +20,11 @@ import static org.entando.kubernetes.model.link.EntandoAppPluginLinkOperationFac
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertTrue;
 
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkBuilder;
-import org.entando.kubernetes.model.link.EntandoAppPluginLinkFluent.MetadataNestedImpl;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

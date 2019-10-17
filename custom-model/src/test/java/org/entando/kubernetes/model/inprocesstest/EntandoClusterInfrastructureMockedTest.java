@@ -16,13 +16,18 @@
 
 package org.entando.kubernetes.model.inprocesstest;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractEntandoClusterInfrastructureTest;
 import org.entando.kubernetes.model.infrastructure.DoneableEntandoClusterInfrastructure;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
+import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureBuilder;
 import org.junit.Rule;
+
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @EnableRuleMigrationSupport
@@ -44,4 +49,13 @@ public class EntandoClusterInfrastructureMockedTest extends AbstractEntandoClust
         return new DoneableEntandoClusterInfrastructure(keycloakServer, entandoClusterInfrastructure -> entandoClusterInfrastructure);
     }
 
+    @Test
+    public void testOverriddenEqualsMethods() {
+        //The ObjectMetaBuilder's equals method is broken. There is no way to fix it. 
+        // These tests just verify that inequality corresponds with hashcode
+        EntandoClusterInfrastructureBuilder builder = new EntandoClusterInfrastructureBuilder().editMetadata().withNamespace("ns")
+                .withName("name").endMetadata();
+        assertNotEquals(builder.editMetadata(), builder.editMetadata());
+        assertNotEquals(builder.editMetadata().hashCode(), builder.editMetadata().hashCode());
+    }
 }

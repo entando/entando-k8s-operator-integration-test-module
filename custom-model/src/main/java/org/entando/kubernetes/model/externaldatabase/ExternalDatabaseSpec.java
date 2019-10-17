@@ -44,6 +44,7 @@ public class ExternalDatabaseSpec implements Serializable {
     }
 
     public ExternalDatabaseSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
+        this();
         this.dbms = dbms.toValue();
         this.host = host;
         this.secretName = secretName;

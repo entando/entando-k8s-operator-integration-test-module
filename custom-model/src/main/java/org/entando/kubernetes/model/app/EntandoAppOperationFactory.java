@@ -56,6 +56,7 @@ public final class EntandoAppOperationFactory {
                 DoneableEntandoApp>) client
                 .customResources(entandoAppCrd, EntandoApp.class, EntandoAppList.class,
                         DoneableEntandoApp.class);
+
         while (notAvailable(oper)) {
             sleep(100);
         }

@@ -50,6 +50,7 @@ public class KeycloakServerSpec implements HasIngress, Serializable {
 
     public KeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName,
             String entandoImageVersion, String tlsSecretName) {
+        this();
         this.imageName = imageName;
         this.dbms = dbms;
         this.ingressHostName = ingressHostName;

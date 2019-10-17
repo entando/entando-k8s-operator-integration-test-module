@@ -16,17 +16,22 @@
 
 package org.entando.kubernetes.model.inprocesstest;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractEntandoAppTest;
 import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
+import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.junit.Rule;
+
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
-@EnableRuleMigrationSupport
 @Tag("in-process")
+@EnableRuleMigrationSupport
 @SuppressWarnings("PMD.TestClassWithoutTestCases")
 //Because PMD doesn't know they are inherited
 public class EntandoAppMockedTest extends AbstractEntandoAppTest {
@@ -42,6 +47,15 @@ public class EntandoAppMockedTest extends AbstractEntandoAppTest {
     @Override
     public KubernetesClient getClient() {
         return server.getClient();
+    }
+
+    @Test
+    public void testOverriddenEqualsMethods() {
+        //The ObjectMetaBuilder's equals method is broken. There is no way to fix it.
+        // These tests just verify that inequality corresponds with hashcode
+        EntandoAppBuilder builder = new EntandoAppBuilder().editMetadata().withNamespace("ns").withName("name").endMetadata();
+        assertNotEquals(builder.editMetadata(), builder.editMetadata());
+        assertNotEquals(builder.editMetadata().hashCode(), builder.editMetadata().hashCode());
     }
 
 }
