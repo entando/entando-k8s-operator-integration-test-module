@@ -87,10 +87,6 @@ public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIn
         return replicas;
     }
 
-    public void setReplicas(Integer replicas) {
-        this.replicas = replicas;
-    }
-
     @Override
     public Optional<String> getKeycloakSecretToUse() {
         return Optional.ofNullable(keycloakSecretToUse);
