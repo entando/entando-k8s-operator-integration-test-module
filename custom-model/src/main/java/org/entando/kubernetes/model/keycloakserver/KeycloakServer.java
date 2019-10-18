@@ -23,41 +23,38 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.client.CustomResource;
 import java.util.Optional;
-import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.HasIngress;
+import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class KeycloakServer extends CustomResource implements HasIngress, EntandoCustomResource {
+public class KeycloakServer extends EntandoBaseCustomResource implements HasIngress {
 
     public static final String CRD_NAME = "entandokeycloakservers.entando.org";
 
     private KeycloakServerSpec spec;
-    private EntandoCustomResourceStatus entandoStatus;
 
     public KeycloakServer() {
-        super("EntandoKeycloakServer");
-        setApiVersion("entando.org/v1alpha1");
+        this(null);
     }
 
     public KeycloakServer(KeycloakServerSpec spec) {
-        this();
-        this.setSpec(spec);
-    }
-
-    public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec, EntandoCustomResourceStatus status) {
-        this(metadata, spec);
-        this.setStatus(status);
+        this(new ObjectMeta(), spec);
     }
 
     public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec) {
-        this(spec);
+        this(metadata, spec, null);
+    }
+
+    public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec, EntandoCustomResourceStatus status) {
+        super(status);
+        setKind("EntandoKeycloakServer");
+        this.spec = spec;
         super.setMetadata(metadata);
     }
 
@@ -67,19 +64,6 @@ public class KeycloakServer extends CustomResource implements HasIngress, Entand
 
     public void setSpec(KeycloakServerSpec spec) {
         this.spec = spec;
-    }
-
-    @Override
-    public EntandoCustomResourceStatus getStatus() {
-        if (this.entandoStatus == null) {
-            this.setStatus(new EntandoCustomResourceStatus());
-        }
-        return this.entandoStatus;
-    }
-
-    @Override
-    public void setStatus(EntandoCustomResourceStatus status) {
-        this.entandoStatus = status;
     }
 
     @Override

@@ -40,11 +40,11 @@ public class EntandoApp extends EntandoBaseCustomResource implements HasIngress,
     private EntandoAppSpec spec;
 
     public EntandoApp() {
-        this(null, null, null);
+        this(null);
     }
 
     public EntandoApp(EntandoAppSpec spec) {
-        this(null, spec);
+        this(new ObjectMeta(), spec);
     }
 
     public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec) {

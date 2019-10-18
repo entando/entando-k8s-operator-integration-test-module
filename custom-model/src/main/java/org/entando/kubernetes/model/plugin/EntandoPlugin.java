@@ -23,43 +23,39 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.client.CustomResource;
 import java.util.Optional;
-import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoPlugin extends CustomResource implements EntandoCustomResource, RequiresKeycloak, HasIngress {
+public class EntandoPlugin extends EntandoBaseCustomResource implements RequiresKeycloak, HasIngress {
 
     public static final String CRD_NAME = "entandoplugins.entando.org";
 
     private EntandoPluginSpec spec;
-    private EntandoCustomResourceStatus entandoStatus;
 
     public EntandoPlugin() {
-        super();
-        setApiVersion("entando.org/v1alpha1");
+        this(null);
     }
 
     public EntandoPlugin(EntandoPluginSpec spec) {
-        this();
-        this.spec = spec;
+        this(new ObjectMeta(), spec);
     }
 
     public EntandoPlugin(ObjectMeta metadata, EntandoPluginSpec spec) {
-        this(spec);
-        super.setMetadata(metadata);
+        this(metadata, spec, null);
     }
 
     public EntandoPlugin(ObjectMeta metaData, EntandoPluginSpec spec, EntandoCustomResourceStatus status) {
-        this(metaData, spec);
-        this.entandoStatus = status;
+        super(status);
+        super.setMetadata(metaData);
+        this.spec = spec;
     }
 
     public EntandoPluginSpec getSpec() {
@@ -68,19 +64,6 @@ public class EntandoPlugin extends CustomResource implements EntandoCustomResour
 
     public void setSpec(EntandoPluginSpec spec) {
         this.spec = spec;
-    }
-
-    @Override
-    public EntandoCustomResourceStatus getStatus() {
-        if (entandoStatus == null) {
-            entandoStatus = new EntandoCustomResourceStatus();
-        }
-        return entandoStatus;
-    }
-
-    @Override
-    public void setStatus(EntandoCustomResourceStatus status) {
-        this.entandoStatus = status;
     }
 
     @Override

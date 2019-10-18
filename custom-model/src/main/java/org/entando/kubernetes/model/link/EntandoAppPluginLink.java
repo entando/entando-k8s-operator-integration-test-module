@@ -23,55 +23,40 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.client.CustomResource;
-import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
+import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoAppPluginLink extends CustomResource implements EntandoCustomResource {
+public class EntandoAppPluginLink extends EntandoBaseCustomResource {
 
     public static final String CRD_NAME = "entandoapppluginlinks.entando.org";
     private EntandoCustomResourceStatus entandoStatus;
     private EntandoAppPluginLinkSpec spec;
 
     public EntandoAppPluginLink() {
-        super();
-        setApiVersion("entando.org/v1alpha1");
+        this(null);
     }
 
     public EntandoAppPluginLink(EntandoAppPluginLinkSpec spec) {
-        this();
-        this.spec = spec;
-    }
-
-    public EntandoAppPluginLink(ObjectMeta meta, EntandoAppPluginLinkSpec spec, EntandoCustomResourceStatus entandoStatus) {
-        this(meta, spec);
-        this.entandoStatus = entandoStatus;
+        this(new ObjectMeta(), spec);
     }
 
     public EntandoAppPluginLink(ObjectMeta meta, EntandoAppPluginLinkSpec spec) {
-        this(spec);
+        this(meta, spec, null);
+    }
+
+    public EntandoAppPluginLink(ObjectMeta meta, EntandoAppPluginLinkSpec spec, EntandoCustomResourceStatus entandoStatus) {
+        super(entandoStatus);
         super.setMetadata(meta);
+        this.spec = spec;
     }
 
     public EntandoAppPluginLinkSpec getSpec() {
         return spec;
     }
 
-    @Override
-    public EntandoCustomResourceStatus getStatus() {
-        if (entandoStatus == null) {
-            entandoStatus = new EntandoCustomResourceStatus();
-        }
-        return entandoStatus;
-    }
-
-    @Override
-    public void setStatus(EntandoCustomResourceStatus status) {
-        this.entandoStatus = status;
-    }
 }

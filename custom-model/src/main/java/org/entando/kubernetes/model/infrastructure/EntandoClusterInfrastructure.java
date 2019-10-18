@@ -23,44 +23,40 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.client.CustomResource;
 import java.util.Optional;
-import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoClusterInfrastructure extends CustomResource implements HasIngress, EntandoCustomResource, RequiresKeycloak {
+public class EntandoClusterInfrastructure extends EntandoBaseCustomResource implements HasIngress, RequiresKeycloak {
 
     public static final String CRD_NAME = "entandoclusterinfrastructures.entando.org";
 
     private EntandoClusterInfrastructureSpec spec;
-    private EntandoCustomResourceStatus entandoStatus;
 
     public EntandoClusterInfrastructure() {
-        super();
-        setApiVersion("entando.org/v1alpha1");
+        this(null);
     }
 
     public EntandoClusterInfrastructure(EntandoClusterInfrastructureSpec spec) {
-        this();
-        this.spec = spec;
+        this(new ObjectMeta(), spec);
+    }
+
+    public EntandoClusterInfrastructure(ObjectMeta metadata, EntandoClusterInfrastructureSpec spec) {
+        this(metadata, spec, null);
     }
 
     public EntandoClusterInfrastructure(ObjectMeta metadata, EntandoClusterInfrastructureSpec spec,
             EntandoCustomResourceStatus status) {
-        this(metadata, spec);
-        this.entandoStatus = status;
-    }
-
-    public EntandoClusterInfrastructure(ObjectMeta metadata, EntandoClusterInfrastructureSpec spec) {
-        this(spec);
+        super(status);
         super.setMetadata(metadata);
+        this.spec = spec;
     }
 
     public EntandoClusterInfrastructureSpec getSpec() {
@@ -69,20 +65,6 @@ public class EntandoClusterInfrastructure extends CustomResource implements HasI
 
     public void setSpec(EntandoClusterInfrastructureSpec spec) {
         this.spec = spec;
-    }
-
-    @Override
-    public EntandoCustomResourceStatus getStatus() {
-        if (this.entandoStatus == null) {
-            this.entandoStatus = new EntandoCustomResourceStatus();
-        }
-
-        return this.entandoStatus;
-    }
-
-    @Override
-    public void setStatus(EntandoCustomResourceStatus status) {
-        this.entandoStatus = status;
     }
 
     @Override
