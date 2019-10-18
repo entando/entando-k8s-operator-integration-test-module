@@ -27,15 +27,17 @@ public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends Entan
     protected EntandoPluginSpecBuilder spec;
 
     protected EntandoPluginFluent() {
-        super();
-        this.metadata = new ObjectMetaBuilder();
-        this.spec = new EntandoPluginSpecBuilder();
+        this(new ObjectMetaBuilder(), new EntandoPluginSpecBuilder());
     }
 
     protected EntandoPluginFluent(EntandoPluginSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new EntandoPluginSpecBuilder(spec));
+    }
+
+    private EntandoPluginFluent(ObjectMetaBuilder metadata, EntandoPluginSpecBuilder spec) {
         super();
-        this.metadata = new ObjectMetaBuilder(objectMeta);
-        this.spec = new EntandoPluginSpecBuilder(spec);
+        this.metadata = metadata;
+        this.spec = spec;
     }
 
     public SpecNestedImpl<A> editSpec() {

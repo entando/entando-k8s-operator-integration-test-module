@@ -27,15 +27,17 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
     protected ExternalDatabaseSpecBuilder spec;
 
     protected ExternalDatabaseFluent() {
-        super();
-        this.metadata = new ObjectMetaBuilder();
-        this.spec = new ExternalDatabaseSpecBuilder();
+        this(new ObjectMetaBuilder(), new ExternalDatabaseSpecBuilder());
     }
 
     protected ExternalDatabaseFluent(ExternalDatabaseSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new ExternalDatabaseSpecBuilder(spec));
+    }
+
+    private ExternalDatabaseFluent(ObjectMetaBuilder metadata, ExternalDatabaseSpecBuilder spec) {
         super();
-        this.metadata = new ObjectMetaBuilder(objectMeta);
-        this.spec = new ExternalDatabaseSpecBuilder(spec);
+        this.metadata = metadata;
+        this.spec = spec;
     }
 
     public SpecNestedImpl<A> editSpec() {

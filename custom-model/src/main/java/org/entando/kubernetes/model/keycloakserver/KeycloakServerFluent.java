@@ -27,15 +27,17 @@ public class KeycloakServerFluent<A extends KeycloakServerFluent<A>> extends Ent
     protected KeycloakServerSpecBuilder spec;
 
     protected KeycloakServerFluent() {
-        super();
-        this.metadata = new ObjectMetaBuilder();
-        this.spec = new KeycloakServerSpecBuilder();
+        this(new ObjectMetaBuilder(), new KeycloakServerSpecBuilder());
     }
 
     protected KeycloakServerFluent(KeycloakServerSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new KeycloakServerSpecBuilder(spec));
+    }
+
+    private KeycloakServerFluent(ObjectMetaBuilder metadata, KeycloakServerSpecBuilder spec) {
         super();
-        this.metadata = new ObjectMetaBuilder(objectMeta);
-        this.spec = new KeycloakServerSpecBuilder(spec);
+        this.metadata = metadata;
+        this.spec = spec;
     }
 
     public SpecNestedImpl<A> editSpec() {

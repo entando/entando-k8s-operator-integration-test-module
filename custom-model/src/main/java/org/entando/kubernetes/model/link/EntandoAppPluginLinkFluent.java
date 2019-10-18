@@ -27,15 +27,17 @@ public class EntandoAppPluginLinkFluent<A extends EntandoAppPluginLinkFluent<A>>
     protected EntandoAppPluginLinkSpecBuilder spec;
 
     protected EntandoAppPluginLinkFluent() {
-        super();
-        this.metadata = new ObjectMetaBuilder();
-        this.spec = new EntandoAppPluginLinkSpecBuilder();
+        this(new ObjectMetaBuilder(), new EntandoAppPluginLinkSpecBuilder());
     }
 
     protected EntandoAppPluginLinkFluent(EntandoAppPluginLinkSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new EntandoAppPluginLinkSpecBuilder(spec));
+    }
+
+    private EntandoAppPluginLinkFluent(ObjectMetaBuilder metadata, EntandoAppPluginLinkSpecBuilder spec) {
         super();
-        this.metadata = new ObjectMetaBuilder(objectMeta);
-        this.spec = new EntandoAppPluginLinkSpecBuilder(spec);
+        this.metadata = metadata;
+        this.spec = spec;
     }
 
     public SpecNestedImpl<A> editSpec() {

@@ -26,15 +26,17 @@ public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends EntandoBase
     protected EntandoAppSpecBuilder spec;
 
     protected EntandoAppFluent() {
-        super();
-        this.metadata = new ObjectMetaBuilder();
-        this.spec = new EntandoAppSpecBuilder();
+        this(new ObjectMetaBuilder(), new EntandoAppSpecBuilder());
     }
 
     protected EntandoAppFluent(EntandoAppSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new EntandoAppSpecBuilder(spec));
+    }
+
+    private EntandoAppFluent(ObjectMetaBuilder metadata, EntandoAppSpecBuilder spec) {
         super();
-        this.metadata = new ObjectMetaBuilder(objectMeta);
-        this.spec = new EntandoAppSpecBuilder(spec);
+        this.metadata = metadata;
+        this.spec = spec;
     }
 
     public SpecNestedImpl<A> editSpec() {

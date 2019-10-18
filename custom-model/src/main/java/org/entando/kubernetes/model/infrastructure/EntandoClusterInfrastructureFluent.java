@@ -28,15 +28,17 @@ public class EntandoClusterInfrastructureFluent<A extends EntandoClusterInfrastr
     protected EntandoClusterInfrastructureSpecBuilder spec;
 
     protected EntandoClusterInfrastructureFluent() {
-        super();
-        this.metadata = new ObjectMetaBuilder();
-        this.spec = new EntandoClusterInfrastructureSpecBuilder();
+        this(new ObjectMetaBuilder(), new EntandoClusterInfrastructureSpecBuilder());
     }
 
     protected EntandoClusterInfrastructureFluent(EntandoClusterInfrastructureSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new EntandoClusterInfrastructureSpecBuilder(spec));
+    }
+
+    private EntandoClusterInfrastructureFluent(ObjectMetaBuilder metadata, EntandoClusterInfrastructureSpecBuilder spec) {
         super();
-        this.metadata = new ObjectMetaBuilder(objectMeta);
-        this.spec = new EntandoClusterInfrastructureSpecBuilder(spec);
+        this.metadata = metadata;
+        this.spec = spec;
     }
 
     public SpecNestedImplCluster<A> editSpec() {
