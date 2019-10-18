@@ -34,8 +34,7 @@ public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends EntandoBase
     }
 
     private EntandoAppFluent(ObjectMetaBuilder metadata, EntandoAppSpecBuilder spec) {
-        super();
-        this.metadata = metadata;
+        super(metadata);
         this.spec = spec;
     }
 

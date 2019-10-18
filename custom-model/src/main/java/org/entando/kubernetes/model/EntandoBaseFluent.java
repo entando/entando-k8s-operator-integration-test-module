@@ -24,6 +24,10 @@ public abstract class EntandoBaseFluent<F extends EntandoBaseFluent<F>> extends 
 
     protected ObjectMetaBuilder metadata;
 
+    protected EntandoBaseFluent(ObjectMetaBuilder metadata) {
+        this.metadata = metadata;
+    }
+
     public final MetadataNestedImpl<F> editMetadata() {
         return new MetadataNestedImpl<>(thisAsF(), this.metadata.build());
     }

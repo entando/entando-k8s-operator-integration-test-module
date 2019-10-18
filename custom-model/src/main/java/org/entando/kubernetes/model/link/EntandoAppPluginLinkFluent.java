@@ -35,8 +35,7 @@ public class EntandoAppPluginLinkFluent<A extends EntandoAppPluginLinkFluent<A>>
     }
 
     private EntandoAppPluginLinkFluent(ObjectMetaBuilder metadata, EntandoAppPluginLinkSpecBuilder spec) {
-        super();
-        this.metadata = metadata;
+        super(metadata);
         this.spec = spec;
     }
 

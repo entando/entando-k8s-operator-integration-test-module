@@ -35,8 +35,7 @@ public class KeycloakServerFluent<A extends KeycloakServerFluent<A>> extends Ent
     }
 
     private KeycloakServerFluent(ObjectMetaBuilder metadata, KeycloakServerSpecBuilder spec) {
-        super();
-        this.metadata = metadata;
+        super(metadata);
         this.spec = spec;
     }
 

@@ -35,8 +35,7 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
     }
 
     private ExternalDatabaseFluent(ObjectMetaBuilder metadata, ExternalDatabaseSpecBuilder spec) {
-        super();
-        this.metadata = metadata;
+        super(metadata);
         this.spec = spec;
     }
 

@@ -35,8 +35,7 @@ public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends Entan
     }
 
     private EntandoPluginFluent(ObjectMetaBuilder metadata, EntandoPluginSpecBuilder spec) {
-        super();
-        this.metadata = metadata;
+        super(metadata);
         this.spec = spec;
     }
 

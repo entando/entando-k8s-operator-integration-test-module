@@ -36,8 +36,7 @@ public class EntandoClusterInfrastructureFluent<A extends EntandoClusterInfrastr
     }
 
     private EntandoClusterInfrastructureFluent(ObjectMetaBuilder metadata, EntandoClusterInfrastructureSpecBuilder spec) {
-        super();
-        this.metadata = metadata;
+        super(metadata);
         this.spec = spec;
     }
 
