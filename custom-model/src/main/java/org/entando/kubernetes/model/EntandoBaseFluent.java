@@ -36,6 +36,7 @@ public abstract class EntandoBaseFluent<F extends EntandoBaseFluent<F>> extends 
         this.metadata = new ObjectMetaBuilder(metadata);
         return thisAsF();
     }
+
     private F thisAsF() {
         return (F) this;
     }
