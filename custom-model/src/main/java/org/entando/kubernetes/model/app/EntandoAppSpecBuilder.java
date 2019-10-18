@@ -16,7 +16,6 @@
 
 package org.entando.kubernetes.model.app;
 
-import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 import org.entando.kubernetes.model.JeeServer;
 

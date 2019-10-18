@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
-import org.entando.kubernetes.model.RequiresKeycloak;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize

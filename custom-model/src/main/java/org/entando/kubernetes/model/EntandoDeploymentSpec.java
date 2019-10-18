@@ -24,15 +24,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.io.Serializable;
 import java.util.Optional;
-import org.entando.kubernetes.model.DbmsImageVendor;
-import org.entando.kubernetes.model.HasIngress;
 
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public abstract class EntandoDeploymentSpec implements HasIngress, Serializable {
 
-    private  Integer replicas = 1;
+    private Integer replicas = 1;
     private DbmsImageVendor dbms;
     private String ingressHostName;
     private String tlsSecretName;

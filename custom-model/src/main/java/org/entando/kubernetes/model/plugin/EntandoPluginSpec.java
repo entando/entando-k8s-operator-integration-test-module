@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsImageVendor;
-import org.entando.kubernetes.model.RequiresKeycloak;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
 @JsonDeserialize
