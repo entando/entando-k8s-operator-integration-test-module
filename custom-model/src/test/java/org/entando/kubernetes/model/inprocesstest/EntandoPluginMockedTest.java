@@ -25,7 +25,6 @@ import org.entando.kubernetes.model.plugin.DoneableEntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
 import org.junit.Rule;
-
 import org.junit.Test;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;

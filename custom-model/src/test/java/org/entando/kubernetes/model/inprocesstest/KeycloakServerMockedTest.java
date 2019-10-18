@@ -25,7 +25,6 @@ import org.entando.kubernetes.model.keycloakserver.DoneableKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.KeycloakServerBuilder;
 import org.junit.Rule;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;

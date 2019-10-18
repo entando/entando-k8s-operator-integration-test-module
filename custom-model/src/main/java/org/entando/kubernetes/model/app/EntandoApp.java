@@ -23,9 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.client.CustomResource;
 import java.util.Optional;
-import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
@@ -35,30 +33,28 @@ import org.entando.kubernetes.model.RequiresKeycloak;
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoApp extends CustomResource implements HasIngress, RequiresKeycloak, EntandoCustomResource {
+public class EntandoApp extends EntandoBaseCustomResource implements HasIngress, RequiresKeycloak {
 
     public static final String CRD_NAME = "entandoapps.entando.org";
 
     private EntandoAppSpec spec;
-    private EntandoCustomResourceStatus entandoStatus;
 
     public EntandoApp() {
-        super();
+        this(null, null, null);
     }
 
     public EntandoApp(EntandoAppSpec spec) {
-        super();
-        setSpec(spec);
+        this(null, spec);
     }
 
     public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec) {
-        this(spec);
-        super.setMetadata(metadata);
+        this(metadata, spec, null);
     }
 
     public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec, EntandoCustomResourceStatus status) {
-        this(metadata, spec);
-        setStatus(status);
+        super(status);
+        super.setMetadata(metadata);
+        this.setSpec(spec);
     }
 
     public EntandoAppSpec getSpec() {
@@ -67,19 +63,6 @@ public class EntandoApp extends CustomResource implements HasIngress, RequiresKe
 
     public void setSpec(EntandoAppSpec spec) {
         this.spec = spec;
-    }
-
-    @Override
-    public EntandoCustomResourceStatus getStatus() {
-        if (entandoStatus == null) {
-            setStatus(new EntandoCustomResourceStatus());
-        }
-        return this.entandoStatus;
-    }
-
-    @Override
-    public void setStatus(EntandoCustomResourceStatus status) {
-        this.entandoStatus = status;
     }
 
     @Override

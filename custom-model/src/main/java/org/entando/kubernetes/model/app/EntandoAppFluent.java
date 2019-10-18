@@ -16,12 +16,10 @@
 
 package org.entando.kubernetes.model.app;
 
-import io.fabric8.kubernetes.api.builder.Fluent;
 import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import org.entando.kubernetes.model.EntandoBaseFluent;
-import org.entando.kubernetes.model.MetadataNestedImpl;
 
 public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends EntandoBaseFluent<A> {
 
