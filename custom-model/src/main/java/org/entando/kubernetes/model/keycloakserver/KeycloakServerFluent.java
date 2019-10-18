@@ -1,16 +1,16 @@
 /*
  *
- *  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- *  *
- *  * This library is free software; you can redistribute it and/or modify it under
- *  * the terms of the GNU Lesser General Public License as published by the Free
- *  * Software Foundation; either version 2.1 of the License, or (at your option)
- *  * any later version.
- *  *
- *  * This library is distributed in the hope that it will be useful, but WITHOUT
- *  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- *  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- *  * details.
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ *  This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
  */
 
@@ -21,11 +21,9 @@ import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import org.entando.kubernetes.model.EntandoBaseFluent;
-import org.entando.kubernetes.model.MetadataNestedImpl;
 
 public class KeycloakServerFluent<A extends KeycloakServerFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
 
-    protected ObjectMetaBuilder metadata;
     protected KeycloakServerSpecBuilder spec;
 
     protected KeycloakServerFluent() {
@@ -38,20 +36,6 @@ public class KeycloakServerFluent<A extends KeycloakServerFluent<A>> extends Ent
         super();
         this.metadata = new ObjectMetaBuilder(objectMeta);
         this.spec = new KeycloakServerSpecBuilder(spec);
-    }
-
-    public MetadataNestedImpl<A> editMetadata() {
-        return new MetadataNestedImpl<>((A) this, this.metadata.build());
-    }
-
-    public MetadataNestedImpl<A> withNewMetadata() {
-        return new MetadataNestedImpl<>((A) this);
-    }
-
-    @Override
-    public A withMetadata(ObjectMeta metadata) {
-        this.metadata = new ObjectMetaBuilder(metadata);
-        return (A) this;
     }
 
     public SpecNestedImpl<A> editSpec() {
