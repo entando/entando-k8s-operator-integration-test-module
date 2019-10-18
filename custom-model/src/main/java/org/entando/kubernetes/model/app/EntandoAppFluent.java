@@ -16,14 +16,14 @@
 
 package org.entando.kubernetes.model.app;
 
-import io.fabric8.kubernetes.api.builder.BaseFluent;
 import io.fabric8.kubernetes.api.builder.Fluent;
 import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import io.fabric8.kubernetes.api.model.ObjectMetaFluentImpl;
+import org.entando.kubernetes.model.EntandoBaseFluent;
+import org.entando.kubernetes.model.MetadataNestedImpl;
 
-public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends BaseFluent<A> implements Fluent<A> {
+public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
 
     protected ObjectMetaBuilder metadata;
     protected EntandoAppSpecBuilder spec;
@@ -48,6 +48,7 @@ public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends BaseFluent<
         return new MetadataNestedImpl<>((A) this);
     }
 
+    @Override
     public A withMetadata(ObjectMeta metadata) {
         this.metadata = new ObjectMetaBuilder(metadata);
         return (A) this;
@@ -86,45 +87,6 @@ public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends BaseFluent<
         }
 
         public N endSpec() {
-            return this.and();
-        }
-    }
-
-    public static class MetadataNestedImpl<N extends EntandoAppFluent<N>> extends ObjectMetaFluentImpl<MetadataNestedImpl<N>> implements
-            Nested<N> {
-
-        private final N parentBuilder;
-        private final ObjectMetaBuilder objectMetaBuilder;
-
-        MetadataNestedImpl(N parentBuilder, ObjectMeta item) {
-            super();
-            this.parentBuilder = parentBuilder;
-            this.objectMetaBuilder = new ObjectMetaBuilder(this, item);
-        }
-
-        MetadataNestedImpl(N parentBuilder) {
-            super();
-            this.parentBuilder = parentBuilder;
-            this.objectMetaBuilder = new ObjectMetaBuilder(this);
-        }
-
-        @Override
-        public N and() {
-            return parentBuilder.withMetadata(this.objectMetaBuilder.build());
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            //By convention the Sonar way. Nothing to add
-            return super.equals(other);
-        }
-
-        @Override
-        public int hashCode() {
-            return this.objectMetaBuilder.hashCode();
-        }
-
-        public N endMetadata() {
             return this.and();
         }
     }
