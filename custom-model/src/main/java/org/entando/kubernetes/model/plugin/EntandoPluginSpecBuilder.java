@@ -21,25 +21,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 
 @SuppressWarnings({"PMD.TooManyMethods"})
-//TODO remove deprecated methods
-public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
+public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> extends EntandoDeploymentSpecBuilder<N> {
 
     private final List<String> connectionConfigNames;
     private final List<ExpectedRole> roles;
     private final List<Permission> permissions;
     private final Map<String, String> parameters;
     private String image;
-    private int replicas = 1;
-    private DbmsImageVendor dbms;
     private String ingressPath;
     private String keycloakSecretToUse;
     private String clusterInfrastructureToUse;
     private String healthCheckPath;
     private PluginSecurityLevel securityLevel;
-    private String tlsSecretName;
-    private String ingressHostName;
 
     public EntandoPluginSpecBuilder() {
         //default constructor required
@@ -50,29 +46,21 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
     }
 
     public EntandoPluginSpecBuilder(EntandoPluginSpec spec) {
+        super(spec);
         this.connectionConfigNames = new ArrayList<>(spec.getConnectionConfigNames());
         this.roles = new ArrayList<>(spec.getRoles());
         this.permissions = new ArrayList<>(spec.getPermissions());
         this.parameters = new ConcurrentHashMap<>(spec.getParameters());
         this.image = spec.getImage();
-        this.replicas = spec.getReplicas();
-        this.dbms = spec.getDbms().orElse(null);
         this.ingressPath = spec.getIngressPath();
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.healthCheckPath = spec.getHealthCheckPath();
         this.securityLevel = spec.getSecurityLevel().orElse(null);
         this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
-        this.ingressHostName = spec.getIngressHostName().orElse(null);
-        this.tlsSecretName = spec.getTlsSecretName().orElse(null);
     }
 
     public N withClusterInfrastructureToUse(String name) {
         this.clusterInfrastructureToUse = name;
-        return (N) this;
-    }
-
-    public N withDbms(DbmsImageVendor dbms) {
-        this.dbms = dbms;
         return (N) this;
     }
 
@@ -83,16 +71,6 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
 
     public N addNewConnectionConfigName(String name) {
         connectionConfigNames.add(name);
-        return (N) this;
-    }
-
-    public N withTlsSecretName(String tlsSecretName) {
-        this.tlsSecretName = tlsSecretName;
-        return (N) this;
-    }
-
-    public N withIngressHostName(String ingressHostName) {
-        this.ingressHostName = ingressHostName;
         return (N) this;
     }
 
@@ -108,11 +86,6 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> {
 
     public N withKeycloakSecretToUse(String name) {
         this.keycloakSecretToUse = name;
-        return (N) this;
-    }
-
-    public N withReplicas(Integer replicas) {
-        this.replicas = replicas;
         return (N) this;
     }
 

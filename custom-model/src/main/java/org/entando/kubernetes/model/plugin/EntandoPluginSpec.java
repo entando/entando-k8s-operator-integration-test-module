@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,21 +33,18 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.EntandoDeploymentSpec;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoPluginSpec implements RequiresKeycloak, Serializable {
+public class EntandoPluginSpec extends EntandoDeploymentSpec implements RequiresKeycloak {
 
     private String image;
-    private Integer replicas = 1;
-    private DbmsImageVendor dbms;
     private PluginSecurityLevel securityLevel;
     private List<String> connectionConfigNames = new ArrayList<>();
-    private String tlsSecretName;
-    private String ingressHostName;
     private List<ExpectedRole> roles = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
     private Map<String, String> parameters = new ConcurrentHashMap<>();
@@ -80,15 +76,11 @@ public class EntandoPluginSpec implements RequiresKeycloak, Serializable {
             @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
             @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse) {
-        this();
+        super(ingressHostName, tlsSecretName, replicas, dbms);
         this.image = image;
-        this.dbms = dbms;
-        this.replicas = replicas;
         this.ingressPath = ingressPath;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.healthCheckPath = healthCheckPath;
-        this.tlsSecretName = tlsSecretName;
-        this.ingressHostName = ingressHostName;
         this.roles = roles;
         this.permissions = permissions;
         this.parameters = parameters;
@@ -108,14 +100,6 @@ public class EntandoPluginSpec implements RequiresKeycloak, Serializable {
 
     public String getImage() {
         return image;
-    }
-
-    public Integer getReplicas() {
-        return replicas;
-    }
-
-    public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(dbms);
     }
 
     public List<ExpectedRole> getRoles() {
@@ -147,11 +131,4 @@ public class EntandoPluginSpec implements RequiresKeycloak, Serializable {
         return connectionConfigNames;
     }
 
-    public Optional<String> getTlsSecretName() {
-        return ofNullable(tlsSecretName);
-    }
-
-    public Optional<String> getIngressHostName() {
-        return ofNullable(ingressHostName);
-    }
 }

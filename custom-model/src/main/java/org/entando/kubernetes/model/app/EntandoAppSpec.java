@@ -26,27 +26,22 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.io.Serializable;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
-import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.EntandoDeploymentSpec;
 
 @JsonSerialize
 @JsonDeserialize()
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoAppSpec implements RequiresKeycloak, HasIngress, Serializable {
+public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKeycloak {
 
     private JeeServer standardServerImage;
     private String customServerImage;
-    private DbmsImageVendor dbms;
-    private String ingressHostName;
-    private String tlsSecretName;
     private String entandoImageVersion;
-    private Integer replicas; // TODO distinguish between dbReplicas and standardServerImage replicas
     private String keycloakSecretToUse;
     private String clusterInfrastructureToUse;
 
@@ -67,14 +62,10 @@ public class EntandoAppSpec implements RequiresKeycloak, HasIngress, Serializabl
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
             @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse) {
-        this();
+        super(ingressHostName, tlsSecretName, replicas, dbms);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
-        this.dbms = dbms;
-        this.ingressHostName = ingressHostName;
-        this.replicas = replicas;
         this.entandoImageVersion = entandoImageVersion;
-        this.tlsSecretName = tlsSecretName;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
     }
@@ -98,24 +89,6 @@ public class EntandoAppSpec implements RequiresKeycloak, HasIngress, Serializabl
 
     public Optional<String> getEntandoImageVersion() {
         return ofNullable(entandoImageVersion);
-    }
-
-    public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(dbms);
-    }
-
-    @Override
-    public Optional<String> getIngressHostName() {
-        return ofNullable(ingressHostName);
-    }
-
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return ofNullable(tlsSecretName);
-    }
-
-    public Optional<Integer> getReplicas() {
-        return ofNullable(replicas);
     }
 
 }

@@ -105,7 +105,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getSecurityLevel().get(), is(STRICT));
         assertThat(actual.getSpec().getIngressPath(), is(INGRESS_PATH));
         assertThat(actual.getSpec().getHealthCheckPath(), is(ACTUATOR_HEALTH));
-        assertThat(actual.getSpec().getReplicas(), is(5));
+        assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getStatus(), is(notNullValue()));
@@ -175,7 +175,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getRoles().get(0).getName(), is(ADMINISTRATOR));
         assertThat(actual.getSpec().getSecurityLevel().get(), is(STRICT));
         assertThat(actual.getSpec().getParameters().get(PARAMETER_NAME), is(PARAMETER_VALUE));
-        assertThat(actual.getSpec().getReplicas(), is(5));
+        assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
     }

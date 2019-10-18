@@ -22,25 +22,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.io.Serializable;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
-import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.EntandoDeploymentSpec;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
 @JsonDeserialize
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIngress, Serializable {
+public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec implements RequiresKeycloak {
 
-    private DbmsImageVendor dbms;
-    private String ingressHostName;
     private String entandoImageVersion;
-    private String tlsSecretName;
     private String keycloakSecretToUse;
-    private Integer replicas = 1;
     @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
     //because 'default' is a reserved word
     private boolean isDefault;
@@ -51,13 +46,9 @@ public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIn
 
     public EntandoClusterInfrastructureSpec(DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
             String tlsSecretName, Integer replicas, String keycloakSecretToUse, boolean isDefault) {
-        this();
-        this.dbms = dbms;
-        this.ingressHostName = ingressHostName;
+        super(ingressHostName, tlsSecretName, replicas, dbms);
         this.entandoImageVersion = entandoImageVersion;
-        this.tlsSecretName = tlsSecretName;
         this.keycloakSecretToUse = keycloakSecretToUse;
-        this.replicas = replicas;
         this.isDefault = isDefault;
     }
 
@@ -65,26 +56,8 @@ public class EntandoClusterInfrastructureSpec implements RequiresKeycloak, HasIn
         return isDefault;
     }
 
-    public Optional<DbmsImageVendor> getDbms() {
-        return Optional.ofNullable(dbms);
-    }
-
-    @Override
-    public Optional<String> getIngressHostName() {
-        return Optional.ofNullable(ingressHostName);
-    }
-
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return Optional.ofNullable(tlsSecretName);
-    }
-
     public Optional<String> getEntandoImageVersion() {
         return Optional.ofNullable(entandoImageVersion);
-    }
-
-    public Integer getReplicas() {
-        return replicas;
     }
 
     @Override

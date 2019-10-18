@@ -62,7 +62,7 @@ public class EntandoCustomResourceStatusTest {
         populateStatus(dbServerStatus);
         KeycloakServer keycloakServer = new KeycloakServer();
         keycloakServer.getMetadata().setGeneration(3L);
-        keycloakServer.setSpec(new KeycloakServerSpec(null, DbmsImageVendor.ORACLE, null, null, null));
+        keycloakServer.setSpec(new KeycloakServerSpec(null, DbmsImageVendor.ORACLE, null, null, null, 1, true));
         keycloakServer.getMetadata().setName("test-keycloak");
         keycloakServer.setStatus(new EntandoCustomResourceStatus());
         keycloakServer.getStatus().putServerStatus(dbServerStatus);

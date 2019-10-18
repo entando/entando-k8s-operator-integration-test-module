@@ -71,7 +71,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
-        assertThat(actual.getSpec().getReplicas(), is(5));
+        assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().isDefault(), is(true));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
@@ -123,7 +123,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
-        assertThat(actual.getSpec().getReplicas(), is(5));
+        assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().isDefault(), is(true));
         assertThat(actual.getMetadata().getName(), is(MY_ENTANDO_CLUSTER_INFRASTRUCTURE));

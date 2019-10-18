@@ -70,7 +70,7 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
-        assertThat(actual.getSpec().getReplicas(), is(5));
+        assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().isDefault(), is(true));
         assertThat(actual.getMetadata().getName(), is(MY_KEYCLOAK));
@@ -121,7 +121,7 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
-        assertThat(actual.getSpec().getReplicas(), is(5));
+        assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().isDefault(), is(true));
         assertThat(actual.getMetadata().getName(), is(MY_KEYCLOAK));

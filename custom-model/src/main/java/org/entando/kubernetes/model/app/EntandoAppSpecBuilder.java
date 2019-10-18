@@ -17,16 +17,13 @@
 package org.entando.kubernetes.model.app;
 
 import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 import org.entando.kubernetes.model.JeeServer;
 
-public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
+public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> extends EntandoDeploymentSpecBuilder<N> {
 
     private JeeServer standardServerImage;
-    private DbmsImageVendor dbms;
-    private String ingressHostName;
-    private String tlsSecretName;
     private String entandoImageVersion;
-    private Integer replicas;
     private String keycloakSecretToUse;
     private String clusterInfrastructureToUse;
     private String customServerImage;
@@ -37,13 +34,10 @@ public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
     }
 
     public EntandoAppSpecBuilder(EntandoAppSpec spec) {
+        super(spec);
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
-        this.replicas = spec.getReplicas().orElse(null);
         this.entandoImageVersion = spec.getEntandoImageVersion().orElse(null);
-        this.tlsSecretName = spec.getTlsSecretName().orElse(null);
-        this.dbms = spec.getDbms().orElse(null);
         this.standardServerImage = spec.getStandardServerImage().orElse(null);
-        this.ingressHostName = spec.getIngressHostName().orElse(null);
         this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
         this.customServerImage = spec.getCustomServerImage().orElse(null);
     }
@@ -57,21 +51,6 @@ public class EntandoAppSpecBuilder<N extends EntandoAppSpecBuilder> {
     public N withCustomServerImage(String customServerImage) {
         this.customServerImage = customServerImage;
         this.standardServerImage = customServerImage == null ? standardServerImage : null;
-        return (N) this;
-    }
-
-    public N withDbms(DbmsImageVendor dbms) {
-        this.dbms = dbms;
-        return (N) this;
-    }
-
-    public N withIngressHostName(String ingressHostName) {
-        this.ingressHostName = ingressHostName;
-        return (N) this;
-    }
-
-    public N withTlsSecretName(String tlsSecretName) {
-        this.tlsSecretName = tlsSecretName;
         return (N) this;
     }
 
