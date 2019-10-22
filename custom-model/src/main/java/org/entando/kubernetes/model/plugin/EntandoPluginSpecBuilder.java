@@ -46,7 +46,8 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> extend
 
     public EntandoPluginSpecBuilder(EntandoPluginSpec spec) {
         super(spec);
-        this.connectionConfigNames = new ArrayList<>(spec.getConnectionConfigNames());
+        this.connectionConfigNames = spec.getConnectionConfigNames() == null ? new ArrayList<>()
+                : new ArrayList<>(spec.getConnectionConfigNames());
         this.roles = new ArrayList<>(spec.getRoles());
         this.permissions = new ArrayList<>(spec.getPermissions());
         this.parameters = new ConcurrentHashMap<>(spec.getParameters());
@@ -125,7 +126,8 @@ public class EntandoPluginSpecBuilder<N extends EntandoPluginSpecBuilder> extend
 
     public EntandoPluginSpec build() {
         return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakSecretToUse,
-                healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions, parameters, connectionConfigNames,
+                healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions, parameters,
+                connectionConfigNames,
                 clusterInfrastructureToUse);
     }
 
