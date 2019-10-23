@@ -53,7 +53,7 @@ public class EntandoAppPluginLinkFluent<A extends EntandoAppPluginLinkFluent<A>>
     }
 
     public static class SpecNestedImpl<N extends EntandoAppPluginLinkFluent> extends
-            EntandoAppPluginLinkSpecBuilder<SpecNestedImpl<N>> implements
+            EntandoAppPluginLinkSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;

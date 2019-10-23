@@ -53,7 +53,7 @@ public class KeycloakServerFluent<A extends KeycloakServerFluent<A>> extends Ent
     }
 
     public static class SpecNestedImpl<N extends KeycloakServerFluent> extends
-            KeycloakServerSpecBuilder<KeycloakServerFluent.SpecNestedImpl<N>> implements
+            KeycloakServerSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;
