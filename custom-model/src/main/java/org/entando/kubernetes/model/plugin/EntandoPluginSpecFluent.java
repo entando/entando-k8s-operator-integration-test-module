@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 
 public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends EntandoDeploymentSpecBuilder<N> {

@@ -66,6 +66,16 @@ public class EntandoCustomResourceStatus implements Serializable {
         return Optional.ofNullable((WebServerStatus) serverStatuses.get(qualifier));
     }
 
+    public Optional<AbstractServerStatus> findCurrentServerStatus() {
+        return this.serverStatuses.values().stream().reduce((abstractServerStatus, abstractServerStatus2) -> {
+            if (abstractServerStatus.getStarted().before(abstractServerStatus2.getStarted())) {
+                return abstractServerStatus2;
+            } else {
+                return abstractServerStatus;
+            }
+        });
+    }
+
     public EntandoDeploymentPhase calculateFinalPhase() {
         return hasFailed() ? EntandoDeploymentPhase.FAILED : EntandoDeploymentPhase.SUCCESSFUL;
     }
