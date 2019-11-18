@@ -33,29 +33,33 @@ public class EntandoControllerFailure implements Serializable {
 
     private String failedObjectType;
     private String failedObjectName;
-    private String errorMessage;
+    private String message;
+    private String detailMessage;
+
+    public EntandoControllerFailure() {
+        //For json
+    }
+
+    public EntandoControllerFailure(String failedObjectType, String failedObjectName, String errorMessage, String detailMessage) {
+        this.failedObjectType = failedObjectType;
+        this.failedObjectName = failedObjectName;
+        this.message = errorMessage;
+        this.detailMessage = detailMessage;
+    }
 
     public String getFailedObjectType() {
         return failedObjectType;
-    }
-
-    public void setFailedObjectType(String failedObjectType) {
-        this.failedObjectType = failedObjectType;
     }
 
     public String getFailedObjectName() {
         return failedObjectName;
     }
 
-    public void setFailedObjectName(String failedObjectName) {
-        this.failedObjectName = failedObjectName;
+    public String getMessage() {
+        return message;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public String getDetailMessage() {
+        return detailMessage;
     }
 }

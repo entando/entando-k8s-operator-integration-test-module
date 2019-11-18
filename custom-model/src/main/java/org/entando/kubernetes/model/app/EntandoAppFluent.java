@@ -51,7 +51,7 @@ public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends EntandoBase
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends EntandoAppFluent> extends EntandoAppSpecBuilder<SpecNestedImpl<N>> implements Nested<N> {
+    public static class SpecNestedImpl<N extends EntandoAppFluent> extends EntandoAppSpecFluent<SpecNestedImpl<N>> implements Nested<N> {
 
         private final N parentBuilder;
 

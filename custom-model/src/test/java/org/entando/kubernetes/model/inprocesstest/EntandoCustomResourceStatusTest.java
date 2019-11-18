@@ -16,21 +16,28 @@
 
 package org.entando.kubernetes.model.inprocesstest;
 
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimStatus;
 import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.api.model.ServiceStatus;
+import io.fabric8.kubernetes.api.model.StatusBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentStatus;
 import io.fabric8.kubernetes.api.model.extensions.IngressStatus;
+import io.fabric8.kubernetes.client.KubernetesClientException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import org.entando.kubernetes.model.AbstractServerStatus;
 import org.entando.kubernetes.model.DbServerStatus;
 import org.entando.kubernetes.model.DbmsImageVendor;
-import org.entando.kubernetes.model.EntandoControllerFailure;
+import org.entando.kubernetes.model.EntandoControllerFailureBuilder;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
+import org.entando.kubernetes.model.EntandoDeploymentPhase;
 import org.entando.kubernetes.model.SampleWriter;
 import org.entando.kubernetes.model.WebServerStatus;
 import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
@@ -46,20 +53,34 @@ public class EntandoCustomResourceStatusTest {
     private static void populateStatus(AbstractServerStatus dbServerStatus) {
         dbServerStatus.setPodStatus(new PodStatus());
         dbServerStatus.setDeploymentStatus(new DeploymentStatus());
-        dbServerStatus.setEntandoControllerFailure(new EntandoControllerFailure());
         dbServerStatus.setPersistentVolumeClaimStatuses(Arrays.asList(new PersistentVolumeClaimStatus()));
         dbServerStatus.setServiceStatus(new ServiceStatus());
+        dbServerStatus.finish();
     }
 
     @Test
-    public void testSerializeDeserialize() {
+    public void testSerializeDeserialize() throws InterruptedException {
         DbServerStatus dbServerStatus = new DbServerStatus();
         dbServerStatus.setQualifier("db");
         populateStatus(dbServerStatus);
+        WebServerStatus zebServerStatus = new WebServerStatus();
+        zebServerStatus.setQualifier("zeb");
+        zebServerStatus.setIngressStatus(new IngressStatus());
+        populateStatus(zebServerStatus);
+        long start = System.currentTimeMillis();
+        await().until(() -> System.currentTimeMillis() - start > 1000);
         WebServerStatus webServerStatus = new WebServerStatus();
         webServerStatus.setQualifier("web");
         webServerStatus.setIngressStatus(new IngressStatus());
-        populateStatus(dbServerStatus);
+        webServerStatus.finishWith(
+                new EntandoControllerFailureBuilder().withFailedObjectType("Wrong").withFailedObjectName("Wrong")
+                        .withException(new KubernetesClientException("Wrong", 403,
+                                new StatusBuilder().withMessage("Ingress failed").withNewDetails()
+                                        .withKind("Ingress")
+                                        .withName("MyIngress")
+                                        .endDetails().build())).build()
+        );
+        populateStatus(webServerStatus);
         KeycloakServer keycloakServer = new KeycloakServer();
         keycloakServer.getMetadata().setGeneration(3L);
         keycloakServer.setSpec(new KeycloakServerSpec(null, DbmsImageVendor.ORACLE, null, null, null, 1, true));
@@ -67,9 +88,18 @@ public class EntandoCustomResourceStatusTest {
         keycloakServer.setStatus(new EntandoCustomResourceStatus());
         keycloakServer.getStatus().putServerStatus(dbServerStatus);
         keycloakServer.getStatus().putServerStatus(webServerStatus);
+        keycloakServer.getStatus().putServerStatus(zebServerStatus);
         Path sample = SampleWriter.writeSample(Paths.get("target"), keycloakServer);
         KeycloakServer actual = SampleWriter.readSample(sample, KeycloakServer.class);
         assertNotNull(actual.getStatus().forDbQualifiedBy("db").get().getDeploymentStatus());
+        AbstractServerStatus actualFinalStatus = actual.getStatus().findCurrentServerStatus().get();
+        assertThat(actualFinalStatus.getQualifier(), is("web"));
+        assertThat(actualFinalStatus.getEntandoControllerFailure().getFailedObjectType(), is("Ingress"));
+        assertThat(actualFinalStatus.getEntandoControllerFailure().getFailedObjectName(), is("MyIngress"));
+        assertThat(actualFinalStatus.getEntandoControllerFailure().getMessage(), is("Ingress failed"));
+        assertThat(actualFinalStatus.getEntandoControllerFailure().getDetailMessage(),
+                containsString("io.fabric8.kubernetes.client.KubernetesClientException"));
+        assertThat(actual.getStatus().calculateFinalPhase(), is(EntandoDeploymentPhase.FAILED));
 
     }
 }

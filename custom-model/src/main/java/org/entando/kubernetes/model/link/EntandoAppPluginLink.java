@@ -54,6 +54,11 @@ public class EntandoAppPluginLink extends EntandoBaseCustomResource {
         this.spec = spec;
     }
 
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
+    }
+
     public EntandoAppPluginLinkSpec getSpec() {
         return spec;
     }

@@ -59,6 +59,11 @@ public class EntandoClusterInfrastructure extends EntandoBaseCustomResource impl
         this.spec = spec;
     }
 
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
+    }
+
     public EntandoClusterInfrastructureSpec getSpec() {
         return spec;
     }

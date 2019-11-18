@@ -44,7 +44,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     @Test
     public void testCreateEntandoAppPluginLink() throws InterruptedException {
         //Given
-        EntandoAppPluginLink externalDatabase = new EntandoAppPluginLinkBuilder()
+        EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
                 .withNewMetadata().withName(MY_PLUGIN)
                 .withNamespace(MY_APP_NAMESPACE)
                 .endMetadata()
@@ -54,7 +54,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_APP_NAMESPACE).endMetadata().done();
-        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(externalDatabase);
+        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(entandoAppPluginLink);
         //When
         EntandoAppPluginLinkList list = entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).list();
         EntandoAppPluginLink actual = list.getItems().get(0);

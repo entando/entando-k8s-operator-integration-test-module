@@ -54,7 +54,7 @@ public class EntandoClusterInfrastructureFluent<A extends EntandoClusterInfrastr
     }
 
     public static class SpecNestedImplCluster<N extends EntandoClusterInfrastructureFluent> extends
-            EntandoClusterInfrastructureSpecBuilder<SpecNestedImplCluster<N>> implements
+            EntandoClusterInfrastructureSpecFluent<SpecNestedImplCluster<N>> implements
             Nested<N> {
 
         private final N parentBuilder;

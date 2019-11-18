@@ -52,7 +52,7 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends ExternalDatabaseFluent> extends ExternalDatabaseSpecBuilder<SpecNestedImpl<N>> implements
+    public static class SpecNestedImpl<N extends ExternalDatabaseFluent> extends ExternalDatabaseSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;

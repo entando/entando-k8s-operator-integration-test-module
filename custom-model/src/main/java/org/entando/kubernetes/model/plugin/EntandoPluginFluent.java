@@ -52,7 +52,7 @@ public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends Entan
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends EntandoPluginFluent> extends EntandoPluginSpecBuilder<SpecNestedImpl<N>> implements
+    public static class SpecNestedImpl<N extends EntandoPluginFluent> extends EntandoPluginSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;

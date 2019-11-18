@@ -55,6 +55,11 @@ public class ExternalDatabase extends EntandoBaseCustomResource {
         this.spec = spec;
     }
 
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
+    }
+
     public ExternalDatabaseSpec getSpec() {
         return spec;
     }
