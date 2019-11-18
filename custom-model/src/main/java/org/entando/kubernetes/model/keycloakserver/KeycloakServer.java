@@ -58,6 +58,11 @@ public class KeycloakServer extends EntandoBaseCustomResource implements HasIngr
         super.setMetadata(metadata);
     }
 
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
+    }
+
     public KeycloakServerSpec getSpec() {
         return spec;
     }

@@ -57,6 +57,11 @@ public class EntandoApp extends EntandoBaseCustomResource implements HasIngress,
         this.setSpec(spec);
     }
 
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
+    }
+
     public EntandoAppSpec getSpec() {
         return spec;
     }

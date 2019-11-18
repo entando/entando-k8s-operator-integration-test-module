@@ -58,6 +58,11 @@ public class EntandoPlugin extends EntandoBaseCustomResource implements Requires
         this.spec = spec;
     }
 
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
+    }
+
     public EntandoPluginSpec getSpec() {
         return spec;
     }

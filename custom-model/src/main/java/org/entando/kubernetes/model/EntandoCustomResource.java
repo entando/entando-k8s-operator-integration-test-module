@@ -23,4 +23,6 @@ public interface EntandoCustomResource extends HasMetadata {
     EntandoCustomResourceStatus getStatus();
 
     void setStatus(EntandoCustomResourceStatus status);
+
+    String getDefinitionName();
 }
