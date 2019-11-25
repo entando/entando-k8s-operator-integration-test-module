@@ -21,6 +21,7 @@ pipelineConfig:
               - -Dsonar.pullrequest.key=${PULL_NUMBER}
               - -Dsonar.pullrequest.base=master
               - -Dsonar.pullrequest.branch=${BRANCH_NAME}
+              - -Dsonar.scm.revision=${PULL_BASE_SHA}
               - -DautoUpdate=false
               - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
               - -DdatabasePassword=owasp
