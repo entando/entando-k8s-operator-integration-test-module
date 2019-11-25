@@ -5,8 +5,6 @@ pipelineConfig:
   env:
   - name: _JAVA_OPTIONS
     value: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xms10m -Xmx512m
-  containerOptions:
-
   pipelines:
     pullRequest:
       build:
