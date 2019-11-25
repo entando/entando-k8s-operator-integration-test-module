@@ -5,6 +5,11 @@ pipelineConfig:
   env:
   - name: _JAVA_OPTIONS
     value: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xms10m -Xmx512m
+  - name: GPG_PASSPHRASE
+    valueFrom:
+      secretKeyRef:
+         name: jenkins-release-gpg
+         key: passphrase
   pipelines:
     pullRequest:
       build:
@@ -41,4 +46,6 @@ pipelineConfig:
               - -DdatabasePassword=owasp
               - -DdatabaseUser=owasp
               - -Dgpg.homedir=/home/jenkins/.gnupg
+              - -Dgpg.keyname=entando-jx
+              - -Dgpg.passphrase=${GPG_PASSPHRASE}
             name: mvn-deploy
