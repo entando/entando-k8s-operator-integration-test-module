@@ -296,7 +296,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>5.2.2</version>
+                <version>5.2.4</version>
                 <executions>
                     <execution>
                         <goals>
@@ -312,6 +312,13 @@
                     <autoUpdate>true</autoUpdate>
                     <format>XML</format>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.2.8</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

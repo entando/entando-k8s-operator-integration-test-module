@@ -2,3 +2,12 @@ buildPack: maven-java11
 pipelineConfig:
   agent:
     image: maven-java11
+  pipelines:
+    pullRequest:
+      build:
+        steps:
+          - command: ["mvn clean verify "]
+    release:
+      build:
+        steps:
+          - command: [" mvn dependency-check:aggregate -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp -DdatabasePassword=owasp -DdatabaseUser=owasp -X "]
