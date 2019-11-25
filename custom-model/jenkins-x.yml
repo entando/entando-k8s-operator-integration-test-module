@@ -1,4 +1,4 @@
-buildPack: jenkins-x-classic
+buildPack: maven-java11
 pipelineConfig:
   agent:
     image: maven-java11
