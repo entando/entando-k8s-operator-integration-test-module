@@ -5,11 +5,43 @@ pipelineConfig:
   pipelines:
     pullRequest:
       build:
-        replace: true
         steps:
-          - command: " mvn dependency-check:aggregate -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp -DdatabasePassword=owasp -DdatabaseUser=owasp -X "
+          - sh: mvn versions:set -DnewVersion=$PREVIEW_VERSION
+            name: set-version
+          - command:  mvn
+          - args:
+            - clean
+            - verify
+            - sonar:sonar
+            - -Dsonar.login=df542e4786884a893b2e776bfa9427e5df55e807
+            - -Dsonar.pullrequest.key=${PULL_NUMBER}
+            - -Dsonar.pullrequest.base=master
+            - -Dsonar.pullrequest.branch=${BRANCH_NAME}
+            - -DautoUpdate=false
+            - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
+            - -DdatabasePassword=owasp
+            - -DdatabaseUser=owasp
+            name: mvn-verify
     release:
-      build:
-        replace: true
+      setVersion:
         steps:
-          - command: " mvn dependency-check:aggregate -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp -DdatabasePassword=owasp -DdatabaseUser=owasp -X "
+          - sh: echo \$(jx-release-version) > VERSION
+            name: next-version
+            comment: so we can retrieve the version in later steps
+          - sh: mvn versions:set -DnewVersion=\$(cat VERSION)
+            name: set-version
+          - sh: jx step tag --version \$(cat VERSION)
+            name: tag-version
+      build:
+        steps:
+          - args:
+              - clean
+              - deploy
+              - -Pprepare-for-central
+              - sonar:sonar
+              - -Dsonar.login=df542e4786884a893b2e776bfa9427e5df55e807
+              - -DautoUpdate=false
+              - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
+              - -DdatabasePassword=owasp
+              - -DdatabaseUser=owasp
+            name: mvn-deploy
