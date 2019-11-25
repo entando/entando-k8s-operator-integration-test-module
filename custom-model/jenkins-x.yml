@@ -40,4 +40,5 @@ pipelineConfig:
               - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
               - -DdatabasePassword=owasp
               - -DdatabaseUser=owasp
+              - -Dgpg.homedir=/home/jenkins/.gnupg
             name: mvn-deploy
