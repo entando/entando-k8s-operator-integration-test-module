@@ -6,7 +6,7 @@ pipelineConfig:
     pullRequest:
       build:
         steps:
-          - command: ["mvn clean verify "]
+          - command: [" mvn dependency-check:aggregate -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp -DdatabasePassword=owasp -DdatabaseUser=owasp -X "]
     release:
       build:
         steps:
