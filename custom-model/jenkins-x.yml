@@ -2,3 +2,43 @@ buildPack: maven-java11
 pipelineConfig:
   agent:
     image: maven-java11
+  env:
+  - name: _JAVA_OPTIONS
+    value: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xms10m -Xmx512m
+  pipelines:
+    pullRequest:
+      build:
+        replace: true
+        steps:
+          - sh: mvn versions:set -DnewVersion=$PREVIEW_VERSION
+            name: set-version
+          - command:  mvn
+            args:
+              - clean
+              - verify
+              - sonar:sonar
+              - -Dsonar.login=df542e4786884a893b2e776bfa9427e5df55e807
+              - -Dsonar.pullrequest.key=${PULL_NUMBER}
+              - -Dsonar.pullrequest.base=master
+              - -Dsonar.pullrequest.branch=${BRANCH_NAME}
+              - -DautoUpdate=false
+              - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
+              - -DdatabasePassword=owasp
+              - -DdatabaseUser=owasp
+            name: mvn-verify
+    release:
+      build:
+        replace: true
+        steps:
+          - command: mvn
+            args:
+              - clean
+              - deploy
+              - -Pprepare-for-central
+              - sonar:sonar
+              - -Dsonar.login=df542e4786884a893b2e776bfa9427e5df55e807
+              - -DautoUpdate=false
+              - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
+              - -DdatabasePassword=owasp
+              - -DdatabaseUser=owasp
+            name: mvn-deploy
