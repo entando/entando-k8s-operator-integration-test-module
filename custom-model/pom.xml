@@ -329,7 +329,6 @@
                         <version>3.1.1</version>
                         <configuration>
                             <source>8</source>
-                            <skip>false</skip>
                             <additionalJOptions combine.children="append">
                                 <additionalJOption>-J-Dhttp.agent=maven-javadoc-plugin</additionalJOption>
                             </additionalJOptions>
@@ -359,9 +358,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

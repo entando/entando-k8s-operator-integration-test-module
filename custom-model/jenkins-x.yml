@@ -3,13 +3,28 @@ pipelineConfig:
   agent:
     image: maven-java11
   env:
-  - name: _JAVA_OPTIONS
-    value: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xms10m -Xmx512m
-  - name: GPG_PASSPHRASE
-    valueFrom:
-      secretKeyRef:
-         name: jenkins-release-gpg
-         key: passphrase
+    - name: _JAVA_OPTIONS
+      value: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xms10m -Xmx512m
+    - name: SONAR_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: entando-jx-common-secret
+          key: sonar.token
+    - name: OWASPDB_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: entando-jx-common-secret
+          key: owaspdb.username
+    - name: OWASPDB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: entando-jx-common-secret
+          key: owaspdb.password
+    - name: OWASPDB_URL
+      valueFrom:
+        secretKeyRef:
+          name: entando-jx-common-secret
+          key: owaspdb.url
   pipelines:
     pullRequest:
       build:
@@ -22,15 +37,32 @@ pipelineConfig:
               - clean
               - verify
               - sonar:sonar
-              - -Dsonar.login=df542e4786884a893b2e776bfa9427e5df55e807
+              - -Dsonar.login=${SONAR_TOKEN}
               - -Dsonar.pullrequest.key=${PULL_NUMBER}
               - -Dsonar.scm.revision=${PULL_BASE_SHA}
               - -DautoUpdate=false
-              - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
-              - -DdatabasePassword=owasp
-              - -DdatabaseUser=owasp
+              - -DconnectionString=${OWASPDB_URL}
+              - -DdatabasePassword=${OWADPDB_PASSWORD}
+              - -DdatabaseUser=${OWASPDB_USERNAME}
             name: mvn-verify
     release:
+      pipeline:
+        env:
+          - name: GPG_PASSPHRASE
+            valueFrom:
+              secretKeyRef:
+                name: entando-jx-common-secret
+                key: gpg.passphrase
+          - name: GPG_KEYNAME
+            valueFrom:
+              secretKeyRef:
+                name: entando-jx-common-secret
+                key: gpg.keyname
+          - name: GPG_HOMEDIR
+            valueFrom:
+              secretKeyRef:
+                name: entando-jx-common-secret
+                key: gpg.homedir
       build:
         replace: true
         steps:
@@ -40,12 +72,12 @@ pipelineConfig:
               - deploy
               - sonar:sonar
               - -Pprepare-for-central
-              - -Dsonar.login=df542e4786884a893b2e776bfa9427e5df55e807
+              - -Dsonar.login=${SONAR_TOKEN}
               - -DautoUpdate=false
-              - -DconnectionString=jdbc:postgresql://172.30.80.197:5432/owasp
-              - -DdatabasePassword=owasp
-              - -DdatabaseUser=owasp
-              - -Dgpg.homedir=/home/jenkins/.gnupg
-              - -Dgpg.keyname=entando-jx
+              - -DconnectionString=${OWASPDB_URL}
+              - -DdatabasePassword=${OWADPDB_PASSWORD}
+              - -DdatabaseUser=${OWASPDB_USERNAME}
+              - -Dgpg.homedir=${GPG_HOMEDIR}
+              - -Dgpg.keyname=${GPG_KEYNAME}
               - -Dgpg.passphrase=${GPG_PASSPHRASE}
             name: mvn-deploy
