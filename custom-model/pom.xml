@@ -288,8 +288,6 @@
                     <failOnError>true</failOnError>
                     <failBuildOnCVSS>7</failBuildOnCVSS>
                     <name>National Vulnerability Database Report</name>
-                    <skip>false</skip>
-                    <autoUpdate>true</autoUpdate>
                     <format>XML</format>
                 </configuration>
                 <dependencies>
