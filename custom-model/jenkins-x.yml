@@ -40,7 +40,7 @@ pipelineConfig:
           - sh: git fetch origin
             name: fetch-full-repo
           - sh: >-
-              mvn clean verify sonar:sonar -Ddependency-check.skip=true \
+              mvn clean verify sonar:sonar \
                -Dsonar.login=${SONAR_TOKEN} \
                -Dsonar.pullrequest.key=${PULL_NUMBER} \
                -Dsonar.pullrequest.base=master \
