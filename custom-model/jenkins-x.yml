@@ -52,6 +52,8 @@ pipelineConfig:
         steps:
           - sh: mvn versions:set -DnewVersion=$PREVIEW_VERSION
             name: set-version
+          - sh: git fetch origin --unshallow
+            name: fetch-full-repo
           - sh: >-
               mvn clean verify sonar:sonar \
                -Dsonar.login=${SONAR_TOKEN} \
@@ -70,7 +72,7 @@ pipelineConfig:
       build:
         replace: true
         steps:
-          - sh: git fetch origin
+          - sh: git fetch origin --unshallow
             name: fetch-full-repo
           - sh: >-
               mvn clean deploy sonar:sonar \
