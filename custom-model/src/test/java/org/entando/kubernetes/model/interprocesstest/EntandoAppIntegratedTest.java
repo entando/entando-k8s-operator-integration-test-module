@@ -24,8 +24,6 @@ import org.entando.kubernetes.model.app.EntandoApp;
 import org.junit.jupiter.api.Tag;
 
 @Tag("inter-process")
-@SuppressWarnings("PMD.TestClassWithoutTestCases")
-//Because PMD doesn't know they are inherited
 public class EntandoAppIntegratedTest extends AbstractEntandoAppTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();

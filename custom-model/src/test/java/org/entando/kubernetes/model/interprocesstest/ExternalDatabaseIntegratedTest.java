@@ -22,12 +22,8 @@ import org.entando.kubernetes.model.AbstractExternalDatabaseTest;
 import org.entando.kubernetes.model.externaldatabase.DoneableExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
-@EnableRuleMigrationSupport
 @Tag("inter-process")
-@SuppressWarnings("PMD.TestClassWithoutTestCases")
-//Because PMD doesn't know they are inherited
 public class ExternalDatabaseIntegratedTest extends AbstractExternalDatabaseTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
