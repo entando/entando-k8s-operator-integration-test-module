@@ -46,23 +46,7 @@ pipelineConfig:
               - -DdatabaseUser=${OWASPDB_USERNAME}
             name: mvn-verify
     release:
-      pipeline:
-        env:
-          - name: GPG_PASSPHRASE
-            valueFrom:
-              secretKeyRef:
-                name: entando-jx-common-secret
-                key: gpg.passphrase
-          - name: GPG_KEYNAME
-            valueFrom:
-              secretKeyRef:
-                name: entando-jx-common-secret
-                key: gpg.keyname
-          - name: GPG_HOMEDIR
-            valueFrom:
-              secretKeyRef:
-                name: entando-jx-common-secret
-                key: gpg.homedir
+
       build:
         replace: true
         steps:
@@ -81,3 +65,19 @@ pipelineConfig:
               - -Dgpg.keyname=${GPG_KEYNAME}
               - -Dgpg.passphrase=${GPG_PASSPHRASE}
             name: mvn-deploy
+            env:
+              - name: GPG_PASSPHRASE
+                valueFrom:
+                  secretKeyRef:
+                    name: entando-jx-common-secret
+                    key: gpg.passphrase
+              - name: GPG_KEYNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: entando-jx-common-secret
+                    key: gpg.keyname
+              - name: GPG_HOMEDIR
+                valueFrom:
+                  secretKeyRef:
+                    name: entando-jx-common-secret
+                    key: gpg.homedir
