@@ -39,7 +39,7 @@ pipelineConfig:
                -Dsonar.scm.revision=${PULL_BASE_SHA} \
                -DautoUpdate=false \
                -DconnectionString=${OWASPDB_URL} \
-               -DdatabasePassword=${OWADPDB_PASSWORD} \
+               -DdatabasePassword=${OWASPDB_PASSWORD} \
                -DdatabaseUser=${OWASPDB_USERNAME}
             name: mvn-verify
     release:
@@ -53,7 +53,7 @@ pipelineConfig:
                -Dsonar.login=${SONAR_TOKEN} \
                -DautoUpdate=false \
                -DconnectionString=${OWASPDB_URL} \
-               -DdatabasePassword=${OWADPDB_PASSWORD} \
+               -DdatabasePassword=${OWASPDB_PASSWORD} \
                -DdatabaseUser=${OWASPDB_USERNAME} \
                -Dgpg.homedir=${GPG_HOMEDIR} \
                -Dgpg.keyname=${GPG_KEYNAME} \
