@@ -35,8 +35,6 @@ public class KeycloakServerSpec extends EntandoDeploymentSpec {
 
     private String imageName;
     private String entandoImageVersion;
-    @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
-    //because 'default' is a reserved word
     private boolean isDefault;
 
     public KeycloakServerSpec() {

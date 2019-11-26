@@ -36,8 +36,6 @@ public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec impl
 
     private String entandoImageVersion;
     private String keycloakSecretToUse;
-    @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
-    //because 'default' is a reserved word
     private boolean isDefault;
 
     public EntandoClusterInfrastructureSpec() {

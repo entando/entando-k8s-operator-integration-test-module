@@ -31,8 +31,6 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @EnableRuleMigrationSupport
 @Tag("in-process")
-@SuppressWarnings("PMD.TestClassWithoutTestCases")
-//Because PMD doesn't know they are inherited
 public class ExternalDatabaseMockedTest extends AbstractExternalDatabaseTest {
 
     @Rule

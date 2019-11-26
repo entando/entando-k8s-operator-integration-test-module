@@ -34,6 +34,7 @@ import java.util.Locale;
  * to be schemas (!) so we only initialize the Root user's password Oracle's images have been troublesome, and are not supported yet. For
  * Oracle, rather use a pre-configured external database.
  */
+@SuppressWarnings("squid:S2068")//Because the password gets resolved from and environment variable at runtime only
 public enum DbmsImageVendor {
     MYSQL("docker.io/centos/mysql-57-centos7:latest", 3306, "root", "/var/lib/mysql/data",
             "MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -h 127.0.0.1 -u root -e 'SELECT 1'",

@@ -31,8 +31,6 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @Tag("in-process")
 @EnableRuleMigrationSupport
-@SuppressWarnings("PMD.TestClassWithoutTestCases")
-//Because PMD doesn't know they are inherited
 public class EntandoAppMockedTest extends AbstractEntandoAppTest {
 
     @Rule
