@@ -48,8 +48,6 @@ import org.junit.jupiter.api.Test;
 @Tag("in-process")
 public class EntandoCustomResourceStatusTest {
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
-    //Bug in PMD. This method is used twice
     private static void populateStatus(AbstractServerStatus dbServerStatus) {
         dbServerStatus.setPodStatus(new PodStatus());
         dbServerStatus.setDeploymentStatus(new DeploymentStatus());
