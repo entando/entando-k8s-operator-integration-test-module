@@ -75,7 +75,6 @@ pipelineConfig:
           - sh: >-
               mvn clean deploy sonar:sonar \
                 -Pprepare-for-central \
-                -Pintegration-test \
                 -Dsonar.login=${SONAR_TOKEN} \
                 -DautoUpdate=false \
                 -DconnectionString=${OWASPDB_URL} \
