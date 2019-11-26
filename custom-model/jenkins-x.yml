@@ -33,7 +33,7 @@ pipelineConfig:
           - sh: mvn versions:set -DnewVersion=$PREVIEW_VERSION
             name: set-version
           - sh: >-
-              mvn clean verify sonar:sonar \
+              mvn clean verify sonar:sonar -DskipTests -Ddependency-check.skip=true \
                -Dsonar.login=${SONAR_TOKEN} \
                -Dsonar.pullrequest.key=${PULL_NUMBER} \
                -Dsonar.scm.revision=${PULL_BASE_SHA} \
