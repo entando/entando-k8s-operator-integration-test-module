@@ -10,6 +10,11 @@ pipelineConfig:
         secretKeyRef:
           name: entando-jx-common-secret
           key: sonar.token
+    - name: SONAR_GITHUB_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: entando-jx-common-secret
+          key: sonar.github.token
     - name: OWASPDB_USERNAME
       valueFrom:
         secretKeyRef:
@@ -32,10 +37,17 @@ pipelineConfig:
         steps:
           - sh: mvn versions:set -DnewVersion=$PREVIEW_VERSION
             name: set-version
+          - sh: get fetch origin
+            name: fetch-full-repo
           - sh: >-
-              mvn clean verify sonar:sonar -DskipTests -Ddependency-check.skip=true \
+              mvn clean verify sonar:sonar -Ddependency-check.skip=true \
                -Dsonar.login=${SONAR_TOKEN} \
                -Dsonar.pullrequest.key=${PULL_NUMBER} \
+               -Dsonar.pullrequest.base=master \
+               -Dsonar.pullrequest.branch=${BRANCH_NAME} \
+               -Dsonar.pullrequest.provider=github \
+               -Dsonar.pullrequest.vsts.token.secured=${SONAR_GITHUB_TOKEN} \
+               -Dsonar.pullrequest.github.repository=entando-k8s-infrastructure/entando-k8s-custom-model \
                -Dsonar.scm.revision=${PULL_BASE_SHA} \
                -DautoUpdate=false \
                -DconnectionString=${OWASPDB_URL} \
