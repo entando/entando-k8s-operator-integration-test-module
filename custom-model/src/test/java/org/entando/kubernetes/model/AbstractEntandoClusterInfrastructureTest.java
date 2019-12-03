@@ -39,12 +39,12 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
 
     @BeforeEach
-    public void deleteEntandoClusterInfrastructure() throws InterruptedException {
+    public void deleteEntandoClusterInfrastructure() {
         prepareNamespace(entandoInfrastructure(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateEntandoClusterInfrastructure() throws InterruptedException {
+    public void testCreateEntandoClusterInfrastructure() {
         //Given
         EntandoClusterInfrastructure externalDatabase = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata().withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
@@ -79,7 +79,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     }
 
     @Test
-    public void testEditEntandoClusterInfrastructure() throws InterruptedException {
+    public void testEditEntandoClusterInfrastructure() {
         //Given
         EntandoClusterInfrastructure keycloakServer = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata()
@@ -133,10 +133,10 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     }
 
     protected abstract DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure
-            keycloakServer) throws InterruptedException;
+            keycloakServer);
 
     protected CustomResourceOperationsImpl<EntandoClusterInfrastructure, EntandoClusterInfrastructureList,
-            DoneableEntandoClusterInfrastructure> entandoInfrastructure() throws InterruptedException {
+            DoneableEntandoClusterInfrastructure> entandoInfrastructure() {
         return EntandoClusterInfrastructureOperationFactory.produceAllEntandoClusterInfrastructures(getClient());
     }
 }

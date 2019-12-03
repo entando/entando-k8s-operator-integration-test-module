@@ -24,13 +24,17 @@ import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L extends CustomResourceList<R>, D extends
         DoneableEntandoCustomResource<D, R>> {
 
+    private static final Logger LOGGER = Logger.getLogger(EntandoCustomResourceResolver.class.getName());
     private final String crdName;
     private final Class<R> customResourceClass;
     private final Class<L> customResourceListClass;
@@ -40,6 +44,7 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
 
     public EntandoCustomResourceResolver(Class<R> customResourceClass, Class<L> listCass, Class<D> doneableClass) {
         try {
+
             R r = customResourceClass.getConstructor().newInstance();
             this.yamlFile = "crd/" + r.getKind() + "CRD.yaml";
             this.crdName = r.getDefinitionName();
@@ -56,12 +61,24 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
             synchronized (this) {
                 if (this.customResourceDefinition == null) {
                     this.customResourceDefinition = loadCrd(client);
+                    /*There is some confusion as to whether this is still necessary:
+                    KubernetesDeserializer.registerCustomKind(
+                            customResourceDefinition.getSpec().getGroup() + "/"
+                                    + customResourceDefinition.getSpec().getVersion() + "#"
+                                    + customResourceDefinition.getSpec().getNames().getKind(),
+                            customResourceClass
+                    ); */
                 }
             }
             CustomResourceOperationsImpl<R, L, D> oper = (CustomResourceOperationsImpl<R, L, D>) client
                     .customResources(customResourceDefinition, customResourceClass, customResourceListClass, doneableCustomResourceClass);
-            while (notAvailable(oper, client)) {
+            int count = 0;
+            while (notAvailable(oper, client) && count < 100) {
                 sleep(100);
+                count++;
+            }
+            if (notAvailable(oper, client)) {
+                throw new IllegalStateException("Could not resolve CRD for " + this.customResourceClass);
             }
             return oper;
         } catch (InterruptedException e) {
@@ -74,22 +91,36 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
         try {
             CustomResourceDefinition crd = client.customResourceDefinitions().withName(crdName).get();
             if (crd == null) {
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(yamlFile)).get();
-                crd = (CustomResourceDefinition) list.get(0);
+                crd = client.customResourceDefinitions().load(loadYamlFile()).get();
                 // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
                 crd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
                 client.customResourceDefinitions().create(crd);
             }
             return crd;
         } catch (KubernetesClientException e) {
+            e.printStackTrace();
             if (e.getCode() == HttpURLConnection.HTTP_FORBIDDEN) {
+                LOGGER.severe("User does not have permissions to create CRD's. Loading from memory.");
                 //The code doesn't have RBAC permission to read the CRD. Let's assume it has already been deployed
-                List<HasMetadata> list = client.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(yamlFile)).get();
+                List<HasMetadata> list = client.load(loadYamlFile()).get();
                 return (CustomResourceDefinition) list.get(0);
             } else {
+                LOGGER.log(Level.SEVERE, "Error", e);
                 throw e;
             }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
         }
+    }
+
+    private InputStream loadYamlFile() {
+        InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(yamlFile);
+        if (resourceAsStream == null) {
+            LOGGER.severe("Could not load yaml file: " + yamlFile);
+            throw new IllegalStateException("Could not load yaml file: " + yamlFile);
+        }
+        return resourceAsStream;
     }
 
     private boolean notAvailable(CustomResourceOperationsImpl<R, L, D> oper, KubernetesClient client) {

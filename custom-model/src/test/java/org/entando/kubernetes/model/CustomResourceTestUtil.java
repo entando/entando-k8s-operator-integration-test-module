@@ -25,7 +25,8 @@ import java.time.Duration;
 
 public interface CustomResourceTestUtil {
 
-    default void prepareNamespace(CustomResourceOperationsImpl oper, String namespace) throws InterruptedException {
+    @SuppressWarnings("unchecked")
+    default void prepareNamespace(CustomResourceOperationsImpl oper, String namespace) {
         if (getClient().namespaces().withName(namespace).get() == null) {
             getClient().namespaces().createNew().withNewMetadata().withName(namespace).endMetadata().done();
         } else {

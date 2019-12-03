@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
@@ -32,9 +33,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
+@RegisterForReflection
 public class EntandoCustomResourceStatus implements Serializable {
 
-    private final Map<String, AbstractServerStatus> serverStatuses = new ConcurrentHashMap<>();
+    private Map<String, AbstractServerStatus> serverStatuses = new ConcurrentHashMap<>();
 
     private EntandoDeploymentPhase entandoDeploymentPhase;
 

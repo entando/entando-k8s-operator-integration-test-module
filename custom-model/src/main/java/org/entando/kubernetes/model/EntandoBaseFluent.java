@@ -41,6 +41,7 @@ public abstract class EntandoBaseFluent<F extends EntandoBaseFluent<F>> extends 
         return thisAsF();
     }
 
+    @SuppressWarnings("unchecked")
     private F thisAsF() {
         return (F) this;
     }

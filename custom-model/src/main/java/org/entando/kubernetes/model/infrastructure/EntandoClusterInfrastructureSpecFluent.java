@@ -36,16 +36,19 @@ public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfr
 
     }
 
+    @SuppressWarnings("unchecked")
     public N withKeycloakSecretToUse(String keycloakSecretToUse) {
         this.keycloakSecretToUse = keycloakSecretToUse;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withDefault(boolean isDefault) {
         this.isDefault = isDefault;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withEntandoImageVersion(String entandoImageVersion) {
         this.entandoImageVersion = entandoImageVersion;
         return (N) this;

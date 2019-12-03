@@ -42,26 +42,31 @@ public class ExternalDatabaseSpecFluent<N extends ExternalDatabaseSpecFluent> {
         return new ExternalDatabaseSpec(dbms, host, port, databaseName, secretName);
     }
 
+    @SuppressWarnings("unchecked")
     public N withDatabaseName(String databaseName) {
         this.databaseName = databaseName;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withDbms(DbmsImageVendor dbms) {
         this.dbms = dbms;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withHost(String host) {
         this.host = host;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withPort(Integer port) {
         this.port = port;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withSecretName(String secretName) {
         this.secretName = secretName;
         return (N) this;

@@ -42,12 +42,12 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     private static final String MY_TLS_SECRET = "my-tls-secret";
 
     @BeforeEach
-    public void deleteEntandoApps() throws InterruptedException {
+    public void deleteEntandoApps() {
         prepareNamespace(entandoApps(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateEntandoApp() throws InterruptedException {
+    public void testCreateEntandoApp() {
         //Given
         EntandoApp entandoApp = new EntandoAppBuilder()
                 .withNewMetadata().withName(MY_APP)
@@ -87,7 +87,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     }
 
     @Test
-    public void testEditEntandoApp() throws InterruptedException {
+    public void testEditEntandoApp() {
         //Given
         EntandoApp entandoApp = new EntandoAppBuilder()
                 .withNewMetadata()
@@ -140,9 +140,9 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
     }
 
-    protected abstract DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) throws InterruptedException;
+    protected abstract DoneableEntandoApp editEntandoApp(EntandoApp entandoApp);
 
-    protected CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp> entandoApps() throws InterruptedException {
+    protected CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp> entandoApps() {
         return produceAllEntandoApps(getClient());
     }
 

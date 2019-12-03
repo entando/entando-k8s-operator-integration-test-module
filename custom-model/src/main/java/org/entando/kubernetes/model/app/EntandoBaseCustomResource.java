@@ -17,9 +17,11 @@
 package org.entando.kubernetes.model.app;
 
 import io.fabric8.kubernetes.client.CustomResource;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.entando.kubernetes.model.EntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 
+@RegisterForReflection
 public abstract class EntandoBaseCustomResource extends CustomResource implements EntandoCustomResource {
 
     private EntandoCustomResourceStatus entandoStatus;

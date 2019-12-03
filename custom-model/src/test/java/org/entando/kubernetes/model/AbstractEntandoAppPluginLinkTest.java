@@ -37,12 +37,12 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     private static final String MY_APP = "my-app";
 
     @BeforeEach
-    public void deleteEntandoAppPluginLinks() throws InterruptedException {
+    public void deleteEntandoAppPluginLinks() {
         prepareNamespace(entandoAppPluginLinks(), MY_APP_NAMESPACE);
     }
 
     @Test
-    public void testCreateEntandoAppPluginLink() throws InterruptedException {
+    public void testCreateEntandoAppPluginLink() {
         //Given
         EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
                 .withNewMetadata().withName(MY_PLUGIN)
@@ -67,7 +67,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     }
 
     @Test
-    public void testEditEntandoAppPluginLink() throws InterruptedException {
+    public void testEditEntandoAppPluginLink() {
         //Given
         EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
                 .withNewMetadata()
@@ -102,12 +102,10 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
         assertThat(actual.getStatus(), is(notNullValue()));
     }
 
-    protected abstract DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoAppPluginLink)
-            throws InterruptedException;
+    protected abstract DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoAppPluginLink);
 
     protected CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,
-            DoneableEntandoAppPluginLink> entandoAppPluginLinks()
-            throws InterruptedException {
+            DoneableEntandoAppPluginLink> entandoAppPluginLinks() {
         return produceAllEntandoAppPluginLinks(getClient());
     }
 

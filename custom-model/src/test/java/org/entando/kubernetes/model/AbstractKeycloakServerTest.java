@@ -39,12 +39,12 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
     private static final String MY_TLS_SECRET = "my-tls-secret";
 
     @BeforeEach
-    public void deleteKeycloakServer() throws InterruptedException {
+    public void deleteKeycloakServer() {
         prepareNamespace(keycloakServers(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateKeycloakServer() throws InterruptedException {
+    public void testCreateKeycloakServer() {
         //Given
         KeycloakServer keycloakServer = new KeycloakServerBuilder()
                 .withNewMetadata().withName(MY_KEYCLOAK)
@@ -77,7 +77,7 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
     }
 
     @Test
-    public void testEditKeycloakServer() throws InterruptedException {
+    public void testEditKeycloakServer() {
         //Given
         KeycloakServer keycloakServer = new KeycloakServerBuilder()
                 .withNewMetadata()
@@ -130,10 +130,9 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected abstract DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) throws InterruptedException;
+    protected abstract DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer);
 
-    protected CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> keycloakServers()
-            throws InterruptedException {
+    protected CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> keycloakServers() {
         return produceAllKeycloakServers(getClient());
     }
 }

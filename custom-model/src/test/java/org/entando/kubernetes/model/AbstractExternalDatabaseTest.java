@@ -20,6 +20,8 @@ import static org.entando.kubernetes.model.externaldatabase.ExternalDatabaseOper
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.externaldatabase.DoneableExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
@@ -38,12 +40,12 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
     private static final String MY_DB_SECRET = "my-db-secret";
 
     @BeforeEach
-    public void deleteExternalDatabase() throws InterruptedException {
+    public void deleteExternalDatabase() {
         prepareNamespace(externalDatabases(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateExternalDatabase() throws InterruptedException {
+    public void testCreateExternalDatabase() {
         //Given
         ExternalDatabase externalDatabase = new ExternalDatabaseBuilder()
                 .withNewMetadata().withName(MY_EXTERNAL_DATABASE)
@@ -58,9 +60,14 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        NonNamespaceOperation<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase, Resource<ExternalDatabase,
+                DoneableExternalDatabase>> op =
+                externalDatabases()
+                        .inNamespace(MY_NAMESPACE);
+        op.create(externalDatabase);
         //When
-        ExternalDatabaseList list = externalDatabases().inNamespace(MY_NAMESPACE).list();
+        ExternalDatabaseList list = op.list();
+        ExternalDatabase externalDatabase1 = op.withName(MY_EXTERNAL_DATABASE).fromServer().get();
         ExternalDatabase actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
@@ -72,7 +79,7 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
     }
 
     @Test
-    public void testEditExternalDatabase() throws InterruptedException {
+    public void testEditExternalDatabase() {
         //Given
         ExternalDatabase externalDatabase = new ExternalDatabaseBuilder()
                 .withNewMetadata().withName(MY_EXTERNAL_DATABASE)
@@ -115,10 +122,9 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected abstract DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) throws InterruptedException;
+    protected abstract DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase);
 
-    protected CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases()
-            throws InterruptedException {
+    protected CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases() {
         return produceAllExternalDatabases(getClient());
     }
 }
