@@ -21,6 +21,7 @@ import static java.lang.String.format;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.fabric8.zjsonpatch.internal.guava.Strings;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import java.util.Locale;
  * Oracle, rather use a pre-configured external database.
  */
 @SuppressWarnings("squid:S2068")//Because the password gets resolved from and environment variable at runtime only
+@RegisterForReflection
 public enum DbmsImageVendor {
     MYSQL("docker.io/centos/mysql-57-centos7:latest", 3306, "root", "/var/lib/mysql/data",
             "MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -h 127.0.0.1 -u root -e 'SELECT 1'",

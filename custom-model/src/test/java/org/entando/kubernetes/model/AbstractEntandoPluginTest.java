@@ -54,12 +54,12 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
 
     @BeforeEach
-    public void deleteEntandoPlugins() throws InterruptedException {
+    public void deleteEntandoPlugins() {
         prepareNamespace(entandoPlugins(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateEntandoPlugin() throws InterruptedException {
+    public void testCreateEntandoPlugin() {
         //Given
         EntandoPlugin externalDatabase = new EntandoPluginBuilder()
                 .withNewMetadata().withName(MY_PLUGIN)
@@ -112,7 +112,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     }
 
     @Test
-    public void testEditEntandoPlugin() throws InterruptedException {
+    public void testEditEntandoPlugin() {
         //Given
         EntandoPlugin entandoPlugin = new EntandoPluginBuilder()
                 .withNewMetadata()
@@ -180,10 +180,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
     }
 
-    protected abstract DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin) throws InterruptedException;
+    protected abstract DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin);
 
-    protected CustomResourceOperationsImpl<EntandoPlugin, EntandoPluginList, DoneableEntandoPlugin> entandoPlugins()
-            throws InterruptedException {
+    protected CustomResourceOperationsImpl<EntandoPlugin, EntandoPluginList, DoneableEntandoPlugin> entandoPlugins() {
         return produceAllEntandoPlugins(getClient());
     }
 

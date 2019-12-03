@@ -41,13 +41,13 @@ public class KeycloakServerIntegratedTest extends AbstractKeycloakServerTest {
     }
 
     @Override
-    protected DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) throws InterruptedException {
+    protected DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) {
         keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
         return keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit();
     }
 
     @Test
-    public void multipleStatuses() throws InterruptedException {
+    public void multipleStatuses() {
         super.testCreateKeycloakServer();
         keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit().withPhase(EntandoDeploymentPhase.STARTED).done();
         DbServerStatus dbStatus = new DbServerStatus("db-qualifier");

@@ -40,33 +40,39 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
 
     }
 
+    @SuppressWarnings("unchecked")
     public N withStandardServerImage(JeeServer jeeServer) {
         this.standardServerImage = jeeServer;
         this.customServerImage = jeeServer == null ? this.customServerImage : null;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withCustomServerImage(String customServerImage) {
         this.customServerImage = customServerImage;
         this.standardServerImage = customServerImage == null ? standardServerImage : null;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withEntandoImageVersion(String entandoImageVersion) {
         this.entandoImageVersion = entandoImageVersion;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withKeycloakSecretToUse(String name) {
         this.keycloakSecretToUse = name;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withClusterInfrastructureToUse(String name) {
         this.clusterInfrastructureToUse = name;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withReplicas(Integer replicas) {
         this.replicas = replicas;
         return (N) this;

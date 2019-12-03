@@ -29,7 +29,7 @@ public class EntandoAppPluginLinkIntegratedTest extends AbstractEntandoAppPlugin
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 
     @Override
-    protected DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoPlugin) throws InterruptedException {
+    protected DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoPlugin) {
         entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(entandoPlugin);
         return entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_PLUGIN).edit();
     }

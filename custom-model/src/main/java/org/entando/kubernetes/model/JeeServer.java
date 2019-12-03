@@ -19,8 +19,10 @@ package org.entando.kubernetes.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.fabric8.zjsonpatch.internal.guava.Strings;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Locale;
 
+@RegisterForReflection
 public enum JeeServer {
     WILDFLY("entando/entando-de-app-wildfly"),
     EAP("entando/entando-de-app-eap"),

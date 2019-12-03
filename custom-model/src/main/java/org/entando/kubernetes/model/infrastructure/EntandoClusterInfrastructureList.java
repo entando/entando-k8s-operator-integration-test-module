@@ -18,8 +18,10 @@ package org.entando.kubernetes.model.infrastructure;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.fabric8.kubernetes.client.CustomResourceList;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonDeserialize
+@RegisterForReflection
 public class EntandoClusterInfrastructureList extends CustomResourceList<EntandoClusterInfrastructure> {
 
 }

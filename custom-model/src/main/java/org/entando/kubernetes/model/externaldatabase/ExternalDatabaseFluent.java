@@ -39,14 +39,17 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
         this.spec = spec;
     }
 
+    @SuppressWarnings("unchecked")
     public SpecNestedImpl<A> editSpec() {
         return new SpecNestedImpl<>((A) this, this.spec.build());
     }
 
+    @SuppressWarnings("unchecked")
     public SpecNestedImpl<A> withNewSpec() {
         return new SpecNestedImpl<>((A) this);
     }
 
+    @SuppressWarnings("unchecked")
     public A withSpec(ExternalDatabaseSpec spec) {
         this.spec = new ExternalDatabaseSpecBuilder(spec);
         return (A) this;
@@ -67,6 +70,7 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
             this.parentBuilder = parentBuilder;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public N and() {
             return (N) parentBuilder.withSpec(this.build());

@@ -34,7 +34,7 @@ public class ExternalDatabaseIntegratedTest extends AbstractExternalDatabaseTest
     }
 
     @Override
-    protected DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) throws InterruptedException {
+    protected DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) {
         externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
         return externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).edit();
     }

@@ -17,7 +17,9 @@
 package org.entando.kubernetes.model.link;
 
 import io.fabric8.kubernetes.client.CustomResourceList;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
+@RegisterForReflection
 public class EntandoAppPluginLinkList extends CustomResourceList<EntandoAppPluginLink> {
 
 }

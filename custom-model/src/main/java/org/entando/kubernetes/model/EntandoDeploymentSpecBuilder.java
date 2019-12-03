@@ -33,21 +33,25 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
     protected EntandoDeploymentSpecBuilder() {
     }
 
+    @SuppressWarnings("unchecked")
     public final N withDbms(DbmsImageVendor dbms) {
         this.dbms = dbms;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public final N withTlsSecretName(String tlsSecretName) {
         this.tlsSecretName = tlsSecretName;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public final N withReplicas(int replicas) {
         this.replicas = replicas;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public final N withIngressHostName(String ingressHostName) {
         this.ingressHostName = ingressHostName;
         return (N) this;

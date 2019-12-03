@@ -20,8 +20,10 @@ import static java.util.Optional.ofNullable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Locale;
 
+@RegisterForReflection
 public enum PluginSecurityLevel {
     STRICT, LENIENT;
 

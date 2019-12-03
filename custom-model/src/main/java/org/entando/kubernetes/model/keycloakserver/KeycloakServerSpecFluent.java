@@ -35,16 +35,19 @@ public class KeycloakServerSpecFluent<N extends KeycloakServerSpecFluent> extend
 
     }
 
+    @SuppressWarnings("unchecked")
     public N withDefault(boolean isDefault) {
         this.isDefault = isDefault;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withImageName(String imageName) {
         this.imageName = imageName;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withEntandoImageVersion(String entandoImageVersion) {
         this.entandoImageVersion = entandoImageVersion;
         return (N) this;

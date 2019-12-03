@@ -35,12 +35,14 @@ public class EntandoAppPluginLinkSpecFluent<N extends EntandoAppPluginLinkSpecFl
 
     }
 
+    @SuppressWarnings("unchecked")
     public N withEntandoApp(String entandoAppNamespace, String entandoAppName) {
         this.entandoAppNamespace = entandoAppNamespace;
         this.entandoAppName = entandoAppName;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withEntandoPlugin(String entandoPluginNamespace, String entandoPluginName) {
         this.entandoPluginNamespace = entandoPluginNamespace;
         this.entandoPluginName = entandoPluginName;

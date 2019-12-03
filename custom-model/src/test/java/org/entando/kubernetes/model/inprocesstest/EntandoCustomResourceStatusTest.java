@@ -57,7 +57,7 @@ public class EntandoCustomResourceStatusTest {
     }
 
     @Test
-    public void testSerializeDeserialize() throws InterruptedException {
+    public void testSerializeDeserialize() {
         DbServerStatus dbServerStatus = new DbServerStatus();
         dbServerStatus.setQualifier("db");
         populateStatus(dbServerStatus);

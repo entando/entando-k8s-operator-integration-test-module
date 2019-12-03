@@ -58,31 +58,37 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
 
     }
 
+    @SuppressWarnings("unchecked")
     public N withClusterInfrastructureToUse(String name) {
         this.clusterInfrastructureToUse = name;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withIngressPath(String ingressPath) {
         this.ingressPath = ingressPath;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N addNewConnectionConfigName(String name) {
         connectionConfigNames.add(name);
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withImage(String image) {
         this.image = image;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withSecurityLevel(PluginSecurityLevel level) {
         this.securityLevel = level;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withKeycloakSecretToUse(String name) {
         this.keycloakSecretToUse = name;
         return (N) this;
@@ -98,6 +104,7 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         return addNewRole(code, name);
     }
 
+    @SuppressWarnings("unchecked")
     public N addNewRole(String code, String name) {
         roles.add(new ExpectedRole(code, name));
         return (N) this;
@@ -113,11 +120,13 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         return addNewPermission(clientId, role);
     }
 
+    @SuppressWarnings("unchecked")
     public N addNewPermission(String clientId, String role) {
         permissions.add(new Permission(clientId, role));
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N addNewParameter(String name, String value) {
         this.parameters.put(name, value);
         return (N) this;
@@ -129,29 +138,34 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
                 clusterInfrastructureToUse);
     }
 
+    @SuppressWarnings("unchecked")
     public N withHealthCheckPath(String healthCheckPath) {
         this.healthCheckPath = healthCheckPath;
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withConnectionConfigNames(List<String> strings) {
         this.connectionConfigNames.clear();
         this.connectionConfigNames.addAll(strings);
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withRoles(List<ExpectedRole> roles) {
         this.roles.clear();
         this.roles.addAll(roles);
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withPermissions(List<Permission> permissions) {
         this.permissions.clear();
         this.permissions.addAll(permissions);
         return (N) this;
     }
 
+    @SuppressWarnings("unchecked")
     public N withParameters(Map<String, String> parameters) {
         this.parameters.clear();
         this.parameters.putAll(parameters);

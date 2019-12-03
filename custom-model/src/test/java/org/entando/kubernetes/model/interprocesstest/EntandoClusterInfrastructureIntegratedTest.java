@@ -41,14 +41,13 @@ public class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoC
     }
 
     @Override
-    protected DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure keycloakServer)
-            throws InterruptedException {
+    protected DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure keycloakServer) {
         entandoInfrastructure().inNamespace(MY_NAMESPACE).create(keycloakServer);
         return entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit();
     }
 
     @Test
-    public void multipleStatuses() throws InterruptedException {
+    public void multipleStatuses() {
         super.testCreateEntandoClusterInfrastructure();
         entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit()
                 .withPhase(EntandoDeploymentPhase.STARTED).done();
