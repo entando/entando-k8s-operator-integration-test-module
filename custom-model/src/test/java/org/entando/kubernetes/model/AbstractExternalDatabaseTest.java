@@ -31,11 +31,11 @@ import org.junit.jupiter.api.Test;
 public abstract class AbstractExternalDatabaseTest implements CustomResourceTestUtil {
 
     protected static final String MY_EXTERNAL_DATABASE = "my-external-database";
+    protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String MY_DB = "my_db";
     private static final String MYHOST_COM = "myhost.com";
     private static final int PORT_1521 = 1521;
     private static final String MY_DB_SECRET = "my-db-secret";
-    protected final String MY_NAMESPACE = calculateNameSpace("my-namespace");
 
     @BeforeEach
     public void deleteExternalDatabase() {

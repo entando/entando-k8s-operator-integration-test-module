@@ -31,10 +31,10 @@ import org.junit.jupiter.api.Test;
 
 public abstract class AbstractEntandoAppPluginLinkTest implements CustomResourceTestUtil {
 
-    public final String MY_APP_NAMESPACE = calculateNameSpace("my-app-namespace");
-    public final String MY_PLUGIN_NAMEPSACE = calculateNameSpace( "my-plugin-namespace");
     protected static final String MY_PLUGIN = "my-plugin";
     private static final String MY_APP = "my-app";
+    public final String MY_APP_NAMESPACE = TestConfig.calculateNameSpace("my-app-namespace");
+    public final String MY_PLUGIN_NAMEPSACE = TestConfig.calculateNameSpace("my-plugin-namespace");
 
     @BeforeEach
     public void deleteEntandoAppPluginLinks() {

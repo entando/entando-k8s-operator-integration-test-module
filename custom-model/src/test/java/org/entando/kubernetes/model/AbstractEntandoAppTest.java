@@ -33,13 +33,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     public static final String MY_CUSTOM_SERVER_IMAGE = "somenamespace/someimage:3.2.2";
     public static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
     protected static final String MY_APP = "my-app";
+    protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
     private static final String MYINGRESS_COM = "myingress.com";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
     private static final String MY_VALUE = "my-value";
     private static final String MY_LABEL = "my-label";
     private static final String MY_TLS_SECRET = "my-tls-secret";
-    protected final String MY_NAMESPACE = calculateNameSpace("my-namespace");
 
     @BeforeEach
     public void deleteEntandoApps() {

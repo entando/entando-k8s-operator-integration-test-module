@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 public abstract class AbstractEntandoPluginTest implements CustomResourceTestUtil {
 
     protected static final String MY_PLUGIN = "my-plugin";
+    protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
@@ -51,7 +52,6 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     private static final String PARAMETER_NAME = "env";
     private static final String PARAMETER_VALUE = "B";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
-    protected final String MY_NAMESPACE = calculateNameSpace("my-namespace");
 
     @BeforeEach
     public void deleteEntandoPlugins() {
