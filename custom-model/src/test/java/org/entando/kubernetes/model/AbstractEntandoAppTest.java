@@ -32,7 +32,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
     public static final String MY_CUSTOM_SERVER_IMAGE = "somenamespace/someimage:3.2.2";
     public static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
-    protected static final String MY_NAMESPACE = "my-namespace";
     protected static final String MY_APP = "my-app";
     private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
     private static final String MYINGRESS_COM = "myingress.com";
@@ -40,6 +39,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     private static final String MY_VALUE = "my-value";
     private static final String MY_LABEL = "my-label";
     private static final String MY_TLS_SECRET = "my-tls-secret";
+    protected final String MY_NAMESPACE = calculateNameSpace("my-namespace");
 
     @BeforeEach
     public void deleteEntandoApps() {

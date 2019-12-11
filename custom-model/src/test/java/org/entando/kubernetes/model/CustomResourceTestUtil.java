@@ -22,6 +22,9 @@ import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import java.time.Duration;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 public interface CustomResourceTestUtil {
 
@@ -47,4 +50,65 @@ public interface CustomResourceTestUtil {
     }
 
     KubernetesClient getClient();
+
+    String ENTANDO_TEST_NAMESPACE_OVERRIDE = "entando.test.namespace.override";
+    String ENTANDO_TEST_NAME_SUFFIX = "entando.test.name.suffix";
+
+    default Optional<String> getKubernetesUsername() {
+        return lookupProperty("entando.kubernetes.username");
+    }
+
+    default Optional<String> getKubernetesPassword() {
+        return lookupProperty("entando.kubernetes.password");
+    }
+
+    default Optional<String> getKubernetesMasterUrl() {
+        return lookupProperty("entando.kubernetes.master.url");
+    }
+
+    default String calculateName(String baseName) {
+        return baseName + getTestNameSuffix().map(s -> "-" + s).orElse("");
+    }
+
+    default String calculateNameSpace(String baseName) {
+        return calculateName(getTestNamespaceOverride().orElse(baseName));
+    }
+
+    default Optional<String> getTestNamespaceOverride() {
+        return lookupProperty(ENTANDO_TEST_NAMESPACE_OVERRIDE);
+    }
+
+    default Optional<String> getTestNameSuffix() {
+        return lookupProperty(ENTANDO_TEST_NAME_SUFFIX);
+    }
+
+    default Optional<String> lookupProperty(String name) {
+        Optional<String> fromEnv = System.getenv().entrySet().stream()
+                .filter(entry -> isMatch(name, entry))
+                .map(Entry::getValue)
+                .findFirst();
+        if (fromEnv.isPresent()) {
+            return fromEnv;
+        } else {
+            return System.getProperties().entrySet().stream()
+                    .filter(entry -> isMatch(name, entry))
+                    .map(Entry::getValue)
+                    .map(String.class::cast)
+                    .findFirst();
+        }
+    }
+
+    default boolean isMatch(String n, Entry<?, ?> entry) {
+        if (entry.getValue() == null || ((String) entry.getValue()).trim().isEmpty()) {
+            return false;
+        }
+        String name = n.toLowerCase(Locale.getDefault());
+        String key = ((String) entry.getKey()).toLowerCase(Locale.getDefault());
+        return name.equals(key) || snakeCaseOf(name).equals(key);
+    }
+
+    default String snakeCaseOf(String in) {
+        return in.replace("-", "_").replace(".", "_");
+    }
+
 }

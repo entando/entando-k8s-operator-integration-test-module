@@ -3,6 +3,8 @@ pipelineConfig:
   agent:
     image: maven-java11
   env:
+    - name: PIPELINE_CODE
+      value: cu
     - name: _JAVA_OPTIONS
       value: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xms10m -Xmx512m
     - name: SONAR_TOKEN
@@ -45,6 +47,11 @@ pipelineConfig:
         secretKeyRef:
           name: entando-jx-common-secret
           key: gpg.homedir
+    - name: ENTANDO_DEFAULT_ROUTING_SUFFIX
+      valueFrom:
+        secretKeyRef:
+          name: entando-jx-common-secret
+          key: default.routing.suffix
   pipelines:
     pullRequest:
       build:
@@ -56,7 +63,7 @@ pipelineConfig:
             name: fetch-full-repo
           - sh: >-
               mvn clean verify sonar:sonar \
-                -Pin-process-verification -Pinter-process-verification
+                -Pin-process-verification -Pinter-process-verification \
                 -Dsonar.login=${SONAR_TOKEN} \
                 -Dsonar.pullrequest.key=${PULL_NUMBER} \
                 -Dsonar.pullrequest.base=master \
@@ -67,8 +74,21 @@ pipelineConfig:
                 -DautoUpdate=false \
                 -DconnectionString=${OWASPDB_URL} \
                 -DdatabasePassword=${OWASPDB_PASSWORD} \
-                -DdatabaseUser=${OWASPDB_USERNAME}
+                -DdatabaseUser=${OWASPDB_USERNAME} \
+                -Dentando.default.routing.suffix=${ENTANDO_DEFAULT_ROUTING_SUFFIX} \
+                -Dentando.test.namespace.override=${REPO_NAME} \
+                -Dentando.test.name.suffix=${PIPELINE_CODE}pr${PULL_NUMBER}
             name: mvn-verify
+      postBuild:
+        replace: true
+        steps:
+          - sh: echo 'No postbuild action'
+            name: post-build
+      promote:
+        replace: true
+        steps:
+          - sh: echo 'No promote action'
+            name: post-build
     release:
       build:
         replace: true
@@ -78,6 +98,7 @@ pipelineConfig:
           - sh: >-
               mvn clean deploy sonar:sonar \
                 -Pprepare-for-nexus \
+                -Pin-process-verification -Pinter-process-verification \
                 -Dsonar.login=${SONAR_TOKEN} \
                 -DautoUpdate=false \
                 -DconnectionString=${OWASPDB_URL} \
@@ -85,5 +106,13 @@ pipelineConfig:
                 -DdatabaseUser=${OWASPDB_USERNAME} \
                 -Dgpg.homedir=${GPG_HOMEDIR} \
                 -Dgpg.keyname=${GPG_KEYNAME} \
-                -Dgpg.passphrase=${GPG_PASSPHRASE}
+                -Dgpg.passphrase=${GPG_PASSPHRASE} \
+                -Dentando.default.routing.suffix=${ENTANDO_DEFAULT_ROUTING_SUFFIX} \
+                -Dentando.test.namespace.override=${REPO_NAME} \
+                -Dentando.test.name.suffix=${PIPELINE_CODE}ms${BUILD_NUMBER}
             name: mvn-deploy
+      promote:
+        replace: true
+        steps:
+          - sh: echo 'No promote action'
+            name: post-build

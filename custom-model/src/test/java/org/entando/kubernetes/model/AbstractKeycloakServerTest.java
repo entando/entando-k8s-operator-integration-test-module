@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 public abstract class AbstractKeycloakServerTest implements CustomResourceTestUtil {
 
-    protected static final String MY_NAMESPACE = "my-namespace";
     protected static final String MY_KEYCLOAK = "my-keycloak";
 
     private static final String SNAPSHOT = "6.1.0-SNAPSHOT";
@@ -38,6 +37,7 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
 
+    protected final String MY_NAMESPACE = calculateNameSpace("my-namespace");
     @BeforeEach
     public void deleteKeycloakServer() {
         prepareNamespace(keycloakServers(), MY_NAMESPACE);

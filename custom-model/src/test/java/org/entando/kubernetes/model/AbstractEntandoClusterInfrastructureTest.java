@@ -30,13 +30,13 @@ import org.junit.jupiter.api.Test;
 
 public abstract class AbstractEntandoClusterInfrastructureTest implements CustomResourceTestUtil {
 
-    protected static final String MY_NAMESPACE = "my-namespace";
     protected static final String MY_ENTANDO_CLUSTER_INFRASTRUCTURE = "my-entando-cluster-infrastructure";
 
     private static final String SNAPSHOT = "6.1.0-SNAPSHOT";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
+    protected final String MY_NAMESPACE = calculateNameSpace("my-namespace");
 
     @BeforeEach
     public void deleteEntandoClusterInfrastructure() {
