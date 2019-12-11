@@ -30,6 +30,11 @@ public class DoneableEntandoClusterInfrastructure extends
     private final Function<EntandoClusterInfrastructure, EntandoClusterInfrastructure> function;
     private final EntandoCustomResourceStatus status;
 
+    public DoneableEntandoClusterInfrastructure(Function<EntandoClusterInfrastructure, EntandoClusterInfrastructure> function) {
+        this.status = new EntandoCustomResourceStatus();
+        this.function = function;
+    }
+
     public DoneableEntandoClusterInfrastructure(EntandoClusterInfrastructure resource,
             Function<EntandoClusterInfrastructure, EntandoClusterInfrastructure> function) {
         super(resource.getSpec(), resource.getMetadata());

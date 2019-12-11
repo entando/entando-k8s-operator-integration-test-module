@@ -98,7 +98,6 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
             }
             return crd;
         } catch (KubernetesClientException e) {
-            e.printStackTrace();
             if (e.getCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 LOGGER.severe("User does not have permissions to create CRD's. Loading from memory.");
                 //The code doesn't have RBAC permission to read the CRD. Let's assume it has already been deployed
@@ -109,7 +108,6 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
                 throw e;
             }
         } catch (RuntimeException e) {
-            e.printStackTrace();
             throw e;
         }
     }

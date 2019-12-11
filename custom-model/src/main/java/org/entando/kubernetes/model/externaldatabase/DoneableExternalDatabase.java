@@ -30,6 +30,11 @@ public class DoneableExternalDatabase extends ExternalDatabaseFluent<DoneableExt
     private final Function<ExternalDatabase, ExternalDatabase> function;
     private final EntandoCustomResourceStatus status;
 
+    public DoneableExternalDatabase(Function<ExternalDatabase, ExternalDatabase> function) {
+        this.status = new EntandoCustomResourceStatus();
+        this.function = function;
+    }
+
     public DoneableExternalDatabase(ExternalDatabase resource, Function<ExternalDatabase, ExternalDatabase> function) {
         super(resource.getSpec(), resource.getMetadata());
         this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());

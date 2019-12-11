@@ -29,6 +29,11 @@ public class DoneableKeycloakServer extends KeycloakServerFluent<DoneableKeycloa
     private final Function<KeycloakServer, KeycloakServer> function;
     private final EntandoCustomResourceStatus status;
 
+    public DoneableKeycloakServer(Function<KeycloakServer, KeycloakServer> function) {
+        this.status = new EntandoCustomResourceStatus();
+        this.function = function;
+    }
+
     public DoneableKeycloakServer(KeycloakServer resource, Function<KeycloakServer, KeycloakServer> function) {
         super(resource.getSpec(), resource.getMetadata());
         this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());

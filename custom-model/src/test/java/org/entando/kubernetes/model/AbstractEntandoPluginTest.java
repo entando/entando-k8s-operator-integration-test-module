@@ -61,7 +61,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     @Test
     public void testCreateEntandoPlugin() {
         //Given
-        EntandoPlugin externalDatabase = new EntandoPluginBuilder()
+        EntandoPlugin entandoPlugin = new EntandoPluginBuilder()
                 .withNewMetadata().withName(MY_PLUGIN)
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
@@ -83,7 +83,8 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        entandoPlugins().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        entandoPlugins().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoPlugin.getMetadata()).withSpec(entandoPlugin.getSpec())
+                .done();
         //When
         EntandoPluginList list = entandoPlugins().inNamespace(MY_NAMESPACE).list();
         EntandoPlugin actual = list.getItems().get(0);

@@ -26,30 +26,35 @@ import org.entando.kubernetes.model.EntandoDeploymentPhase;
 public class DoneableEntandoAppPluginLink extends EntandoAppPluginLinkFluent<DoneableEntandoAppPluginLink> implements
         DoneableEntandoCustomResource<DoneableEntandoAppPluginLink, EntandoAppPluginLink> {
 
-    private final EntandoCustomResourceStatus entandoStatus;
+    private final EntandoCustomResourceStatus status;
     private final Function<EntandoAppPluginLink, EntandoAppPluginLink> function;
+
+    public DoneableEntandoAppPluginLink(Function<EntandoAppPluginLink, EntandoAppPluginLink> function) {
+        this.status = new EntandoCustomResourceStatus();
+        this.function = function;
+    }
 
     public DoneableEntandoAppPluginLink(EntandoAppPluginLink resource, Function<EntandoAppPluginLink, EntandoAppPluginLink> function) {
         super(resource.getSpec(), resource.getMetadata());
         this.function = function;
-        this.entandoStatus = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
+        this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
     }
 
     @Override
     public DoneableEntandoAppPluginLink withStatus(AbstractServerStatus status) {
-        this.entandoStatus.putServerStatus(status);
+        this.status.putServerStatus(status);
         return this;
     }
 
     @Override
     public DoneableEntandoAppPluginLink withPhase(EntandoDeploymentPhase phase) {
-        entandoStatus.setEntandoDeploymentPhase(phase);
+        status.setEntandoDeploymentPhase(phase);
         return this;
     }
 
     @Override
     public EntandoAppPluginLink done() {
-        return function.apply(new EntandoAppPluginLink(metadata.build(), spec.build(), entandoStatus));
+        return function.apply(new EntandoAppPluginLink(metadata.build(), spec.build(), status));
     }
 
 }

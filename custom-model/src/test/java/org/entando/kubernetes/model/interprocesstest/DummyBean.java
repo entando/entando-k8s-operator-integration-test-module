@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model;
+package org.entando.kubernetes.model.interprocesstest;
 
 import static org.entando.kubernetes.model.plugin.PluginSecurityLevel.STRICT;
 
@@ -26,9 +26,15 @@ import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import io.quarkus.runtime.StartupEvent;
 import java.util.Arrays;
 import java.util.Objects;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.entando.kubernetes.model.DbServerStatus;
+import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.DoneableEntandoCustomResource;
+import org.entando.kubernetes.model.EntandoControllerFailure;
+import org.entando.kubernetes.model.EntandoCustomResource;
+import org.entando.kubernetes.model.EntandoDeploymentPhase;
+import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
@@ -61,8 +67,8 @@ import org.entando.kubernetes.model.plugin.EntandoPluginList;
 import org.entando.kubernetes.model.plugin.EntandoPluginOperationFactory;
 
 /**
- * This bean is intended solely to test our custom resources in Quarkus/Graalvm. It is deactivated by default. To activated it for
- * testing purposes, uncomment the @Observes annotation in {@link #onStartup(StartupEvent)}
+ * This bean is intended solely to test our custom resources in Quarkus/Graalvm. It is deactivated by default. To activated it for testing
+ * purposes, uncomment the @Observes annotation in {@link #onStartup(StartupEvent)}
  */
 @Singleton
 public class DummyBean {

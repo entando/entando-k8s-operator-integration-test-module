@@ -46,7 +46,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     @Test
     public void testCreateEntandoClusterInfrastructure() {
         //Given
-        EntandoClusterInfrastructure externalDatabase = new EntandoClusterInfrastructureBuilder()
+        EntandoClusterInfrastructure clusterInfrastructure = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata().withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
@@ -61,7 +61,8 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        entandoInfrastructure().inNamespace(MY_NAMESPACE).createNew().withMetadata(clusterInfrastructure.getMetadata())
+                .withSpec(clusterInfrastructure.getSpec()).done();
         //When
         EntandoClusterInfrastructureList list = entandoInfrastructure().inNamespace(MY_NAMESPACE).list();
         EntandoClusterInfrastructure actual = list.getItems().get(0);

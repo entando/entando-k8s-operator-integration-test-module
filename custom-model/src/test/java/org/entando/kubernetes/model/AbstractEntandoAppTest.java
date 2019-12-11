@@ -66,7 +66,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
+        entandoApps().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoApp.getMetadata()).withSpec(entandoApp.getSpec()).done();
         //When
         EntandoAppList list = entandoApps().inNamespace(MY_NAMESPACE).list();
         EntandoApp actual = list.getItems().get(0);

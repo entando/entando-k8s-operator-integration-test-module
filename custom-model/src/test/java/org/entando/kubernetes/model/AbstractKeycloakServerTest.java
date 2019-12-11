@@ -61,7 +61,8 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
+        keycloakServers().inNamespace(MY_NAMESPACE).createNew().withMetadata(keycloakServer.getMetadata())
+                .withSpec(keycloakServer.getSpec()).done();
         //When
         KeycloakServerList list = keycloakServers().inNamespace(MY_NAMESPACE).list();
         KeycloakServer actual = list.getItems().get(0);

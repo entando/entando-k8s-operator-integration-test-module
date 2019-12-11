@@ -26,29 +26,34 @@ import org.entando.kubernetes.model.EntandoDeploymentPhase;
 public class DoneableEntandoPlugin extends EntandoPluginFluent<DoneableEntandoPlugin> implements
         DoneableEntandoCustomResource<DoneableEntandoPlugin, EntandoPlugin> {
 
-    private final EntandoCustomResourceStatus entandoStatus;
+    private final EntandoCustomResourceStatus status;
     private final Function<EntandoPlugin, EntandoPlugin> function;
+
+    public DoneableEntandoPlugin(Function<EntandoPlugin, EntandoPlugin> function) {
+        this.function = function;
+        this.status = new EntandoCustomResourceStatus();
+    }
 
     public DoneableEntandoPlugin(EntandoPlugin resource, Function<EntandoPlugin, EntandoPlugin> function) {
         super(resource.getSpec(), resource.getMetadata());
         this.function = function;
-        this.entandoStatus = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
+        this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
     }
 
     @Override
     public DoneableEntandoPlugin withStatus(AbstractServerStatus status) {
-        this.entandoStatus.putServerStatus(status);
+        this.status.putServerStatus(status);
         return this;
     }
 
     @Override
     public DoneableEntandoPlugin withPhase(EntandoDeploymentPhase phase) {
-        entandoStatus.setEntandoDeploymentPhase(phase);
+        status.setEntandoDeploymentPhase(phase);
         return this;
     }
 
     @Override
     public EntandoPlugin done() {
-        return function.apply(new EntandoPlugin(metadata.build(), spec.build(), entandoStatus));
+        return function.apply(new EntandoPlugin(metadata.build(), spec.build(), status));
     }
 }

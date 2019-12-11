@@ -54,7 +54,9 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_APP_NAMESPACE).endMetadata().done();
-        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(entandoAppPluginLink);
+        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).createNew().withMetadata(entandoAppPluginLink.getMetadata())
+                .withSpec(entandoAppPluginLink.getSpec())
+                .done();
         //When
         EntandoAppPluginLinkList list = entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).list();
         EntandoAppPluginLink actual = list.getItems().get(0);

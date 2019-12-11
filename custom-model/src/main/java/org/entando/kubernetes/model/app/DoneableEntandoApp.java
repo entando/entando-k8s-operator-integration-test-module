@@ -29,6 +29,11 @@ public class DoneableEntandoApp extends EntandoAppFluent<DoneableEntandoApp> imp
     private final EntandoCustomResourceStatus status;
     private final Function<EntandoApp, EntandoApp> function;
 
+    public DoneableEntandoApp(Function<EntandoApp, EntandoApp> function) {
+        this.function = function;
+        this.status = new EntandoCustomResourceStatus();
+    }
+
     public DoneableEntandoApp(EntandoApp resource, Function<EntandoApp, EntandoApp> function) {
         super(resource.getSpec(), resource.getMetadata());
         this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
