@@ -58,8 +58,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .withSpec(entandoAppPluginLink.getSpec())
                 .done();
         //When
-        EntandoAppPluginLinkList list = entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).list();
-        EntandoAppPluginLink actual = list.getItems().get(0);
+        EntandoAppPluginLink actual =  entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_PLUGIN).get();
         //Then
         assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));
         assertThat(actual.getSpec().getEntandoAppNamespace(), is(MY_APP_NAMESPACE));
@@ -104,7 +103,10 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
         assertThat(actual.getStatus(), is(notNullValue()));
     }
 
-    protected abstract DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoAppPluginLink);
+    protected DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoPlugin) {
+        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(entandoPlugin);
+        return entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_PLUGIN).edit();
+    }
 
     protected CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,
             DoneableEntandoAppPluginLink> entandoAppPluginLinks() {

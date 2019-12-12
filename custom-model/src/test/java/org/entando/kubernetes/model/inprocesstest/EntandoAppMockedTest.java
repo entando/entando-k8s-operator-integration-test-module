@@ -36,10 +36,6 @@ public class EntandoAppMockedTest extends AbstractEntandoAppTest {
     @Rule
     public KubernetesServer server = new KubernetesServer(false, true);
 
-    @Override
-    protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) {
-        return new DoneableEntandoApp(entandoApp, builtEntandoApp -> builtEntandoApp);
-    }
 
     @Override
     public KubernetesClient getClient() {

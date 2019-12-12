@@ -31,7 +31,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-public class EntandoAppPluginLinkSpec implements KubernetesResource {
+public class EntandoAppPluginLinkSpec {
 
     private String entandoAppNamespace;
     private String entandoAppName;

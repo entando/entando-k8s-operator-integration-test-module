@@ -40,12 +40,6 @@ public class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoC
         return client;
     }
 
-    @Override
-    protected DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure keycloakServer) {
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).create(keycloakServer);
-        return entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit();
-    }
-
     @Test
     public void multipleStatuses() {
         super.testCreateEntandoClusterInfrastructure();

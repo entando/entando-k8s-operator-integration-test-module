@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractEntandoAppPluginLinkTest;
-import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
-import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
@@ -35,11 +33,6 @@ public class EntandoAppPluginLinkMockedTest extends AbstractEntandoAppPluginLink
 
     @Rule
     public KubernetesServer server = new KubernetesServer(false, true);
-
-    @Override
-    protected DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoPlugin) {
-        return new DoneableEntandoAppPluginLink(entandoPlugin, builtEntandoAppPluginLink -> builtEntandoAppPluginLink);
-    }
 
     @Override
     public KubernetesClient getClient() {

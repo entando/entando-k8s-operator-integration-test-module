@@ -40,11 +40,6 @@ public class KeycloakServerIntegratedTest extends AbstractKeycloakServerTest {
         return client;
     }
 
-    @Override
-    protected DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) {
-        keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
-        return keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit();
-    }
 
     @Test
     public void multipleStatuses() {

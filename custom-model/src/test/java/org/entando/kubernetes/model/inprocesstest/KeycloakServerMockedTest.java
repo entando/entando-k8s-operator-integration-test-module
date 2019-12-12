@@ -41,10 +41,6 @@ public class KeycloakServerMockedTest extends AbstractKeycloakServerTest {
         return this.server.getClient();
     }
 
-    @Override
-    protected DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) {
-        return new DoneableKeycloakServer(keycloakServer, builtKeycloakServer -> builtKeycloakServer);
-    }
 
     @Test
     public void testOverriddenEqualsMethods() {

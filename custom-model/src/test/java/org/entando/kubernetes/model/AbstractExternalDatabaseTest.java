@@ -61,11 +61,7 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
         externalDatabases().inNamespace(MY_NAMESPACE).createNew().withMetadata(externalDatabase.getMetadata())
                 .withSpec(externalDatabase.getSpec()).done();
         //When
-        ExternalDatabaseList list = externalDatabases()
-                .inNamespace(MY_NAMESPACE).list();
-        ExternalDatabase externalDatabase1 = externalDatabases()
-                .inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).fromServer().get();
-        ExternalDatabase actual = list.getItems().get(0);
+        ExternalDatabase actual =  externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).get();
         //Then
         assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
         assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
@@ -119,7 +115,10 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected abstract DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase);
+    protected DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) {
+        externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        return externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).edit();
+    }
 
     protected CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases() {
         return produceAllExternalDatabases(getClient());

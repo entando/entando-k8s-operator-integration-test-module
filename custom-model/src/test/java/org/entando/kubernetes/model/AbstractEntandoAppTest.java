@@ -140,7 +140,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
     }
 
-    protected abstract DoneableEntandoApp editEntandoApp(EntandoApp entandoApp);
+    protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) {
+        entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
+        return entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit();
+    }
 
     protected CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp> entandoApps() {
         return produceAllEntandoApps(getClient());

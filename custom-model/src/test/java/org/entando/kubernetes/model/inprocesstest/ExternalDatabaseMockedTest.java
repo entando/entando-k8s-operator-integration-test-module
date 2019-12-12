@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractExternalDatabaseTest;
-import org.entando.kubernetes.model.externaldatabase.DoneableExternalDatabase;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
@@ -41,11 +39,7 @@ public class ExternalDatabaseMockedTest extends AbstractExternalDatabaseTest {
         return this.server.getClient();
     }
 
-    @Override
-    protected DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) {
-        return new DoneableExternalDatabase(externalDatabase,
-                builtExternalDatabase -> builtExternalDatabase);
-    }
+
 
     @Test
     public void testOverriddenEqualsMethods() {

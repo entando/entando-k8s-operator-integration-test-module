@@ -36,6 +36,7 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
     private static final String ENTANDO_SOMEKEYCLOAK = "entando/somekeycloak";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
+    private CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> operations;
 
     @BeforeEach
     public void deleteKeycloakServer() {
@@ -130,9 +131,15 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected abstract DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer);
+    protected final DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) {
+        keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
+        return keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit();
+    }
 
     protected CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> keycloakServers() {
-        return produceAllKeycloakServers(getClient());
+        if (operations == null) {
+            operations = produceAllKeycloakServers(getClient());
+        }
+        return operations;
     }
 }

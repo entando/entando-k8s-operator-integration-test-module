@@ -41,10 +41,7 @@ public class EntandoClusterInfrastructureMockedTest extends AbstractEntandoClust
         return this.server.getClient();
     }
 
-    @Override
-    protected DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure keycloakServer) {
-        return new DoneableEntandoClusterInfrastructure(keycloakServer, entandoClusterInfrastructure -> entandoClusterInfrastructure);
-    }
+
 
     @Test
     public void testOverriddenEqualsMethods() {

@@ -181,7 +181,10 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
     }
 
-    protected abstract DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin);
+    protected DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin) {
+        entandoPlugins().inNamespace(MY_NAMESPACE).create(entandoPlugin);
+        return entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).edit();
+    }
 
     protected CustomResourceOperationsImpl<EntandoPlugin, EntandoPluginList, DoneableEntandoPlugin> entandoPlugins() {
         return produceAllEntandoPlugins(getClient());

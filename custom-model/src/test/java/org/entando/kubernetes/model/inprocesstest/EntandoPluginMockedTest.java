@@ -37,11 +37,6 @@ public class EntandoPluginMockedTest extends AbstractEntandoPluginTest {
     public KubernetesServer server = new KubernetesServer(false, true);
 
     @Override
-    protected DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin) {
-        return new DoneableEntandoPlugin(entandoPlugin, builtEntandoPlugin -> builtEntandoPlugin);
-    }
-
-    @Override
     public KubernetesClient getClient() {
         return server.getClient();
     }

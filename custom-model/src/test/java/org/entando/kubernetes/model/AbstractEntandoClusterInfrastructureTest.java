@@ -132,8 +132,10 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected abstract DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure
-            keycloakServer);
+    protected DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure keycloakServer) {
+        entandoInfrastructure().inNamespace(MY_NAMESPACE).create(keycloakServer);
+        return entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit();
+    }
 
     protected CustomResourceOperationsImpl<EntandoClusterInfrastructure, EntandoClusterInfrastructureList,
             DoneableEntandoClusterInfrastructure> entandoInfrastructure() {

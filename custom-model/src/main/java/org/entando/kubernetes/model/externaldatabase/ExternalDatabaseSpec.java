@@ -23,17 +23,16 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 
+@JsonInclude(Include.NON_NULL)
 @JsonSerialize
 @JsonDeserialize
-@JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-public class ExternalDatabaseSpec implements Serializable {
+public class ExternalDatabaseSpec {
 
     private String dbms;
     private String host;
@@ -42,11 +41,10 @@ public class ExternalDatabaseSpec implements Serializable {
     private String secretName;
 
     public ExternalDatabaseSpec() {
-        super();
+
     }
 
     public ExternalDatabaseSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
-        this();
         this.dbms = dbms.toValue();
         this.host = host;
         this.secretName = secretName;

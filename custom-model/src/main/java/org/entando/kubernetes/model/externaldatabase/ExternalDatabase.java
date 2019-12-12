@@ -35,7 +35,7 @@ import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 @RegisterForReflection
 public class ExternalDatabase extends EntandoBaseCustomResource {
 
-    public static final String CRD_NAME = "externaldatabases.entando.org";
+    public static final String CRD_NAME = "externaldbs.entando.org";
 
     private ExternalDatabaseSpec spec;
 
@@ -53,6 +53,7 @@ public class ExternalDatabase extends EntandoBaseCustomResource {
 
     public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec, EntandoCustomResourceStatus status) {
         super(status);
+        setKind("ExternalDB");
         super.setMetadata(metadata);
         this.spec = spec;
     }
