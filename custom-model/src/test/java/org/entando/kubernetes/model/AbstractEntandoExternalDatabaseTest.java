@@ -20,11 +20,11 @@ import static org.entando.kubernetes.model.externaldatabase.EntandoExternalDatab
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.externaldatabase.DoneableEntandoExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.EntandoExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.EntandoExternalDatabaseBuilder;
 import org.entando.kubernetes.model.externaldatabase.EntandoExternalDatabaseList;
-import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +57,6 @@ public abstract class AbstractEntandoExternalDatabaseTest implements CustomResou
                 .withDbms(DbmsImageVendor.ORACLE)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         externalDatabases().inNamespace(MY_NAMESPACE).createNew().withMetadata(externalDatabase.getMetadata())
                 .withSpec(externalDatabase.getSpec()).done();
         //When
@@ -86,10 +85,11 @@ public abstract class AbstractEntandoExternalDatabaseTest implements CustomResou
                 .withDbms(DbmsImageVendor.POSTGRESQL)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         //When
         //We are not using the mock server here because of a known bug
-        DoneableEntandoExternalDatabase doneableEntandoExternalDatabase = editEntandoExternalDatabase(externalDatabase);
+        externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        DoneableEntandoExternalDatabase doneableEntandoExternalDatabase = externalDatabases().inNamespace(MY_NAMESPACE)
+                .withName(MY_EXTERNAL_DATABASE).edit();
         EntandoExternalDatabase actual = doneableEntandoExternalDatabase
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
@@ -113,11 +113,6 @@ public abstract class AbstractEntandoExternalDatabaseTest implements CustomResou
         assertThat(actual.getMetadata().getLabels().get("my-label"), is("my-value"));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
-    }
-
-    protected DoneableEntandoExternalDatabase editEntandoExternalDatabase(EntandoExternalDatabase externalDatabase) {
-        externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
-        return externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).edit();
     }
 
     protected CustomResourceOperationsImpl<EntandoExternalDatabase, EntandoExternalDatabaseList, DoneableEntandoExternalDatabase> externalDatabases() {

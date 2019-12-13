@@ -19,8 +19,6 @@ package org.entando.kubernetes.model.interprocesstest;
 import io.fabric8.kubernetes.client.AutoAdaptableKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.entando.kubernetes.model.AbstractEntandoAppPluginLinkTest;
-import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
-import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.junit.jupiter.api.Tag;
 
 @Tag("inter-process")

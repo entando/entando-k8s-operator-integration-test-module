@@ -57,11 +57,10 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
                 .withDbms(DbmsImageVendor.ORACLE)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         externalDatabases().inNamespace(MY_NAMESPACE).createNew().withMetadata(externalDatabase.getMetadata())
                 .withSpec(externalDatabase.getSpec()).done();
         //When
-        ExternalDatabase actual =  externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).get();
+        ExternalDatabase actual = externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).get();
         //Then
         assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
         assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
@@ -86,10 +85,10 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
                 .withDbms(DbmsImageVendor.POSTGRESQL)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         //When
-        //We are not using the mock server here because of a known bug
-        DoneableExternalDatabase doneableExternalDatabase = editExternalDatabase(externalDatabase);
+        externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        DoneableExternalDatabase doneableExternalDatabase = externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE)
+                .edit();
         ExternalDatabase actual = doneableExternalDatabase
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
@@ -113,11 +112,6 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
         assertThat(actual.getMetadata().getLabels().get("my-label"), is("my-value"));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
-    }
-
-    protected DoneableExternalDatabase editExternalDatabase(ExternalDatabase externalDatabase) {
-        externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
-        return externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).edit();
     }
 
     protected CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases() {

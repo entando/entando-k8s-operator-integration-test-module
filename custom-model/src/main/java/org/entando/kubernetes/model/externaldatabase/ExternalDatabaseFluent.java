@@ -38,7 +38,7 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
 
     private ExternalDatabaseFluent(ObjectMetaBuilder metadata, ExternalDatabaseSpecBuilder spec) {
         super(metadata);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", ExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", ExternalDatabase.class);
         this.spec = spec;
     }
 

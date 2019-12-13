@@ -39,8 +39,6 @@ public class ExternalDatabaseMockedTest extends AbstractExternalDatabaseTest {
         return this.server.getClient();
     }
 
-
-
     @Test
     public void testOverriddenEqualsMethods() {
         //The ObjectMetaBuilder's equals method is broken. There is no way to fix it. 

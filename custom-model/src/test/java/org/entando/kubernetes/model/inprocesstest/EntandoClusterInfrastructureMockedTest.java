@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractEntandoClusterInfrastructureTest;
-import org.entando.kubernetes.model.infrastructure.DoneableEntandoClusterInfrastructure;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
@@ -40,8 +38,6 @@ public class EntandoClusterInfrastructureMockedTest extends AbstractEntandoClust
     public KubernetesClient getClient() {
         return this.server.getClient();
     }
-
-
 
     @Test
     public void testOverriddenEqualsMethods() {

@@ -24,14 +24,15 @@ import org.entando.kubernetes.model.EntandoCustomResourceResolver;
 public final class EntandoExternalDatabaseOperationFactory {
 
     private static EntandoCustomResourceResolver<EntandoExternalDatabase, EntandoExternalDatabaseList, DoneableEntandoExternalDatabase> resolver =
-            new EntandoCustomResourceResolver<>(EntandoExternalDatabase.class, EntandoExternalDatabaseList.class, DoneableEntandoExternalDatabase.class);
+            new EntandoCustomResourceResolver<>(EntandoExternalDatabase.class, EntandoExternalDatabaseList.class,
+                    DoneableEntandoExternalDatabase.class);
 
     private EntandoExternalDatabaseOperationFactory() {
     }
 
     public static CustomResourceOperationsImpl<EntandoExternalDatabase, EntandoExternalDatabaseList,
             DoneableEntandoExternalDatabase> produceAllEntandoExternalDatabases(KubernetesClient client) {
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", EntandoExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", EntandoExternalDatabase.class);
         return resolver.resolveOperation(client);
     }
 }

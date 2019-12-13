@@ -5,7 +5,7 @@ metadata:
   name: entandoapps.entando.org
 spec:
   group: entando.org
-  version: v1alpha1
+  version: v1
   names:
     kind: EntandoApp
     plural: entandoapps

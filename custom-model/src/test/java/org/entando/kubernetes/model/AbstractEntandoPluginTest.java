@@ -82,12 +82,10 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         entandoPlugins().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoPlugin.getMetadata()).withSpec(entandoPlugin.getSpec())
                 .done();
         //When
-        EntandoPluginList list = entandoPlugins().inNamespace(MY_NAMESPACE).list();
-        EntandoPlugin actual = list.getItems().get(0);
+        EntandoPlugin actual = entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
@@ -135,10 +133,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withClusterInfrastructureToUse("another-cluster-infrastructure")
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         //When
-        //We are not using the mock server here because of a known bug
-        EntandoPlugin actual = editEntandoPlugin(entandoPlugin)
+        entandoPlugins().inNamespace(MY_NAMESPACE).create(entandoPlugin);
+        EntandoPlugin actual = entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).edit()
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
@@ -179,11 +176,6 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
-    }
-
-    protected DoneableEntandoPlugin editEntandoPlugin(EntandoPlugin entandoPlugin) {
-        entandoPlugins().inNamespace(MY_NAMESPACE).create(entandoPlugin);
-        return entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).edit();
     }
 
     protected CustomResourceOperationsImpl<EntandoPlugin, EntandoPluginList, DoneableEntandoPlugin> entandoPlugins() {

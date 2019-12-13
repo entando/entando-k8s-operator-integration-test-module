@@ -65,11 +65,9 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         entandoApps().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoApp.getMetadata()).withSpec(entandoApp.getSpec()).done();
         //When
-        EntandoAppList list = entandoApps().inNamespace(MY_NAMESPACE).list();
-        EntandoApp actual = list.getItems().get(0);
+        EntandoApp actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
@@ -106,7 +104,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withClusterInfrastructureToUse("some-cluster-infrastructure")
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         //When
         //We are not using the mock server here because of a known bug
         EntandoApp actual = editEntandoApp(entandoApp)

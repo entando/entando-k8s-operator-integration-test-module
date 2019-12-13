@@ -18,10 +18,10 @@ package org.entando.kubernetes.model.inprocesstest;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.entando.kubernetes.model.externaldatabase.EntandoExternalDatabaseBuilder;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractEntandoExternalDatabaseTest;
+import org.entando.kubernetes.model.externaldatabase.EntandoExternalDatabaseBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,13 +39,12 @@ public class EntandoExternalDatabaseMockedTest extends AbstractEntandoExternalDa
         return this.server.getClient();
     }
 
-
-
     @Test
     public void testOverriddenEqualsMethods() {
         //The ObjectMetaBuilder's equals method is broken. There is no way to fix it. 
         // These tests just verify that inequality corresponds with hashcode
-        EntandoExternalDatabaseBuilder builder = new EntandoExternalDatabaseBuilder().editMetadata().withNamespace("ns").withName("name").endMetadata();
+        EntandoExternalDatabaseBuilder builder = new EntandoExternalDatabaseBuilder().editMetadata().withNamespace("ns").withName("name")
+                .endMetadata();
         assertNotEquals(builder.editMetadata(), builder.editMetadata());
         assertNotEquals(builder.editMetadata().hashCode(), builder.editMetadata().hashCode());
     }

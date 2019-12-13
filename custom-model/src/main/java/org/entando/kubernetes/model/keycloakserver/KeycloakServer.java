@@ -58,7 +58,7 @@ public class KeycloakServer extends EntandoBaseCustomResource implements HasIngr
     public KeycloakServer(ObjectMeta metadata, KeycloakServerSpec spec, EntandoCustomResourceStatus status) {
         super(status);
         setKind("EntandoKeycloakServer");
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", KeycloakServer.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoKeycloakServer", KeycloakServer.class);
         this.spec = spec;
         super.setMetadata(metadata);
     }

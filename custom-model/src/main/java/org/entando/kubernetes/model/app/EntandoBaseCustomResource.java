@@ -33,7 +33,7 @@ public abstract class EntandoBaseCustomResource extends CustomResource implement
     protected EntandoBaseCustomResource(EntandoCustomResourceStatus entandoStatus) {
         super();
         this.entandoStatus = entandoStatus;
-        //        this.setApiVersion("v1alpha1");
+        //        this.setApiVersion("v1");
     }
 
     @Override

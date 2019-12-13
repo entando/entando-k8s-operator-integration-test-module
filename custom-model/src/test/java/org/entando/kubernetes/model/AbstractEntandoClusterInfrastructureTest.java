@@ -59,12 +59,11 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withDefault(true)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         entandoInfrastructure().inNamespace(MY_NAMESPACE).createNew().withMetadata(clusterInfrastructure.getMetadata())
                 .withSpec(clusterInfrastructure.getSpec()).done();
         //When
-        EntandoClusterInfrastructureList list = entandoInfrastructure().inNamespace(MY_NAMESPACE).list();
-        EntandoClusterInfrastructure actual = list.getItems().get(0);
+        EntandoClusterInfrastructure actual = entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
+                .get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
@@ -96,11 +95,11 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withDefault(false)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-
         //When
         //We are not using the mock server here because of a known bug
-        EntandoClusterInfrastructure actual = editEntandoClusterInfrastructure(keycloakServer)
+        entandoInfrastructure().inNamespace(MY_NAMESPACE).create(keycloakServer);
+        EntandoClusterInfrastructure actual = entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
+                .edit()
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
@@ -130,11 +129,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
-    }
-
-    protected DoneableEntandoClusterInfrastructure editEntandoClusterInfrastructure(EntandoClusterInfrastructure keycloakServer) {
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).create(keycloakServer);
-        return entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit();
     }
 
     protected CustomResourceOperationsImpl<EntandoClusterInfrastructure, EntandoClusterInfrastructureList,

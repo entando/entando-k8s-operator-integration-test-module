@@ -37,7 +37,7 @@ public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A
 
     private EntandoKeycloakServerFluent(ObjectMetaBuilder metadata, EntandoKeycloakServerSpecBuilder spec) {
         super(metadata);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", EntandoKeycloakServer.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         this.spec = spec;
     }
 

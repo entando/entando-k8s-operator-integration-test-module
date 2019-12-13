@@ -24,7 +24,8 @@ import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
 
-public class DoneableEntandoExternalDatabase extends EntandoExternalDatabaseFluent<DoneableEntandoExternalDatabase> implements Doneable<EntandoExternalDatabase>,
+public class DoneableEntandoExternalDatabase extends EntandoExternalDatabaseFluent<DoneableEntandoExternalDatabase> implements
+        Doneable<EntandoExternalDatabase>,
         DoneableEntandoCustomResource<DoneableEntandoExternalDatabase, EntandoExternalDatabase> {
 
     private final Function<EntandoExternalDatabase, EntandoExternalDatabase> function;
@@ -35,7 +36,8 @@ public class DoneableEntandoExternalDatabase extends EntandoExternalDatabaseFlue
         this.function = function;
     }
 
-    public DoneableEntandoExternalDatabase(EntandoExternalDatabase resource, Function<EntandoExternalDatabase, EntandoExternalDatabase> function) {
+    public DoneableEntandoExternalDatabase(EntandoExternalDatabase resource,
+            Function<EntandoExternalDatabase, EntandoExternalDatabase> function) {
         super(resource.getSpec(), resource.getMetadata());
         this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
         this.function = function;

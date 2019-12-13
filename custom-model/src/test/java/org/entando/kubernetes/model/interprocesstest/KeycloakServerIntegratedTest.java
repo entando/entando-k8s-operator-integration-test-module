@@ -25,8 +25,6 @@ import org.entando.kubernetes.model.AbstractKeycloakServerTest;
 import org.entando.kubernetes.model.DbServerStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
 import org.entando.kubernetes.model.WebServerStatus;
-import org.entando.kubernetes.model.keycloakserver.DoneableKeycloakServer;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +37,6 @@ public class KeycloakServerIntegratedTest extends AbstractKeycloakServerTest {
     public KubernetesClient getClient() {
         return client;
     }
-
 
     @Test
     public void multipleStatuses() {

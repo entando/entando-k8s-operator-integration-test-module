@@ -55,7 +55,7 @@ public class EntandoExternalDatabase extends EntandoBaseCustomResource {
     public EntandoExternalDatabase(ObjectMeta metadata, EntandoExternalDatabaseSpec spec, EntandoCustomResourceStatus status) {
         super(status);
         setKind("EntandoExternalDB");
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", EntandoExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", EntandoExternalDatabase.class);
         super.setMetadata(metadata);
         this.spec = spec;
     }

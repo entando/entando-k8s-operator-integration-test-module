@@ -37,7 +37,7 @@ public class EntandoExternalDatabaseFluent<A extends EntandoExternalDatabaseFlue
 
     private EntandoExternalDatabaseFluent(ObjectMetaBuilder metadata, EntandoExternalDatabaseSpecBuilder spec) {
         super(metadata);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", EntandoExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", EntandoExternalDatabase.class);
         this.spec = spec;
     }
 
@@ -57,7 +57,8 @@ public class EntandoExternalDatabaseFluent<A extends EntandoExternalDatabaseFlue
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends EntandoExternalDatabaseFluent> extends EntandoExternalDatabaseSpecFluent<SpecNestedImpl<N>> implements
+    public static class SpecNestedImpl<N extends EntandoExternalDatabaseFluent> extends
+            EntandoExternalDatabaseSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;

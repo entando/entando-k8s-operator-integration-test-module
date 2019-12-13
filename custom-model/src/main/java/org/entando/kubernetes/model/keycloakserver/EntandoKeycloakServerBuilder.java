@@ -18,7 +18,8 @@ package org.entando.kubernetes.model.keycloakserver;
 
 import io.fabric8.kubernetes.api.builder.Builder;
 
-public class EntandoKeycloakServerBuilder extends EntandoKeycloakServerFluent<EntandoKeycloakServerBuilder> implements Builder<EntandoKeycloakServer> {
+public class EntandoKeycloakServerBuilder extends EntandoKeycloakServerFluent<EntandoKeycloakServerBuilder> implements
+        Builder<EntandoKeycloakServer> {
 
     @Override
     public EntandoKeycloakServer build() {

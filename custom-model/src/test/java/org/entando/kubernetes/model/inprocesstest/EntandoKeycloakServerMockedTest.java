@@ -20,8 +20,8 @@ import static org.junit.Assert.assertNotEquals;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
-import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
 import org.entando.kubernetes.model.AbstractEntandoKeycloakServerTest;
+import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

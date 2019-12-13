@@ -31,10 +31,11 @@ import org.junit.jupiter.api.Test;
 
 public abstract class AbstractEntandoAppPluginLinkTest implements CustomResourceTestUtil {
 
+    protected static final String MY_APP_PLUGIN_LINK = "my-app-plugin-link";
     protected static final String MY_PLUGIN = "my-plugin";
-    private static final String MY_APP = "my-app";
     protected static final String MY_APP_NAMESPACE = TestConfig.calculateNameSpace("my-app-namespace");
-    protected static  final String MY_PLUGIN_NAMESPACE = TestConfig.calculateNameSpace("my-plugin-namespace");
+    protected static final String MY_PLUGIN_NAMESPACE = TestConfig.calculateNameSpace("my-plugin-namespace");
+    private static final String MY_APP = "my-app";
 
     @BeforeEach
     public void deleteEntandoAppPluginLinks() {
@@ -45,7 +46,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     public void testCreateEntandoAppPluginLink() {
         //Given
         EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
-                .withNewMetadata().withName(MY_PLUGIN)
+                .withNewMetadata().withName(MY_APP_PLUGIN_LINK)
                 .withNamespace(MY_APP_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
@@ -53,18 +54,17 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .withEntandoPlugin(MY_PLUGIN_NAMESPACE, MY_PLUGIN)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_APP_NAMESPACE).endMetadata().done();
         entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).createNew().withMetadata(entandoAppPluginLink.getMetadata())
                 .withSpec(entandoAppPluginLink.getSpec())
                 .done();
         //When
-        EntandoAppPluginLink actual =  entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_PLUGIN).get();
+        EntandoAppPluginLink actual = entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_APP_PLUGIN_LINK).get();
         //Then
         assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));
         assertThat(actual.getSpec().getEntandoAppNamespace(), is(MY_APP_NAMESPACE));
         assertThat(actual.getSpec().getEntandoPluginName(), is(MY_PLUGIN));
         assertThat(actual.getSpec().getEntandoPluginNamespace(), is(MY_PLUGIN_NAMESPACE));
-        assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
+        assertThat(actual.getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
     }
 
     @Test
@@ -72,7 +72,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
         //Given
         EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
                 .withNewMetadata()
-                .withName(MY_PLUGIN)
+                .withName(MY_APP_PLUGIN_LINK)
                 .withNamespace(MY_APP_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
@@ -80,10 +80,10 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .withEntandoPlugin("antoher-namespace", "some-plugin")
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_APP_NAMESPACE).endMetadata().done();
         //When
         //We are not using the mock server here because of a known bug
-        EntandoAppPluginLink actual = editEntandoAppPluginLink(entandoAppPluginLink)
+        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(entandoAppPluginLink);
+        EntandoAppPluginLink actual = entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_APP_PLUGIN_LINK).edit()
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
@@ -99,13 +99,8 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
         assertThat(actual.getSpec().getEntandoAppNamespace(), is(MY_APP_NAMESPACE));
         assertThat(actual.getSpec().getEntandoPluginName(), is(MY_PLUGIN));
         assertThat(actual.getSpec().getEntandoPluginNamespace(), is(MY_PLUGIN_NAMESPACE));
-        assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
+        assertThat(actual.getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
         assertThat(actual.getStatus(), is(notNullValue()));
-    }
-
-    protected DoneableEntandoAppPluginLink editEntandoAppPluginLink(EntandoAppPluginLink entandoPlugin) {
-        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(entandoPlugin);
-        return entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_PLUGIN).edit();
     }
 
     protected CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,

@@ -60,12 +60,10 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         keycloakServers().inNamespace(MY_NAMESPACE).createNew().withMetadata(keycloakServer.getMetadata())
                 .withSpec(keycloakServer.getSpec()).done();
         //When
-        EntandoKeycloakServerList list = keycloakServers().inNamespace(MY_NAMESPACE).list();
-        EntandoKeycloakServer actual = list.getItems().get(0);
+        EntandoKeycloakServer actual = keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
@@ -95,7 +93,6 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withDefault(false)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
 
         //When
         //We are not using the mock server here because of a known bug

@@ -32,7 +32,7 @@ public final class KeycloakServerOperationFactory {
 
     public static CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> produceAllKeycloakServers(
             KubernetesClient client) {
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", KeycloakServer.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoKeycloakServer", KeycloakServer.class);
         return resolver.resolveOperation(client);
     }
 }

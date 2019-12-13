@@ -1,6 +1,6 @@
 ---
 kind: "EntandoPlugin"
-apiVersion: "entando.org/v1alpha1"
+apiVersion: "entando.org/v1"
 metadata:
   name: "test-plugin-a"
 spec:

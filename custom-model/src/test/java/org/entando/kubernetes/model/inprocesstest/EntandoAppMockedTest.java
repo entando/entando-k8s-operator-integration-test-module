@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractEntandoAppTest;
-import org.entando.kubernetes.model.app.DoneableEntandoApp;
-import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
@@ -35,7 +33,6 @@ public class EntandoAppMockedTest extends AbstractEntandoAppTest {
 
     @Rule
     public KubernetesServer server = new KubernetesServer(false, true);
-
 
     @Override
     public KubernetesClient getClient() {

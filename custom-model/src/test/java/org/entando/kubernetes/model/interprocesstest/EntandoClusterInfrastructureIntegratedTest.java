@@ -25,8 +25,6 @@ import org.entando.kubernetes.model.AbstractEntandoClusterInfrastructureTest;
 import org.entando.kubernetes.model.DbServerStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
 import org.entando.kubernetes.model.WebServerStatus;
-import org.entando.kubernetes.model.infrastructure.DoneableEntandoClusterInfrastructure;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

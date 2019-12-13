@@ -60,12 +60,10 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         keycloakServers().inNamespace(MY_NAMESPACE).createNew().withMetadata(keycloakServer.getMetadata())
                 .withSpec(keycloakServer.getSpec()).done();
         //When
-        KeycloakServerList list = keycloakServers().inNamespace(MY_NAMESPACE).list();
-        KeycloakServer actual = list.getItems().get(0);
+        KeycloakServer actual = keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
@@ -95,11 +93,9 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
                 .withDefault(false)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-
         //When
-        //We are not using the mock server here because of a known bug
-        KeycloakServer actual = editKeycloakServer(keycloakServer)
+        keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
+        KeycloakServer actual = keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit()
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
@@ -129,11 +125,6 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
-    }
-
-    protected final DoneableKeycloakServer editKeycloakServer(KeycloakServer keycloakServer) {
-        keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
-        return keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit();
     }
 
     protected CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> keycloakServers() {

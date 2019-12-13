@@ -21,8 +21,6 @@ import static org.junit.Assert.assertNotEquals;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.entando.kubernetes.model.AbstractKeycloakServerTest;
-import org.entando.kubernetes.model.keycloakserver.DoneableKeycloakServer;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.KeycloakServerBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
@@ -40,7 +38,6 @@ public class KeycloakServerMockedTest extends AbstractKeycloakServerTest {
     public KubernetesClient getClient() {
         return this.server.getClient();
     }
-
 
     @Test
     public void testOverriddenEqualsMethods() {
