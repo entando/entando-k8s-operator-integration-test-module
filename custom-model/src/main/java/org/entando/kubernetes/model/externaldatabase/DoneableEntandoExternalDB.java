@@ -24,43 +24,43 @@ import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
 
-public class DoneableEntandoExternalDatabase extends EntandoExternalDatabaseFluent<DoneableEntandoExternalDatabase> implements
-        Doneable<EntandoExternalDatabase>,
-        DoneableEntandoCustomResource<DoneableEntandoExternalDatabase, EntandoExternalDatabase> {
+public class DoneableEntandoExternalDB extends EntandoExternalDBFluent<DoneableEntandoExternalDB> implements
+        Doneable<EntandoExternalDB>,
+        DoneableEntandoCustomResource<DoneableEntandoExternalDB, EntandoExternalDB> {
 
-    private final Function<EntandoExternalDatabase, EntandoExternalDatabase> function;
+    private final Function<EntandoExternalDB, EntandoExternalDB> function;
     private final EntandoCustomResourceStatus status;
 
-    public DoneableEntandoExternalDatabase(Function<EntandoExternalDatabase, EntandoExternalDatabase> function) {
+    public DoneableEntandoExternalDB(Function<EntandoExternalDB, EntandoExternalDB> function) {
         this.status = new EntandoCustomResourceStatus();
         this.function = function;
     }
 
-    public DoneableEntandoExternalDatabase(EntandoExternalDatabase resource,
-            Function<EntandoExternalDatabase, EntandoExternalDatabase> function) {
+    public DoneableEntandoExternalDB(EntandoExternalDB resource,
+            Function<EntandoExternalDB, EntandoExternalDB> function) {
         super(resource.getSpec(), resource.getMetadata());
         this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
         this.function = function;
     }
 
     @Override
-    public EntandoExternalDatabase done() {
+    public EntandoExternalDB done() {
         return function.apply(build());
     }
 
     @Override
-    public DoneableEntandoExternalDatabase withStatus(AbstractServerStatus status) {
+    public DoneableEntandoExternalDB withStatus(AbstractServerStatus status) {
         this.status.putServerStatus(status);
         return this;
     }
 
     @Override
-    public DoneableEntandoExternalDatabase withPhase(EntandoDeploymentPhase phase) {
+    public DoneableEntandoExternalDB withPhase(EntandoDeploymentPhase phase) {
         status.setEntandoDeploymentPhase(phase);
         return this;
     }
 
-    private EntandoExternalDatabase build() {
-        return new EntandoExternalDatabase(super.metadata.build(), super.spec.build(), status);
+    private EntandoExternalDB build() {
+        return new EntandoExternalDB(super.metadata.build(), super.spec.build(), status);
     }
 }

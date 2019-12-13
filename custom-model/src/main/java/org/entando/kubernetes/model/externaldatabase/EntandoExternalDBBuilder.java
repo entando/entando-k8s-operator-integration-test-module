@@ -18,11 +18,11 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import io.fabric8.kubernetes.api.builder.Builder;
 
-public class EntandoExternalDatabaseBuilder extends EntandoExternalDatabaseFluent<EntandoExternalDatabaseBuilder> implements
-        Builder<EntandoExternalDatabase> {
+public class EntandoExternalDBBuilder extends EntandoExternalDBFluent<EntandoExternalDBBuilder> implements
+        Builder<EntandoExternalDB> {
 
     @Override
-    public EntandoExternalDatabase build() {
-        return new EntandoExternalDatabase(super.metadata.build(), super.spec.build());
+    public EntandoExternalDB build() {
+        return new EntandoExternalDB(super.metadata.build(), super.spec.build());
     }
 }

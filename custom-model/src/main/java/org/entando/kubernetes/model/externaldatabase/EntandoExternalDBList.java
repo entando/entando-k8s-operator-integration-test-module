@@ -22,6 +22,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonDeserialize
 @RegisterForReflection
-public class EntandoExternalDatabaseList extends CustomResourceList<EntandoExternalDatabase> {
+public class EntandoExternalDBList extends CustomResourceList<EntandoExternalDB> {
 
 }

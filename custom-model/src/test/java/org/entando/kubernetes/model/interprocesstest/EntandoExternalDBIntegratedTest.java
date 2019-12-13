@@ -18,11 +18,11 @@ package org.entando.kubernetes.model.interprocesstest;
 
 import io.fabric8.kubernetes.client.AutoAdaptableKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import org.entando.kubernetes.model.AbstractEntandoExternalDatabaseTest;
+import org.entando.kubernetes.model.AbstractEntandoExternalDBTest;
 import org.junit.jupiter.api.Tag;
 
 @Tag("inter-process")
-public class EntandoExternalDatabaseIntegratedTest extends AbstractEntandoExternalDatabaseTest {
+public class EntandoExternalDBIntegratedTest extends AbstractEntandoExternalDBTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 

@@ -16,13 +16,13 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-public class EntandoExternalDatabaseSpecBuilder extends EntandoExternalDatabaseSpecFluent<EntandoExternalDatabaseSpecBuilder> {
+public class EntandoExternalDBSpecBuilder extends EntandoExternalDBSpecFluent<EntandoExternalDBSpecBuilder> {
 
-    public EntandoExternalDatabaseSpecBuilder(EntandoExternalDatabaseSpec instance) {
+    public EntandoExternalDBSpecBuilder(EntandoExternalDBSpec instance) {
         super(instance);
     }
 
-    public EntandoExternalDatabaseSpecBuilder() {
+    public EntandoExternalDBSpecBuilder() {
         //Default constructor requried
         super();
     }

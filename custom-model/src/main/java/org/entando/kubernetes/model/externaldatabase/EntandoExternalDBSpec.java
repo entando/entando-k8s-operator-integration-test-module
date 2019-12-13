@@ -32,7 +32,7 @@ import org.entando.kubernetes.model.DbmsImageVendor;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-public class EntandoExternalDatabaseSpec {
+public class EntandoExternalDBSpec {
 
     private String dbms;
     private String host;
@@ -40,11 +40,11 @@ public class EntandoExternalDatabaseSpec {
     private String databaseName;
     private String secretName;
 
-    public EntandoExternalDatabaseSpec() {
+    public EntandoExternalDBSpec() {
 
     }
 
-    public EntandoExternalDatabaseSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
+    public EntandoExternalDBSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
         this.dbms = dbms.toValue();
         this.host = host;
         this.secretName = secretName;
