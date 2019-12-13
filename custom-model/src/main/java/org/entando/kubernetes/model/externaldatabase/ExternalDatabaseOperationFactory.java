@@ -32,7 +32,7 @@ public final class ExternalDatabaseOperationFactory {
 
     public static CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList,
             DoneableExternalDatabase> produceAllExternalDatabases(KubernetesClient client) {
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", ExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoDatabaseService", ExternalDatabase.class);
         return resolver.resolveOperation(client);
     }
 }

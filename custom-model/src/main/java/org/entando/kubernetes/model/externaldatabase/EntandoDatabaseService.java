@@ -22,54 +22,55 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.util.Optional;
-import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.EntandoCustomResourceStatus;
+import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 
-@JsonInclude(Include.NON_NULL)
 @JsonSerialize
 @JsonDeserialize
+@JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-public class EntandoExternalDBSpec {
+public class EntandoDatabaseService extends EntandoBaseCustomResource {
 
-    private String dbms;
-    private String host;
-    private Integer port;
-    private String databaseName;
-    private String secretName;
+    public static final String CRD_NAME = "entandodatabaseservices.entando.org";
 
-    public EntandoExternalDBSpec() {
+    private EntandoDatabaseServiceSpec spec;
 
+    public EntandoDatabaseService() {
+        this(null);
     }
 
-    public EntandoExternalDBSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
-        this.dbms = dbms.toValue();
-        this.host = host;
-        this.secretName = secretName;
-        this.port = port;
-        this.databaseName = databaseName;
+    public EntandoDatabaseService(EntandoDatabaseServiceSpec spec) {
+        this(new ObjectMeta(), spec);
     }
 
-    public DbmsImageVendor getDbms() {
-        return DbmsImageVendor.forValue(dbms);
+    public EntandoDatabaseService(ObjectMeta metadata, EntandoDatabaseServiceSpec spec) {
+        this(metadata, spec, null);
     }
 
-    public String getHost() {
-        return host;
+    public EntandoDatabaseService(ObjectMeta metadata, EntandoDatabaseServiceSpec spec, EntandoCustomResourceStatus status) {
+        super(status);
+        setKind("EntandoDatabaseService");
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoDatabaseService", EntandoDatabaseService.class);
+        super.setMetadata(metadata);
+        this.spec = spec;
     }
 
-    public String getSecretName() {
-        return secretName;
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
     }
 
-    public Optional<Integer> getPort() {
-        return Optional.ofNullable(port);
+    public EntandoDatabaseServiceSpec getSpec() {
+        return spec;
     }
 
-    public String getDatabaseName() {
-        return databaseName;
+    public void setSpec(EntandoDatabaseServiceSpec spec) {
+        this.spec = spec;
     }
 
 }

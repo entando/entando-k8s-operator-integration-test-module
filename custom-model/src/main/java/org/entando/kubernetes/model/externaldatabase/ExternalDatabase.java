@@ -37,7 +37,7 @@ import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 @Deprecated
 public class ExternalDatabase extends EntandoBaseCustomResource {
 
-    public static final String CRD_NAME = "entandoexternaldbs.entando.org";
+    public static final String CRD_NAME = "entandodatabaseservices.entando.org";
 
     private ExternalDatabaseSpec spec;
 
@@ -55,8 +55,8 @@ public class ExternalDatabase extends EntandoBaseCustomResource {
 
     public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec, EntandoCustomResourceStatus status) {
         super(status);
-        setKind("EntandoExternalDB");
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", ExternalDatabase.class);
+        setKind("EntandoDatabaseService");
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoDatabaseService", ExternalDatabase.class);
         super.setMetadata(metadata);
         this.spec = spec;
     }

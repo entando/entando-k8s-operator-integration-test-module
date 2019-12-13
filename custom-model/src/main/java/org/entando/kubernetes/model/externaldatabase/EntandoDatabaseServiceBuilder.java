@@ -16,15 +16,13 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-public class EntandoExternalDBSpecBuilder extends EntandoExternalDBSpecFluent<EntandoExternalDBSpecBuilder> {
+import io.fabric8.kubernetes.api.builder.Builder;
 
-    public EntandoExternalDBSpecBuilder(EntandoExternalDBSpec instance) {
-        super(instance);
+public class EntandoDatabaseServiceBuilder extends EntandoDatabaseServiceFluent<EntandoDatabaseServiceBuilder> implements
+        Builder<EntandoDatabaseService> {
+
+    @Override
+    public EntandoDatabaseService build() {
+        return new EntandoDatabaseService(super.metadata.build(), super.spec.build());
     }
-
-    public EntandoExternalDBSpecBuilder() {
-        //Default constructor requried
-        super();
-    }
-
 }

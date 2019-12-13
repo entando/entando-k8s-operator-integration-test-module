@@ -22,55 +22,54 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
+import java.util.Optional;
+import org.entando.kubernetes.model.DbmsImageVendor;
 
+@JsonInclude(Include.NON_NULL)
 @JsonSerialize
 @JsonDeserialize
-@JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-public class EntandoExternalDB extends EntandoBaseCustomResource {
+public class EntandoDatabaseServiceSpec {
 
-    public static final String CRD_NAME = "entandoexternaldbs.entando.org";
+    private String dbms;
+    private String host;
+    private Integer port;
+    private String databaseName;
+    private String secretName;
 
-    private EntandoExternalDBSpec spec;
+    public EntandoDatabaseServiceSpec() {
 
-    public EntandoExternalDB() {
-        this(null);
     }
 
-    public EntandoExternalDB(EntandoExternalDBSpec spec) {
-        this(new ObjectMeta(), spec);
+    public EntandoDatabaseServiceSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
+        this.dbms = dbms.toValue();
+        this.host = host;
+        this.secretName = secretName;
+        this.port = port;
+        this.databaseName = databaseName;
     }
 
-    public EntandoExternalDB(ObjectMeta metadata, EntandoExternalDBSpec spec) {
-        this(metadata, spec, null);
+    public DbmsImageVendor getDbms() {
+        return DbmsImageVendor.forValue(dbms);
     }
 
-    public EntandoExternalDB(ObjectMeta metadata, EntandoExternalDBSpec spec, EntandoCustomResourceStatus status) {
-        super(status);
-        setKind("EntandoExternalDB");
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", EntandoExternalDB.class);
-        super.setMetadata(metadata);
-        this.spec = spec;
+    public String getHost() {
+        return host;
     }
 
-    @Override
-    public String getDefinitionName() {
-        return CRD_NAME;
+    public String getSecretName() {
+        return secretName;
     }
 
-    public EntandoExternalDBSpec getSpec() {
-        return spec;
+    public Optional<Integer> getPort() {
+        return Optional.ofNullable(port);
     }
 
-    public void setSpec(EntandoExternalDBSpec spec) {
-        this.spec = spec;
+    public String getDatabaseName() {
+        return databaseName;
     }
 
 }

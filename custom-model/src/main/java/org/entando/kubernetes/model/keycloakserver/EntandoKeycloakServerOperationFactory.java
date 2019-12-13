@@ -23,15 +23,18 @@ import org.entando.kubernetes.model.EntandoCustomResourceResolver;
 
 public final class EntandoKeycloakServerOperationFactory {
 
-    private static EntandoCustomResourceResolver<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> resolver =
-            new EntandoCustomResourceResolver<>(EntandoKeycloakServer.class, EntandoKeycloakServerList.class,
-                    DoneableEntandoKeycloakServer.class);
+    private static EntandoCustomResourceResolver
+            <EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> resolver =
+            new EntandoCustomResourceResolver<>(
+                    EntandoKeycloakServer.class, EntandoKeycloakServerList.class, DoneableEntandoKeycloakServer.class);
 
     private EntandoKeycloakServerOperationFactory() {
     }
 
-    public static CustomResourceOperationsImpl<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> produceAllEntandoKeycloakServers(
-            KubernetesClient client) {
+    public static CustomResourceOperationsImpl<
+            EntandoKeycloakServer,
+            EntandoKeycloakServerList,
+            DoneableEntandoKeycloakServer> produceAllEntandoKeycloakServers(KubernetesClient client) {
         KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         return resolver.resolveOperation(client);
     }

@@ -21,18 +21,19 @@ import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import org.entando.kubernetes.model.EntandoCustomResourceResolver;
 
-public final class EntandoExternalDBOperationFactory {
+public final class EntandoDatabaseServiceOperationFactory {
 
-    private static EntandoCustomResourceResolver<EntandoExternalDB, EntandoExternalDBList, DoneableEntandoExternalDB> resolver =
-            new EntandoCustomResourceResolver<>(EntandoExternalDB.class, EntandoExternalDBList.class,
-                    DoneableEntandoExternalDB.class);
+    private static EntandoCustomResourceResolver
+            <EntandoDatabaseService, EntandoDatabaseServiceList, DoneableEntandoDatabaseService> resolver =
+            new EntandoCustomResourceResolver<>(
+                    EntandoDatabaseService.class, EntandoDatabaseServiceList.class, DoneableEntandoDatabaseService.class);
 
-    private EntandoExternalDBOperationFactory() {
+    private EntandoDatabaseServiceOperationFactory() {
     }
 
-    public static CustomResourceOperationsImpl<EntandoExternalDB, EntandoExternalDBList,
-            DoneableEntandoExternalDB> produceAllEntandoExternalDBs(KubernetesClient client) {
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", EntandoExternalDB.class);
+    public static CustomResourceOperationsImpl<EntandoDatabaseService, EntandoDatabaseServiceList,
+            DoneableEntandoDatabaseService> produceAllEntandoDatabaseServices(KubernetesClient client) {
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoDatabaseService", EntandoDatabaseService.class);
         return resolver.resolveOperation(client);
     }
 }

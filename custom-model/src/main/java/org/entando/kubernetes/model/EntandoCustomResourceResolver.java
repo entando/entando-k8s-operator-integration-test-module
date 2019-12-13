@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.entando.kubernetes.model.app.EntandoApp;
-import org.entando.kubernetes.model.externaldatabase.EntandoExternalDB;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.link.EntandoAppPluginLink;
@@ -53,6 +53,7 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
     private final Class<D> doneableCustomResourceClass;
     private final String yamlFile;
     private CustomResourceDefinition customResourceDefinition;
+
     public EntandoCustomResourceResolver(Class<R> customResourceClass, Class<L> listCass, Class<D> doneableClass) {
         try {
 
@@ -73,7 +74,7 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
         KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoClusterInfrastructure", EntandoClusterInfrastructure.class);
         KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoAppPluginLink", EntandoAppPluginLink.class);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoExternalDB", EntandoExternalDB.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoDatabaseService", EntandoDatabaseService.class);
     }
 
     public CustomResourceOperationsImpl<R, L, D> resolveOperation(KubernetesClient client) {

@@ -64,6 +64,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withSpec(keycloakServer.getSpec()).done();
         //When
         EntandoKeycloakServer actual = keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).get();
+
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
@@ -133,7 +134,10 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
         return keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).edit();
     }
 
-    protected CustomResourceOperationsImpl<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> keycloakServers() {
+    protected CustomResourceOperationsImpl<
+            EntandoKeycloakServer,
+            EntandoKeycloakServerList,
+            DoneableEntandoKeycloakServer> keycloakServers() {
         if (operations == null) {
             operations = produceAllEntandoKeycloakServers(getClient());
         }

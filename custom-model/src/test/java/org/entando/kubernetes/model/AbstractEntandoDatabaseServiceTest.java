@@ -16,19 +16,19 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.externaldatabase.EntandoExternalDBOperationFactory.produceAllEntandoExternalDBs;
+import static org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceOperationFactory.produceAllEntandoDatabaseServices;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
-import org.entando.kubernetes.model.externaldatabase.DoneableEntandoExternalDB;
-import org.entando.kubernetes.model.externaldatabase.EntandoExternalDB;
-import org.entando.kubernetes.model.externaldatabase.EntandoExternalDBBuilder;
-import org.entando.kubernetes.model.externaldatabase.EntandoExternalDBList;
+import org.entando.kubernetes.model.externaldatabase.DoneableEntandoDatabaseService;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public abstract class AbstractEntandoExternalDBTest implements CustomResourceTestUtil {
+public abstract class AbstractEntandoDatabaseServiceTest implements CustomResourceTestUtil {
 
     protected static final String MY_EXTERNAL_DATABASE = "my-external-database";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
@@ -38,14 +38,14 @@ public abstract class AbstractEntandoExternalDBTest implements CustomResourceTes
     private static final String MY_DB_SECRET = "my-db-secret";
 
     @BeforeEach
-    public void deleteEntandoExternalDB() {
+    public void deleteEntandoDatabaseService() {
         prepareNamespace(externalDatabases(), MY_NAMESPACE);
     }
 
     @Test
-    public void testCreateEntandoExternalDB() {
+    public void testCreateEntandoDatabaseService() {
         //Given
-        EntandoExternalDB externalDatabase = new EntandoExternalDBBuilder()
+        EntandoDatabaseService externalDatabase = new EntandoDatabaseServiceBuilder()
                 .withNewMetadata().withName(MY_EXTERNAL_DATABASE)
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
@@ -60,7 +60,7 @@ public abstract class AbstractEntandoExternalDBTest implements CustomResourceTes
         externalDatabases().inNamespace(MY_NAMESPACE).createNew().withMetadata(externalDatabase.getMetadata())
                 .withSpec(externalDatabase.getSpec()).done();
         //When
-        EntandoExternalDB actual = externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).get();
+        EntandoDatabaseService actual = externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).get();
         //Then
         assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
         assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
@@ -71,9 +71,9 @@ public abstract class AbstractEntandoExternalDBTest implements CustomResourceTes
     }
 
     @Test
-    public void testEditEntandoExternalDB() {
+    public void testEditEntandoDatabaseService() {
         //Given
-        EntandoExternalDB externalDatabase = new EntandoExternalDBBuilder()
+        EntandoDatabaseService externalDatabase = new EntandoDatabaseServiceBuilder()
                 .withNewMetadata().withName(MY_EXTERNAL_DATABASE)
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
@@ -88,9 +88,9 @@ public abstract class AbstractEntandoExternalDBTest implements CustomResourceTes
         //When
         //We are not using the mock server here because of a known bug
         externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
-        DoneableEntandoExternalDB doneableEntandoExternalDB = externalDatabases().inNamespace(MY_NAMESPACE)
+        DoneableEntandoDatabaseService doneableEntandoDatabaseService = externalDatabases().inNamespace(MY_NAMESPACE)
                 .withName(MY_EXTERNAL_DATABASE).edit();
-        EntandoExternalDB actual = doneableEntandoExternalDB
+        EntandoDatabaseService actual = doneableEntandoDatabaseService
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
@@ -115,7 +115,10 @@ public abstract class AbstractEntandoExternalDBTest implements CustomResourceTes
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected CustomResourceOperationsImpl<EntandoExternalDB, EntandoExternalDBList, DoneableEntandoExternalDB> externalDatabases() {
-        return produceAllEntandoExternalDBs(getClient());
+    protected CustomResourceOperationsImpl<
+            EntandoDatabaseService,
+            EntandoDatabaseServiceList,
+            DoneableEntandoDatabaseService> externalDatabases() {
+        return produceAllEntandoDatabaseServices(getClient());
     }
 }

@@ -16,13 +16,12 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-import io.fabric8.kubernetes.api.builder.Builder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.fabric8.kubernetes.client.CustomResourceList;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
-public class EntandoExternalDBBuilder extends EntandoExternalDBFluent<EntandoExternalDBBuilder> implements
-        Builder<EntandoExternalDB> {
+@JsonDeserialize
+@RegisterForReflection
+public class EntandoDatabaseServiceList extends CustomResourceList<EntandoDatabaseService> {
 
-    @Override
-    public EntandoExternalDB build() {
-        return new EntandoExternalDB(super.metadata.build(), super.spec.build());
-    }
 }

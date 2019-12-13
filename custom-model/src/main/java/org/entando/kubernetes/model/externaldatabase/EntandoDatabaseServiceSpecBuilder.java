@@ -16,12 +16,15 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.fabric8.kubernetes.client.CustomResourceList;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+public class EntandoDatabaseServiceSpecBuilder extends EntandoDatabaseServiceSpecFluent<EntandoDatabaseServiceSpecBuilder> {
 
-@JsonDeserialize
-@RegisterForReflection
-public class EntandoExternalDBList extends CustomResourceList<EntandoExternalDB> {
+    public EntandoDatabaseServiceSpecBuilder(EntandoDatabaseServiceSpec instance) {
+        super(instance);
+    }
+
+    public EntandoDatabaseServiceSpecBuilder() {
+        //Default constructor requried
+        super();
+    }
 
 }
