@@ -16,16 +16,15 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.link.EntandoAppPluginLinkOperationFactory.produceAllEntandoAppPluginLinks;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkBuilder;
-import org.entando.kubernetes.model.link.EntandoAppPluginLinkList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,9 +35,11 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     protected static final String MY_APP_NAMESPACE = TestConfig.calculateNameSpace("my-app-namespace");
     protected static final String MY_PLUGIN_NAMESPACE = TestConfig.calculateNameSpace("my-plugin-namespace");
     private static final String MY_APP = "my-app";
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoAppPluginLinks() {
+        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(entandoAppPluginLinks(), MY_APP_NAMESPACE);
     }
 
@@ -103,9 +104,9 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
         assertThat(actual.getStatus(), is(notNullValue()));
     }
 
-    protected CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,
+    protected CustomResourceOperationsImpl<EntandoAppPluginLink, CustomResourceList<EntandoAppPluginLink>,
             DoneableEntandoAppPluginLink> entandoAppPluginLinks() {
-        return produceAllEntandoAppPluginLinks(getClient());
-    }
+        return registry.getOperations(EntandoAppPluginLink.class);
 
+    }
 }

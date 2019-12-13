@@ -16,15 +16,14 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.app.EntandoAppOperationFactory.produceAllEntandoApps;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
-import org.entando.kubernetes.model.app.EntandoAppList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,9 +39,11 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     private static final String MY_VALUE = "my-value";
     private static final String MY_LABEL = "my-label";
     private static final String MY_TLS_SECRET = "my-tls-secret";
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoApps() {
+        this.registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(entandoApps(), MY_NAMESPACE);
     }
 
@@ -142,8 +143,8 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         return entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit();
     }
 
-    protected CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp> entandoApps() {
-        return produceAllEntandoApps(getClient());
+    protected CustomResourceOperationsImpl<EntandoApp, CustomResourceList<EntandoApp>, DoneableEntandoApp> entandoApps() {
+        return registry.getOperations(EntandoApp.class);
     }
 
 }

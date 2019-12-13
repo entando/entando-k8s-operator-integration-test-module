@@ -16,15 +16,14 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.keycloakserver.KeycloakServerOperationFactory.produceAllKeycloakServers;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.keycloakserver.DoneableKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.KeycloakServerBuilder;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServerList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,10 +35,11 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
     private static final String ENTANDO_SOMEKEYCLOAK = "entando/somekeycloak";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
-    private CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> operations;
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteKeycloakServer() {
+        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(keycloakServers(), MY_NAMESPACE);
     }
 
@@ -127,10 +127,7 @@ public abstract class AbstractKeycloakServerTest implements CustomResourceTestUt
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> keycloakServers() {
-        if (operations == null) {
-            operations = produceAllKeycloakServers(getClient());
-        }
-        return operations;
+    protected CustomResourceOperationsImpl<KeycloakServer, CustomResourceList<KeycloakServer>, DoneableKeycloakServer> keycloakServers() {
+        return registry.getOperations(KeycloakServer.class);
     }
 }

@@ -16,15 +16,14 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceOperationFactory.produceAllEntandoDatabaseServices;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.externaldatabase.DoneableEntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
-import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,9 +35,11 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
     private static final String MYHOST_COM = "myhost.com";
     private static final int PORT_1521 = 1521;
     private static final String MY_DB_SECRET = "my-db-secret";
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoDatabaseService() {
+        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(externalDatabases(), MY_NAMESPACE);
     }
 
@@ -117,8 +118,8 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
 
     protected CustomResourceOperationsImpl<
             EntandoDatabaseService,
-            EntandoDatabaseServiceList,
+            CustomResourceList<EntandoDatabaseService>,
             DoneableEntandoDatabaseService> externalDatabases() {
-        return produceAllEntandoDatabaseServices(getClient());
+        return registry.getOperations(EntandoDatabaseService.class);
     }
 }

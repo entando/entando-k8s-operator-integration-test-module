@@ -16,15 +16,14 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.externaldatabase.ExternalDatabaseOperationFactory.produceAllExternalDatabases;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.externaldatabase.DoneableExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
 import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseBuilder;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,9 +35,11 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
     private static final String MYHOST_COM = "myhost.com";
     private static final int PORT_1521 = 1521;
     private static final String MY_DB_SECRET = "my-db-secret";
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteExternalDatabase() {
+        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(externalDatabases(), MY_NAMESPACE);
     }
 
@@ -114,7 +115,10 @@ public abstract class AbstractExternalDatabaseTest implements CustomResourceTest
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases() {
-        return produceAllExternalDatabases(getClient());
+    protected CustomResourceOperationsImpl<
+            ExternalDatabase,
+            CustomResourceList<ExternalDatabase>,
+            DoneableExternalDatabase> externalDatabases() {
+        return registry.getOperations(ExternalDatabase.class);
     }
 }

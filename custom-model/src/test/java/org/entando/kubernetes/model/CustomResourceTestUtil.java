@@ -28,7 +28,7 @@ public interface CustomResourceTestUtil {
     @SuppressWarnings("unchecked")
     default void prepareNamespace(CustomResourceOperationsImpl oper, String namespace) {
         if (getClient().namespaces().withName(namespace).get() == null) {
-            getClient().namespaces().createNew().withNewMetadata().withName(namespace).addToLabels("testKind", "end-to-end").endMetadata()
+            getClient().namespaces().createNew().withNewMetadata().withName(namespace).addToLabels("testType", "end-to-end").endMetadata()
                     .done();
         } else {
             await().atMost(Duration.ofMinutes(2)).until(() -> {

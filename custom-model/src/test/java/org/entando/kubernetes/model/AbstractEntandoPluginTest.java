@@ -16,19 +16,18 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.plugin.EntandoPluginOperationFactory.produceAllEntandoPlugins;
 import static org.entando.kubernetes.model.plugin.PluginSecurityLevel.STRICT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import java.util.Arrays;
 import java.util.Collections;
 import org.entando.kubernetes.model.plugin.DoneableEntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
-import org.entando.kubernetes.model.plugin.EntandoPluginList;
 import org.entando.kubernetes.model.plugin.ExpectedRole;
 import org.entando.kubernetes.model.plugin.Permission;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,9 +51,11 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     private static final String PARAMETER_NAME = "env";
     private static final String PARAMETER_VALUE = "B";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoPlugins() {
+        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(entandoPlugins(), MY_NAMESPACE);
     }
 
@@ -178,8 +179,8 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
     }
 
-    protected CustomResourceOperationsImpl<EntandoPlugin, EntandoPluginList, DoneableEntandoPlugin> entandoPlugins() {
-        return produceAllEntandoPlugins(getClient());
+    protected CustomResourceOperationsImpl<EntandoPlugin, CustomResourceList<EntandoPlugin>, DoneableEntandoPlugin> entandoPlugins() {
+        return registry.getOperations(EntandoPlugin.class);
     }
 
 }

@@ -16,15 +16,14 @@
 
 package org.entando.kubernetes.model;
 
-import static org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerOperationFactory.produceAllEntandoKeycloakServers;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.keycloakserver.DoneableEntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
-import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,10 +35,11 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
     private static final String ENTANDO_SOMEKEYCLOAK = "entando/somekeycloak";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
-    private CustomResourceOperationsImpl<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> operations;
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoKeycloakServer() {
+        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(keycloakServers(), MY_NAMESPACE);
     }
 
@@ -136,11 +136,8 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
 
     protected CustomResourceOperationsImpl<
             EntandoKeycloakServer,
-            EntandoKeycloakServerList,
+            CustomResourceList<EntandoKeycloakServer>,
             DoneableEntandoKeycloakServer> keycloakServers() {
-        if (operations == null) {
-            operations = produceAllEntandoKeycloakServers(getClient());
-        }
-        return operations;
+        return registry.getOperations(EntandoKeycloakServer.class);
     }
 }

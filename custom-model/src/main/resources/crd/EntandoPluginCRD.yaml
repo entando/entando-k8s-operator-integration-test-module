@@ -5,9 +5,33 @@ metadata:
 spec:
   group: entando.org
   version: v1
+  additionalPrinterColumns:
+    - name: Phase
+      type: string
+      JSONPath: .entandoStatus.entandoDeploymentPhase
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
+    - name: Host
+      type: string
+      JSONPath: .spec.ingressHostName
+    - name: Path
+      type: string
+      JSONPath: .spec.increatePath
+    - name: Image
+      type: string
+      JSONPath: .spec.image
+    - name: DBMS
+      type: string
+      JSONPath: .spec.dbms
+    - name: Replicas
+      type: integer
+      JSONPath: .spec.replicas
   names:
     kind: EntandoPlugin
     plural: entandoplugins
+    shortNames:
+      - eplugs
   scope: Namespaced
   validation:
     openAPIV3Schema:

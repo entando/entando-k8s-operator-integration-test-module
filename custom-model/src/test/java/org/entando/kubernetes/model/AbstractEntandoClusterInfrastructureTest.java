@@ -19,12 +19,11 @@ package org.entando.kubernetes.model;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.infrastructure.DoneableEntandoClusterInfrastructure;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureBuilder;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureList;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureOperationFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,9 +35,11 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
+    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoClusterInfrastructure() {
+        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(entandoInfrastructure(), MY_NAMESPACE);
     }
 
@@ -131,8 +132,8 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
     }
 
-    protected CustomResourceOperationsImpl<EntandoClusterInfrastructure, EntandoClusterInfrastructureList,
+    protected CustomResourceOperationsImpl<EntandoClusterInfrastructure, CustomResourceList<EntandoClusterInfrastructure>,
             DoneableEntandoClusterInfrastructure> entandoInfrastructure() {
-        return EntandoClusterInfrastructureOperationFactory.produceAllEntandoClusterInfrastructures(getClient());
+        return registry.getOperations(EntandoClusterInfrastructure.class);
     }
 }

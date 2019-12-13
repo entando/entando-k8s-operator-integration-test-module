@@ -6,9 +6,24 @@ metadata:
 spec:
   group: entando.org
   version: v1
+  additionalPrinterColumns:
+    - name: Phase
+      type: string
+      JSONPath: .entandoStatus.entandoDeploymentPhase
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
+    - name: Host
+      type: string
+      JSONPath: .spec.ingressHostName
+    - name: Replicas
+      type: integer
+      JSONPath: .spec.replicas
   names:
     kind: EntandoClusterInfrastructure
     plural: entandoclusterinfrastructures
+    shortNames:
+      - ecis
   scope: Namespaced
   validation:
     openAPIV3Schema:

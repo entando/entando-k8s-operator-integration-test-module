@@ -6,9 +6,27 @@ metadata:
 spec:
   group: entando.org
   version: v1
+  additionalPrinterColumns:
+    - name: Phase
+      type: string
+      JSONPath: .entandoStatus.entandoDeploymentPhase
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
+    - name: Host
+      type: string
+      JSONPath: .spec.ingressHostName
+    - name: Image
+      type: string
+      JSONPath: .spec.customServerImage
+    - name: Replicas
+      type: integer
+      JSONPath: .spec.replicas
   names:
     kind: EntandoApp
     plural: entandoapps
+    shortNames:
+      - eapps
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -43,4 +61,3 @@ spec:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
         entandoStatus: {}
-

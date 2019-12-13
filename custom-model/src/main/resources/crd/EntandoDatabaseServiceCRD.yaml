@@ -5,9 +5,33 @@ metadata:
 spec:
   group: entando.org
   version: v1
+  additionalPrinterColumns:
+    - name: Phase
+      type: string
+      JSONPath: .entandoStatus.entandoDeploymentPhase
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
+    - name: Host
+      type: string
+      JSONPath: .spec.host
+    - name: Port
+      type: integer
+      JSONPath: .spec.port
+    - name: Database
+      type: string
+      JSONPath: .spec.databaseName
+    - name: DBMS
+      type: string
+      JSONPath: .spec.dbms
+    - name: Secret-Name
+      type: string
+      JSONPath: .spec.secretName
   names:
     kind: EntandoDatabaseService
     plural: entandodatabaseservices
+    shortNames:
+      - edbs
   scope: Namespaced
   validation:
     openAPIV3Schema:
