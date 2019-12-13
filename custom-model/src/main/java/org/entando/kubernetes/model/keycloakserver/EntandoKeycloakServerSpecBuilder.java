@@ -16,13 +16,15 @@
 
 package org.entando.kubernetes.model.keycloakserver;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.fabric8.kubernetes.client.CustomResourceList;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+public class EntandoKeycloakServerSpecBuilder extends EntandoKeycloakServerSpecFluent<EntandoKeycloakServerSpecBuilder> {
 
-@JsonDeserialize
-@RegisterForReflection
-@Deprecated
-public class KeycloakServerList extends CustomResourceList<KeycloakServer> {
+    public EntandoKeycloakServerSpecBuilder(EntandoKeycloakServerSpec spec) {
+        super(spec);
+    }
+
+    public EntandoKeycloakServerSpecBuilder() {
+        super();
+        //required default constructor
+    }
 
 }

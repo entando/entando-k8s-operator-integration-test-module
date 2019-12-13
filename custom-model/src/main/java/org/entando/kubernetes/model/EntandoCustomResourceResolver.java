@@ -18,6 +18,7 @@ package org.entando.kubernetes.model;
 
 import static java.lang.Thread.sleep;
 
+import org.entando.kubernetes.model.externaldatabase.EntandoExternalDatabase;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.CustomResourceList;
@@ -31,10 +32,9 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.app.EntandoApp;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
 import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
 
@@ -49,9 +49,9 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
         KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoApp", EntandoApp.class);
         KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoPlugin", EntandoPlugin.class);
         KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoClusterInfrastructure", EntandoClusterInfrastructure.class);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", KeycloakServer.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoAppPluginLink", EntandoAppPluginLink.class);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#ExternalDB", ExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", EntandoExternalDatabase.class);
     }
 
     private static final Logger LOGGER = Logger.getLogger(EntandoCustomResourceResolver.class.getName());

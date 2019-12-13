@@ -16,6 +16,7 @@
 
 package org.entando.kubernetes.model.keycloakserver;
 
+@Deprecated
 public class KeycloakServerSpecBuilder extends KeycloakServerSpecFluent<KeycloakServerSpecBuilder> {
 
     public KeycloakServerSpecBuilder(KeycloakServerSpec spec) {

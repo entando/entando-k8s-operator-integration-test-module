@@ -18,8 +18,10 @@ package org.entando.kubernetes.model.keycloakserver;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import org.entando.kubernetes.model.EntandoCustomResourceResolver;
 
+@Deprecated
 public final class KeycloakServerOperationFactory {
 
     private static EntandoCustomResourceResolver<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> resolver =
@@ -30,6 +32,7 @@ public final class KeycloakServerOperationFactory {
 
     public static CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> produceAllKeycloakServers(
             KubernetesClient client) {
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", KeycloakServer.class);
         return resolver.resolveOperation(client);
     }
 }

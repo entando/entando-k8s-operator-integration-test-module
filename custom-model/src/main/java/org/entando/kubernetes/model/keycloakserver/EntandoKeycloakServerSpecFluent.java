@@ -18,21 +18,20 @@ package org.entando.kubernetes.model.keycloakserver;
 
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 
-@Deprecated
-public class KeycloakServerSpecFluent<N extends KeycloakServerSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
+public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
 
     protected String imageName;
     protected String entandoImageVersion;
     protected boolean isDefault;
 
-    public KeycloakServerSpecFluent(KeycloakServerSpec spec) {
+    public EntandoKeycloakServerSpecFluent(EntandoKeycloakServerSpec spec) {
         super(spec);
         this.entandoImageVersion = spec.getEntandoImageVersion().orElse(null);
         this.isDefault = spec.isDefault();
         this.imageName = spec.getImageName().orElse(null);
     }
 
-    public KeycloakServerSpecFluent() {
+    public EntandoKeycloakServerSpecFluent() {
 
     }
 
@@ -54,7 +53,7 @@ public class KeycloakServerSpecFluent<N extends KeycloakServerSpecFluent> extend
         return (N) this;
     }
 
-    public KeycloakServerSpec build() {
-        return new KeycloakServerSpec(imageName, dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas, isDefault);
+    public EntandoKeycloakServerSpec build() {
+        return new EntandoKeycloakServerSpec(imageName, dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas, isDefault);
     }
 }

@@ -23,6 +23,7 @@ import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
 
+@Deprecated
 public class DoneableKeycloakServer extends KeycloakServerFluent<DoneableKeycloakServer> implements
         DoneableEntandoCustomResource<DoneableKeycloakServer, KeycloakServer> {
 

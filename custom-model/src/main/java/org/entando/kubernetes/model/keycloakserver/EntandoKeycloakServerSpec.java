@@ -33,18 +33,17 @@ import org.entando.kubernetes.model.EntandoDeploymentSpec;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-@Deprecated
-public class KeycloakServerSpec extends EntandoDeploymentSpec {
+public class EntandoKeycloakServerSpec extends EntandoDeploymentSpec {
 
     private String imageName;
     private String entandoImageVersion;
     private boolean isDefault;
 
-    public KeycloakServerSpec() {
+    public EntandoKeycloakServerSpec() {
         super();
     }
 
-    public KeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
+    public EntandoKeycloakServerSpec(String imageName, DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
             String tlsSecretName, int replicas, boolean isDefault) {
         super(ingressHostName, tlsSecretName, replicas, dbms);
         this.imageName = imageName;

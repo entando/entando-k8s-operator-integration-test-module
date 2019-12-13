@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.externaldatabase;
+package org.entando.kubernetes.model.keycloakserver;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -25,7 +25,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.util.Optional;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
+import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 
 @JsonSerialize
@@ -34,31 +36,29 @@ import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-@Deprecated
-public class ExternalDatabase extends EntandoBaseCustomResource {
+public class EntandoKeycloakServer extends EntandoBaseCustomResource implements HasIngress {
 
-    public static final String CRD_NAME = "entandoexternaldbs.entando.org";
+    public static final String CRD_NAME = "entandokeycloakservers.entando.org";
 
-    private ExternalDatabaseSpec spec;
+    private EntandoKeycloakServerSpec spec;
 
-    public ExternalDatabase() {
+    public EntandoKeycloakServer() {
         this(null);
     }
 
-    public ExternalDatabase(ExternalDatabaseSpec spec) {
+    public EntandoKeycloakServer(EntandoKeycloakServerSpec spec) {
         this(new ObjectMeta(), spec);
     }
 
-    public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec) {
+    public EntandoKeycloakServer(ObjectMeta metadata, EntandoKeycloakServerSpec spec) {
         this(metadata, spec, null);
     }
 
-    public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec, EntandoCustomResourceStatus status) {
+    public EntandoKeycloakServer(ObjectMeta metadata, EntandoKeycloakServerSpec spec, EntandoCustomResourceStatus status) {
         super(status);
-        setKind("EntandoExternalDB");
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", ExternalDatabase.class);
-        super.setMetadata(metadata);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         this.spec = spec;
+        super.setMetadata(metadata);
     }
 
     @Override
@@ -66,12 +66,21 @@ public class ExternalDatabase extends EntandoBaseCustomResource {
         return CRD_NAME;
     }
 
-    public ExternalDatabaseSpec getSpec() {
+    public EntandoKeycloakServerSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(ExternalDatabaseSpec spec) {
+    public void setSpec(EntandoKeycloakServerSpec spec) {
         this.spec = spec;
     }
 
+    @Override
+    public Optional<String> getIngressHostName() {
+        return getSpec().getIngressHostName();
+    }
+
+    @Override
+    public Optional<String> getTlsSecretName() {
+        return getSpec().getTlsSecretName();
+    }
 }

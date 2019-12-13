@@ -22,7 +22,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonDeserialize
 @RegisterForReflection
-@Deprecated
-public class KeycloakServerList extends CustomResourceList<KeycloakServer> {
+public class EntandoKeycloakServerList extends CustomResourceList<EntandoKeycloakServer> {
 
 }

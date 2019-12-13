@@ -14,25 +14,24 @@
  *
  */
 
-package org.entando.kubernetes.model.externaldatabase;
+package org.entando.kubernetes.model.keycloakserver;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import org.entando.kubernetes.model.EntandoCustomResourceResolver;
 
-@Deprecated
-public final class ExternalDatabaseOperationFactory {
+public final class EntandoKeycloakServerOperationFactory {
 
-    private static EntandoCustomResourceResolver<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> resolver =
-            new EntandoCustomResourceResolver<>(ExternalDatabase.class, ExternalDatabaseList.class, DoneableExternalDatabase.class);
+    private static EntandoCustomResourceResolver<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> resolver =
+            new EntandoCustomResourceResolver<>(EntandoKeycloakServer.class, EntandoKeycloakServerList.class, DoneableEntandoKeycloakServer.class);
 
-    private ExternalDatabaseOperationFactory() {
+    private EntandoKeycloakServerOperationFactory() {
     }
 
-    public static CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList,
-            DoneableExternalDatabase> produceAllExternalDatabases(KubernetesClient client) {
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", ExternalDatabase.class);
+    public static CustomResourceOperationsImpl<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> produceAllEntandoKeycloakServers(
+            KubernetesClient client) {
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         return resolver.resolveOperation(client);
     }
 }

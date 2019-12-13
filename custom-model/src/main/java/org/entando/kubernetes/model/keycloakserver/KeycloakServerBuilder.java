@@ -18,6 +18,7 @@ package org.entando.kubernetes.model.keycloakserver;
 
 import io.fabric8.kubernetes.api.builder.Builder;
 
+@Deprecated
 public class KeycloakServerBuilder extends KeycloakServerFluent<KeycloakServerBuilder> implements Builder<KeycloakServer> {
 
     @Override

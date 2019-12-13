@@ -14,15 +14,21 @@
  *
  */
 
-package org.entando.kubernetes.model.keycloakserver;
+package org.entando.kubernetes.model.interprocesstest;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.fabric8.kubernetes.client.CustomResourceList;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.fabric8.kubernetes.client.AutoAdaptableKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import org.entando.kubernetes.model.AbstractEntandoExternalDatabaseTest;
+import org.junit.jupiter.api.Tag;
 
-@JsonDeserialize
-@RegisterForReflection
-@Deprecated
-public class KeycloakServerList extends CustomResourceList<KeycloakServer> {
+@Tag("inter-process")
+public class EntandoExternalDatabaseIntegratedTest extends AbstractEntandoExternalDatabaseTest {
+
+    private final KubernetesClient client = new AutoAdaptableKubernetesClient();
+
+    @Override
+    public KubernetesClient getClient() {
+        return client;
+    }
 
 }

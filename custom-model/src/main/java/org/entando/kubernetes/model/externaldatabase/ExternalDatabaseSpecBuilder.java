@@ -16,6 +16,7 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
+@Deprecated
 public class ExternalDatabaseSpecBuilder extends ExternalDatabaseSpecFluent<ExternalDatabaseSpecBuilder> {
 
     public ExternalDatabaseSpecBuilder(ExternalDatabaseSpec instance) {

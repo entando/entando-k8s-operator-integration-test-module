@@ -34,29 +34,28 @@ import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-@Deprecated
-public class ExternalDatabase extends EntandoBaseCustomResource {
+public class EntandoExternalDatabase extends EntandoBaseCustomResource {
 
     public static final String CRD_NAME = "entandoexternaldbs.entando.org";
 
-    private ExternalDatabaseSpec spec;
+    private EntandoExternalDatabaseSpec spec;
 
-    public ExternalDatabase() {
+    public EntandoExternalDatabase() {
         this(null);
     }
 
-    public ExternalDatabase(ExternalDatabaseSpec spec) {
+    public EntandoExternalDatabase(EntandoExternalDatabaseSpec spec) {
         this(new ObjectMeta(), spec);
     }
 
-    public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec) {
+    public EntandoExternalDatabase(ObjectMeta metadata, EntandoExternalDatabaseSpec spec) {
         this(metadata, spec, null);
     }
 
-    public ExternalDatabase(ObjectMeta metadata, ExternalDatabaseSpec spec, EntandoCustomResourceStatus status) {
+    public EntandoExternalDatabase(ObjectMeta metadata, EntandoExternalDatabaseSpec spec, EntandoCustomResourceStatus status) {
         super(status);
         setKind("EntandoExternalDB");
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", ExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", EntandoExternalDatabase.class);
         super.setMetadata(metadata);
         this.spec = spec;
     }
@@ -66,11 +65,11 @@ public class ExternalDatabase extends EntandoBaseCustomResource {
         return CRD_NAME;
     }
 
-    public ExternalDatabaseSpec getSpec() {
+    public EntandoExternalDatabaseSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(ExternalDatabaseSpec spec) {
+    public void setSpec(EntandoExternalDatabaseSpec spec) {
         this.spec = spec;
     }
 

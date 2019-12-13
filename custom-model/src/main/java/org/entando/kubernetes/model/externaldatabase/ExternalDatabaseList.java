@@ -22,6 +22,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonDeserialize
 @RegisterForReflection
+@Deprecated
 public class ExternalDatabaseList extends CustomResourceList<ExternalDatabase> {
 
 }

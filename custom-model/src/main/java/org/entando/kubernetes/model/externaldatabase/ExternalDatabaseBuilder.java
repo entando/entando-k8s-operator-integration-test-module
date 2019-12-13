@@ -18,6 +18,7 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import io.fabric8.kubernetes.api.builder.Builder;
 
+@Deprecated
 public class ExternalDatabaseBuilder extends ExternalDatabaseFluent<ExternalDatabaseBuilder> implements Builder<ExternalDatabase> {
 
     @Override

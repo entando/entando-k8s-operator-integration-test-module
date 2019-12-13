@@ -32,6 +32,7 @@ import org.entando.kubernetes.model.DbmsImageVendor;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
+@Deprecated
 public class ExternalDatabaseSpec {
 
     private String dbms;

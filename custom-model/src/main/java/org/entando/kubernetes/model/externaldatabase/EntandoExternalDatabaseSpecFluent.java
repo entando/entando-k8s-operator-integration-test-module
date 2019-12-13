@@ -18,8 +18,7 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import org.entando.kubernetes.model.DbmsImageVendor;
 
-@Deprecated
-public class ExternalDatabaseSpecFluent<N extends ExternalDatabaseSpecFluent> {
+public class EntandoExternalDatabaseSpecFluent<N extends EntandoExternalDatabaseSpecFluent> {
 
     private String databaseName;
     private DbmsImageVendor dbms;
@@ -27,7 +26,7 @@ public class ExternalDatabaseSpecFluent<N extends ExternalDatabaseSpecFluent> {
     private Integer port;
     private String secretName;
 
-    public ExternalDatabaseSpecFluent(ExternalDatabaseSpec spec) {
+    public EntandoExternalDatabaseSpecFluent(EntandoExternalDatabaseSpec spec) {
         this.databaseName = spec.getDatabaseName();
         this.dbms = spec.getDbms();
         this.host = spec.getHost();
@@ -35,12 +34,12 @@ public class ExternalDatabaseSpecFluent<N extends ExternalDatabaseSpecFluent> {
         this.secretName = spec.getSecretName();
     }
 
-    public ExternalDatabaseSpecFluent() {
+    public EntandoExternalDatabaseSpecFluent() {
 
     }
 
-    public ExternalDatabaseSpec build() {
-        return new ExternalDatabaseSpec(dbms, host, port, databaseName, secretName);
+    public EntandoExternalDatabaseSpec build() {
+        return new EntandoExternalDatabaseSpec(dbms, host, port, databaseName, secretName);
     }
 
     @SuppressWarnings("unchecked")

@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.keycloakserver;
+package org.entando.kubernetes.model.externaldatabase;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.fabric8.kubernetes.client.CustomResourceList;
@@ -22,7 +22,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @JsonDeserialize
 @RegisterForReflection
-@Deprecated
-public class KeycloakServerList extends CustomResourceList<KeycloakServer> {
+public class EntandoExternalDatabaseList extends CustomResourceList<EntandoExternalDatabase> {
 
 }

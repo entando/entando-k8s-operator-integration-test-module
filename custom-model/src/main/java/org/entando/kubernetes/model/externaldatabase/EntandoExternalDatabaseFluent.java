@@ -23,22 +23,21 @@ import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import org.entando.kubernetes.model.EntandoBaseFluent;
 
-@Deprecated
-public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
+public class EntandoExternalDatabaseFluent<A extends EntandoExternalDatabaseFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
 
-    protected ExternalDatabaseSpecBuilder spec;
+    protected EntandoExternalDatabaseSpecBuilder spec;
 
-    protected ExternalDatabaseFluent() {
-        this(new ObjectMetaBuilder(), new ExternalDatabaseSpecBuilder());
+    protected EntandoExternalDatabaseFluent() {
+        this(new ObjectMetaBuilder(), new EntandoExternalDatabaseSpecBuilder());
     }
 
-    protected ExternalDatabaseFluent(ExternalDatabaseSpec spec, ObjectMeta objectMeta) {
-        this(new ObjectMetaBuilder(objectMeta), new ExternalDatabaseSpecBuilder(spec));
+    protected EntandoExternalDatabaseFluent(EntandoExternalDatabaseSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new EntandoExternalDatabaseSpecBuilder(spec));
     }
 
-    private ExternalDatabaseFluent(ObjectMetaBuilder metadata, ExternalDatabaseSpecBuilder spec) {
+    private EntandoExternalDatabaseFluent(ObjectMetaBuilder metadata, EntandoExternalDatabaseSpecBuilder spec) {
         super(metadata);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", ExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", EntandoExternalDatabase.class);
         this.spec = spec;
     }
 
@@ -53,17 +52,17 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
     }
 
     @SuppressWarnings("unchecked")
-    public A withSpec(ExternalDatabaseSpec spec) {
-        this.spec = new ExternalDatabaseSpecBuilder(spec);
+    public A withSpec(EntandoExternalDatabaseSpec spec) {
+        this.spec = new EntandoExternalDatabaseSpecBuilder(spec);
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends ExternalDatabaseFluent> extends ExternalDatabaseSpecFluent<SpecNestedImpl<N>> implements
+    public static class SpecNestedImpl<N extends EntandoExternalDatabaseFluent> extends EntandoExternalDatabaseSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;
 
-        SpecNestedImpl(N parentBuilder, ExternalDatabaseSpec item) {
+        SpecNestedImpl(N parentBuilder, EntandoExternalDatabaseSpec item) {
             super(item);
             this.parentBuilder = parentBuilder;
         }

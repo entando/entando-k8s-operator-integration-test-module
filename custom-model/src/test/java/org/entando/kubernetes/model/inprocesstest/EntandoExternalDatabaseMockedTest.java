@@ -18,12 +18,10 @@ package org.entando.kubernetes.model.inprocesstest;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import io.fabric8.kubernetes.client.KubernetesClient;
+import org.entando.kubernetes.model.externaldatabase.EntandoExternalDatabaseBuilder;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
-import org.entando.kubernetes.model.AbstractEntandoPluginTest;
-import org.entando.kubernetes.model.plugin.DoneableEntandoPlugin;
-import org.entando.kubernetes.model.plugin.EntandoPlugin;
-import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
+import org.entando.kubernetes.model.AbstractEntandoExternalDatabaseTest;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -31,23 +29,24 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @EnableRuleMigrationSupport
 @Tag("in-process")
-public class EntandoPluginMockedTest extends AbstractEntandoPluginTest {
+public class EntandoExternalDatabaseMockedTest extends AbstractEntandoExternalDatabaseTest {
 
     @Rule
     public KubernetesServer server = new KubernetesServer(false, true);
 
     @Override
-    public KubernetesClient getClient() {
-        return server.getClient();
+    public NamespacedKubernetesClient getClient() {
+        return this.server.getClient();
     }
+
+
 
     @Test
     public void testOverriddenEqualsMethods() {
         //The ObjectMetaBuilder's equals method is broken. There is no way to fix it. 
         // These tests just verify that inequality corresponds with hashcode
-        EntandoPluginBuilder builder = new EntandoPluginBuilder().editMetadata().withNamespace("ns").withName("name").endMetadata();
+        EntandoExternalDatabaseBuilder builder = new EntandoExternalDatabaseBuilder().editMetadata().withNamespace("ns").withName("name").endMetadata();
         assertNotEquals(builder.editMetadata(), builder.editMetadata());
         assertNotEquals(builder.editMetadata().hashCode(), builder.editMetadata().hashCode());
     }
-
 }

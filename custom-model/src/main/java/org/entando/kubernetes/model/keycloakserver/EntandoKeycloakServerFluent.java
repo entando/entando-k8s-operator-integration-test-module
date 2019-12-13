@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.externaldatabase;
+package org.entando.kubernetes.model.keycloakserver;
 
 import io.fabric8.kubernetes.api.builder.Fluent;
 import io.fabric8.kubernetes.api.builder.Nested;
@@ -23,22 +23,21 @@ import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import org.entando.kubernetes.model.EntandoBaseFluent;
 
-@Deprecated
-public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
+public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
 
-    protected ExternalDatabaseSpecBuilder spec;
+    protected EntandoKeycloakServerSpecBuilder spec;
 
-    protected ExternalDatabaseFluent() {
-        this(new ObjectMetaBuilder(), new ExternalDatabaseSpecBuilder());
+    protected EntandoKeycloakServerFluent() {
+        this(new ObjectMetaBuilder(), new EntandoKeycloakServerSpecBuilder());
     }
 
-    protected ExternalDatabaseFluent(ExternalDatabaseSpec spec, ObjectMeta objectMeta) {
-        this(new ObjectMetaBuilder(objectMeta), new ExternalDatabaseSpecBuilder(spec));
+    protected EntandoKeycloakServerFluent(EntandoKeycloakServerSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new EntandoKeycloakServerSpecBuilder(spec));
     }
 
-    private ExternalDatabaseFluent(ObjectMetaBuilder metadata, ExternalDatabaseSpecBuilder spec) {
+    private EntandoKeycloakServerFluent(ObjectMetaBuilder metadata, EntandoKeycloakServerSpecBuilder spec) {
         super(metadata);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoExternalDB", ExternalDatabase.class);
+        KubernetesDeserializer.registerCustomKind("entando.org/v1alpha1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         this.spec = spec;
     }
 
@@ -53,17 +52,18 @@ public class ExternalDatabaseFluent<A extends ExternalDatabaseFluent<A>> extends
     }
 
     @SuppressWarnings("unchecked")
-    public A withSpec(ExternalDatabaseSpec spec) {
-        this.spec = new ExternalDatabaseSpecBuilder(spec);
+    public A withSpec(EntandoKeycloakServerSpec spec) {
+        this.spec = new EntandoKeycloakServerSpecBuilder(spec);
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends ExternalDatabaseFluent> extends ExternalDatabaseSpecFluent<SpecNestedImpl<N>> implements
+    public static class SpecNestedImpl<N extends EntandoKeycloakServerFluent> extends
+            EntandoKeycloakServerSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;
 
-        SpecNestedImpl(N parentBuilder, ExternalDatabaseSpec item) {
+        SpecNestedImpl(N parentBuilder, EntandoKeycloakServerSpec item) {
             super(item);
             this.parentBuilder = parentBuilder;
         }

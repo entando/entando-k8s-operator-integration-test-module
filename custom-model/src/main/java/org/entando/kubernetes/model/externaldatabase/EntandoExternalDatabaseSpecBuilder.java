@@ -14,15 +14,17 @@
  *
  */
 
-package org.entando.kubernetes.model.keycloakserver;
+package org.entando.kubernetes.model.externaldatabase;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.fabric8.kubernetes.client.CustomResourceList;
-import io.quarkus.runtime.annotations.RegisterForReflection;
+public class EntandoExternalDatabaseSpecBuilder extends EntandoExternalDatabaseSpecFluent<EntandoExternalDatabaseSpecBuilder> {
 
-@JsonDeserialize
-@RegisterForReflection
-@Deprecated
-public class KeycloakServerList extends CustomResourceList<KeycloakServer> {
+    public EntandoExternalDatabaseSpecBuilder(EntandoExternalDatabaseSpec instance) {
+        super(instance);
+    }
+
+    public EntandoExternalDatabaseSpecBuilder() {
+        //Default constructor requried
+        super();
+    }
 
 }
