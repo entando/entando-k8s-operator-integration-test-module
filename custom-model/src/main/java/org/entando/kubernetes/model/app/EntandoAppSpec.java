@@ -43,6 +43,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
 
     private JeeServer standardServerImage;
     private String customServerImage;
+    private String ingressPath;
     private String entandoImageVersion;
     private String keycloakSecretToUse;
     private String clusterInfrastructureToUse;
@@ -59,6 +60,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("customServerImage") String customServerImage,
             @JsonProperty("dbms") DbmsImageVendor dbms,
             @JsonProperty("ingressHostName") String ingressHostName,
+            @JsonProperty("ingressHostPath") String ingressPath,
             @JsonProperty("replicas") int replicas,
             @JsonProperty("entandoImageVersion") String entandoImageVersion,
             @JsonProperty("tlsSecretName") String tlsSecretName,
@@ -67,6 +69,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
         super(ingressHostName, tlsSecretName, replicas, dbms);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
+        this.ingressPath = ingressPath;
         this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
@@ -75,6 +78,10 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
     @Override
     public Optional<String> getKeycloakSecretToUse() {
         return ofNullable(keycloakSecretToUse);
+    }
+
+    public Optional<String> getIngressPath() {
+        return ofNullable(ingressPath);
     }
 
     public Optional<String> getClusterInfrastructureTouse() {

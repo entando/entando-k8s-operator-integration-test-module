@@ -35,10 +35,12 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
     private static final String MYINGRESS_COM = "myingress.com";
+    private static final String MY_INGRESS_PATH = "/my-ingress-path";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
     private static final String MY_VALUE = "my-value";
     private static final String MY_LABEL = "my-label";
     private static final String MY_TLS_SECRET = "my-tls-secret";
+    private static final Integer MY_REPLICAS = 5;
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -59,11 +61,12 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
                 .withStandardServerImage(JeeServer.WILDFLY)
-                .withReplicas(5)
+                .withReplicas(MY_REPLICAS)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withIngressPath(MY_INGRESS_PATH)
                 .endSpec()
                 .build();
         entandoApps().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoApp.getMetadata()).withSpec(entandoApp.getSpec()).done();
@@ -76,6 +79,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
+        assertThat(actual.getSpec().getIngressPath().get(), is(MY_INGRESS_PATH));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getStandardServerImage().get(), is(JeeServer.WILDFLY));
         assertThat(actual.getSpec().getReplicas().get(), is(5));

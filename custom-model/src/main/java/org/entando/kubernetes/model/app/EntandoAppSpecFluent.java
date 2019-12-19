@@ -26,6 +26,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
     protected String keycloakSecretToUse;
     protected String clusterInfrastructureToUse;
     protected String customServerImage;
+    protected String ingressPath;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
@@ -34,52 +35,48 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         this.customServerImage = spec.getCustomServerImage().orElse(null);
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
+        this.ingressPath = spec.getIngressPath().orElse(null);
     }
 
     public EntandoAppSpecFluent() {
 
     }
 
-    @SuppressWarnings("unchecked")
     public N withStandardServerImage(JeeServer jeeServer) {
         this.standardServerImage = jeeServer;
         this.customServerImage = jeeServer == null ? this.customServerImage : null;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
+    public N withIngressPath(String ingressPath) {
+        this.ingressPath = ingressPath;
+        return thisAsN();
+    }
+
     public N withCustomServerImage(String customServerImage) {
         this.customServerImage = customServerImage;
         this.standardServerImage = customServerImage == null ? standardServerImage : null;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withEntandoImageVersion(String entandoImageVersion) {
         this.entandoImageVersion = entandoImageVersion;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withKeycloakSecretToUse(String name) {
         this.keycloakSecretToUse = name;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withClusterInfrastructureToUse(String name) {
         this.clusterInfrastructureToUse = name;
-        return (N) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public N withReplicas(Integer replicas) {
-        this.replicas = replicas;
-        return (N) this;
+        return thisAsN();
     }
 
     public EntandoAppSpec build() {
-        return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.replicas,
-                this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse);
+        return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
+                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse);
     }
+
 }
