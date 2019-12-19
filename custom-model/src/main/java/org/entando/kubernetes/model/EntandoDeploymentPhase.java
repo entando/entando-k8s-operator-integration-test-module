@@ -24,7 +24,7 @@ import java.util.Locale;
 
 @RegisterForReflection
 public enum EntandoDeploymentPhase {
-    REQUESTED, STARTED(), SUCCESSFUL(), FAILED();
+    REQUESTED, STARTED, SUCCESSFUL, FAILED;
 
     @JsonCreator
     public static EntandoDeploymentPhase forValue(String value) {
@@ -39,7 +39,4 @@ public enum EntandoDeploymentPhase {
         return name().toLowerCase(Locale.getDefault());
     }
 
-    public boolean requiresSync() {
-        return this != STARTED;
-    }
 }

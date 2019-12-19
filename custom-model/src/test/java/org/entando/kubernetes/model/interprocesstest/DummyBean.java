@@ -40,21 +40,21 @@ import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.app.EntandoAppList;
 import org.entando.kubernetes.model.app.EntandoAppOperationFactory;
-import org.entando.kubernetes.model.externaldatabase.DoneableExternalDatabase;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseBuilder;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseList;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseOperationFactory;
+import org.entando.kubernetes.model.externaldatabase.DoneableEntandoDatabaseService;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceList;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceOperationFactory;
 import org.entando.kubernetes.model.infrastructure.DoneableEntandoClusterInfrastructure;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureBuilder;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureList;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureOperationFactory;
-import org.entando.kubernetes.model.keycloakserver.DoneableKeycloakServer;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServerBuilder;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServerList;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServerOperationFactory;
+import org.entando.kubernetes.model.keycloakserver.DoneableEntandoKeycloakServer;
+import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
+import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
+import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerList;
+import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerOperationFactory;
 import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkBuilder;
@@ -126,8 +126,8 @@ public class DummyBean {
             deleteAll(entandoApps());
             deleteAll(entandoPlugins());
             deleteAll(entandoAppPluginLinks());
-            testCreateExternalDatabase();
-            testCreateKeycloakServer();
+            testCreateEntandoDatabaseService();
+            testCreateEntandoKeycloakServer();
             testCreateEntandoClusterInfrastructure();
             testCreateEntandoApp();
             testCreateEntandoPlugin();
@@ -170,8 +170,8 @@ public class DummyBean {
                 .withHealthCheckPath(ACTUATOR_HEALTH)
                 .withIngressHostName(MYHOST_COM)
                 .withTlsSecretName(MY_TLS_SECRET)
-                .withPermission(ENTANDO_APP, SUPERUSER)
-                .withRole(ADMIN, ADMINISTRATOR)
+                .addNewPermission(ENTANDO_APP, SUPERUSER)
+                .addNewRole(ADMIN, ADMINISTRATOR)
                 .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
@@ -256,9 +256,9 @@ public class DummyBean {
         assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
     }
 
-    public void testCreateKeycloakServer() {
+    public void testCreateEntandoKeycloakServer() {
         //Given
-        KeycloakServer keycloakServer = new KeycloakServerBuilder()
+        EntandoKeycloakServer keycloakServer = new EntandoKeycloakServerBuilder()
                 .withNewMetadata().withName(MY_KEYCLOAK)
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
@@ -275,8 +275,8 @@ public class DummyBean {
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
         //When
-        KeycloakServerList list = keycloakServers().inNamespace(MY_NAMESPACE).list();
-        KeycloakServer actual = list.getItems().get(0);
+        EntandoKeycloakServerList list = keycloakServers().inNamespace(MY_NAMESPACE).list();
+        EntandoKeycloakServer actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
@@ -346,9 +346,9 @@ public class DummyBean {
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
     }
 
-    public void testCreateExternalDatabase() {
+    public void testCreateEntandoDatabaseService() {
         //Given
-        ExternalDatabase externalDatabase = new ExternalDatabaseBuilder()
+        EntandoDatabaseService externalDatabase = new EntandoDatabaseServiceBuilder()
                 .withNewMetadata().withName(MY_EXTERNAL_DATABASE)
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
@@ -363,8 +363,8 @@ public class DummyBean {
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
         externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
         //When
-        ExternalDatabaseList list = externalDatabases().inNamespace(MY_NAMESPACE).list();
-        ExternalDatabase actual = list.getItems().get(0);
+        EntandoDatabaseServiceList list = externalDatabases().inNamespace(MY_NAMESPACE).list();
+        EntandoDatabaseService actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
         assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
@@ -374,8 +374,9 @@ public class DummyBean {
         assertThat(actual.getMetadata().getName(), is(MY_EXTERNAL_DATABASE));
     }
 
-    private CustomResourceOperationsImpl<ExternalDatabase, ExternalDatabaseList, DoneableExternalDatabase> externalDatabases() {
-        return ExternalDatabaseOperationFactory.produceAllExternalDatabases(getClient());
+    private CustomResourceOperationsImpl<EntandoDatabaseService, EntandoDatabaseServiceList,
+            DoneableEntandoDatabaseService> externalDatabases() {
+        return EntandoDatabaseServiceOperationFactory.produceAllEntandoDatabaseServices(getClient());
     }
 
     private CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,
@@ -395,8 +396,8 @@ public class DummyBean {
         return EntandoAppOperationFactory.produceAllEntandoApps(getClient());
     }
 
-    CustomResourceOperationsImpl<KeycloakServer, KeycloakServerList, DoneableKeycloakServer> keycloakServers() {
-        return KeycloakServerOperationFactory.produceAllKeycloakServers(getClient());
+    CustomResourceOperationsImpl<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> keycloakServers() {
+        return EntandoKeycloakServerOperationFactory.produceAllEntandoKeycloakServers(getClient());
     }
 
     CustomResourceOperationsImpl<EntandoClusterInfrastructure, EntandoClusterInfrastructureList,

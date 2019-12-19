@@ -39,6 +39,8 @@ spec:
               pattern: '^(wildfly|eap|tomcat|jetty)$'
             customServerImage:
               type: string
+            ingressPath:
+              type: string
             dbms:
               type: string
               pattern: '^(mysql|oracle|postgresql|none)$'

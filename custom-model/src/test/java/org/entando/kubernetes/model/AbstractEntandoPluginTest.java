@@ -46,6 +46,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     private static final String ACTUATOR_HEALTH = "/actuator/health";
     private static final String ENTANDO_APP = "entando-app";
     private static final String SUPERUSER = "superuser";
+    private static final String MY_COMPANION_CONTAINER = "my-companion-container";
     private static final String ADMIN = "admin";
     private static final String ADMINISTRATOR = "Administrator";
     private static final String PARAMETER_NAME = "env";
@@ -75,8 +76,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withHealthCheckPath(ACTUATOR_HEALTH)
                 .withIngressHostName(MYHOST_COM)
                 .withTlsSecretName(MY_TLS_SECRET)
-                .withPermission(ENTANDO_APP, SUPERUSER)
-                .withRole(ADMIN, ADMINISTRATOR)
+                .addNewPermission(ENTANDO_APP, SUPERUSER)
+                .addNewRole(ADMIN, ADMINISTRATOR)
+                .addNewCompanionContainer(MY_COMPANION_CONTAINER)
                 .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
@@ -97,6 +99,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getConnectionConfigNames(), is(Arrays.asList(SOME_CONNECTION)));
+        assertThat(actual.getSpec().getCompanionContainers(), is(Arrays.asList(MY_COMPANION_CONTAINER)));
         assertThat(actual.getSpec().getPermissions().get(0).getClientId(), is(ENTANDO_APP));
         assertThat(actual.getSpec().getPermissions().get(0).getRole(), is(SUPERUSER));
         assertThat(actual.getSpec().getParameters().get(PARAMETER_NAME), is(PARAMETER_VALUE));
@@ -126,8 +129,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withReplicas(5)
                 .withIngressPath(INGRESS_PATH)
                 .withHealthCheckPath("/actuator/unhealth")
-                .withPermission("entando-usermgment", "subuser")
-                .withRole("user", "User")
+                .addNewPermission("entando-usermgment", "subuser")
+                .addNewRole("user", "User")
+                .addNewCompanionContainer(MY_COMPANION_CONTAINER)
                 .addNewParameter(PARAMETER_NAME, "A")
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse("another-keycloak-secret")
@@ -167,6 +171,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getIngressHostName().get(), is(MYHOST_COM));
+        assertThat(actual.getSpec().getConnectionConfigNames(), is(Arrays.asList(SOME_CONNECTION)));
         assertThat(actual.getSpec().getConnectionConfigNames(), is(Arrays.asList(SOME_CONNECTION)));
         assertThat(actual.getSpec().getPermissions().get(0).getClientId(), is(ENTANDO_APP));
         assertThat(actual.getSpec().getPermissions().get(0).getRole(), is(SUPERUSER));

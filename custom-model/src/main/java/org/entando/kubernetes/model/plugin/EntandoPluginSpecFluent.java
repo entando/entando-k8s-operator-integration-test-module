@@ -28,6 +28,7 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     protected final List<ExpectedRole> roles;
     protected final List<Permission> permissions;
     protected final Map<String, String> parameters;
+    private final List<String> companionContainers;
     protected String image;
     protected String ingressPath;
     protected String keycloakSecretToUse;
@@ -47,6 +48,7 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         this.roles = new ArrayList<>(spec.getRoles());
         this.parameters = new ConcurrentHashMap<>(spec.getParameters());
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
+        this.companionContainers = new ArrayList<>(spec.getCompanionContainers());
     }
 
     public EntandoPluginSpecFluent() {
@@ -55,120 +57,97 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         roles = new ArrayList<>();
         permissions = new ArrayList<>();
         parameters = new ConcurrentHashMap<>();
-
+        this.companionContainers = new ArrayList<>();
     }
 
-    @SuppressWarnings("unchecked")
     public N withClusterInfrastructureToUse(String name) {
         this.clusterInfrastructureToUse = name;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withIngressPath(String ingressPath) {
         this.ingressPath = ingressPath;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N addNewConnectionConfigName(String name) {
         connectionConfigNames.add(name);
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withImage(String image) {
         this.image = image;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withSecurityLevel(PluginSecurityLevel level) {
         this.securityLevel = level;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withKeycloakSecretToUse(String name) {
         this.keycloakSecretToUse = name;
-        return (N) this;
+        return thisAsN();
     }
 
-    /**
-     * Legacy method.
-     *
-     * @deprecated Use {@link #addNewRole(String, String)}
-     */
-    @Deprecated
-    public N withRole(String code, String name) {
-        return addNewRole(code, name);
-    }
-
-    @SuppressWarnings("unchecked")
     public N addNewRole(String code, String name) {
         roles.add(new ExpectedRole(code, name));
-        return (N) this;
+        return thisAsN();
     }
 
-    /**
-     * Legacy method.
-     *
-     * @deprecated Use {@link #addNewPermission(String, String)}
-     */
-    @Deprecated
-    public N withPermission(String clientId, String role) {
-        return addNewPermission(clientId, role);
+    public N addNewCompanionContainer(String name) {
+        this.companionContainers.add(name);
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N addNewPermission(String clientId, String role) {
         permissions.add(new Permission(clientId, role));
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N addNewParameter(String name, String value) {
         this.parameters.put(name, value);
-        return (N) this;
+        return thisAsN();
+    }
+
+    public N withHealthCheckPath(String healthCheckPath) {
+        this.healthCheckPath = healthCheckPath;
+        return thisAsN();
+    }
+
+    public N withConnectionConfigNames(List<String> strings) {
+        this.connectionConfigNames.clear();
+        this.connectionConfigNames.addAll(strings);
+        return thisAsN();
+    }
+
+    public N withCompanionContainers(List<String> strings) {
+        this.companionContainers.clear();
+        this.companionContainers.addAll(strings);
+        return thisAsN();
+    }
+
+    public N withRoles(List<ExpectedRole> roles) {
+        this.roles.clear();
+        this.roles.addAll(roles);
+        return thisAsN();
+    }
+
+    public N withPermissions(List<Permission> permissions) {
+        this.permissions.clear();
+        this.permissions.addAll(permissions);
+        return thisAsN();
+    }
+
+    public N withParameters(Map<String, String> parameters) {
+        this.parameters.clear();
+        this.parameters.putAll(parameters);
+        return thisAsN();
     }
 
     public EntandoPluginSpec build() {
         return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakSecretToUse,
                 healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions, parameters, connectionConfigNames,
-                clusterInfrastructureToUse);
-    }
-
-    @SuppressWarnings("unchecked")
-    public N withHealthCheckPath(String healthCheckPath) {
-        this.healthCheckPath = healthCheckPath;
-        return (N) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public N withConnectionConfigNames(List<String> strings) {
-        this.connectionConfigNames.clear();
-        this.connectionConfigNames.addAll(strings);
-        return (N) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public N withRoles(List<ExpectedRole> roles) {
-        this.roles.clear();
-        this.roles.addAll(roles);
-        return (N) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public N withPermissions(List<Permission> permissions) {
-        this.permissions.clear();
-        this.permissions.addAll(permissions);
-        return (N) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public N withParameters(Map<String, String> parameters) {
-        this.parameters.clear();
-        this.parameters.putAll(parameters);
-        return (N) this;
+                clusterInfrastructureToUse, companionContainers);
     }
 }

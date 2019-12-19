@@ -54,6 +54,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
     private String keycloakSecretToUse;
     private String healthCheckPath;
     private String clusterInfrastructureToUse;
+    private List<String> companionContainers = new ArrayList<>();
 
     public EntandoPluginSpec() {
         //Needed for JSON Deserialization
@@ -77,7 +78,9 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("permissions") List<Permission> permissions,
             @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
-            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse) {
+            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse,
+            @JsonProperty("companionContainers") List<String> companionContainers
+    ) {
         super(ingressHostName, tlsSecretName, replicas, dbms);
         this.image = image;
         this.ingressPath = ingressPath;
@@ -90,6 +93,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
         this.securityLevel = securityLevel;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
 
+        this.companionContainers = companionContainers;
     }
 
     public Map<String, String> getParameters() {
@@ -133,4 +137,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
         return connectionConfigNames;
     }
 
+    public List<String> getCompanionContainers() {
+        return this.companionContainers;
+    }
 }

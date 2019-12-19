@@ -71,6 +71,10 @@ spec:
               type: array
               items:
                 type: string
+            companionContainers:
+              type: array
+              items:
+                type: string
             roles:
               type: array
               items:

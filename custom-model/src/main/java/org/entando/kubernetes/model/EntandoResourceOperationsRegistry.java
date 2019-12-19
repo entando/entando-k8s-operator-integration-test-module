@@ -27,14 +27,10 @@ import org.entando.kubernetes.model.app.EntandoAppOperationFactory;
 import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceOperationFactory;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabase;
-import org.entando.kubernetes.model.externaldatabase.ExternalDatabaseOperationFactory;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureOperationFactory;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerOperationFactory;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServer;
-import org.entando.kubernetes.model.keycloakserver.KeycloakServerOperationFactory;
 import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkOperationFactory;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
@@ -61,8 +57,6 @@ public class EntandoResourceOperationsRegistry {
         operationSuppliers.put(EntandoPlugin.class, EntandoPluginOperationFactory::produceAllEntandoPlugins);
         operationSuppliers.put(EntandoAppPluginLink.class, EntandoAppPluginLinkOperationFactory::produceAllEntandoAppPluginLinks);
         operationSuppliers.put(EntandoDatabaseService.class, EntandoDatabaseServiceOperationFactory::produceAllEntandoDatabaseServices);
-        operationSuppliers.put(ExternalDatabase.class, ExternalDatabaseOperationFactory::produceAllExternalDatabases);
-        operationSuppliers.put(KeycloakServer.class, KeycloakServerOperationFactory::produceAllKeycloakServers);
         return Collections.unmodifiableMap(operationSuppliers);
     }
 
