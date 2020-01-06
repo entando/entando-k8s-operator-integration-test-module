@@ -60,7 +60,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("customServerImage") String customServerImage,
             @JsonProperty("dbms") DbmsImageVendor dbms,
             @JsonProperty("ingressHostName") String ingressHostName,
-            @JsonProperty("ingressHostPath") String ingressPath,
+            @JsonProperty("ingressPath") String ingressPath,
             @JsonProperty("replicas") int replicas,
             @JsonProperty("entandoImageVersion") String entandoImageVersion,
             @JsonProperty("tlsSecretName") String tlsSecretName,
