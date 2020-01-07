@@ -30,7 +30,7 @@
     <repositories>
         <repository>
             <id>jx-releases</id>
-            <url>http://nexus-jx.apps.serv.run/repository/maven-releases/</url>
+            <url>https://nexus-jx.apps.serv.run/repository/maven-releases/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
