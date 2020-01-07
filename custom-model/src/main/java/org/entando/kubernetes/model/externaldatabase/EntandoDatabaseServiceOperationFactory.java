@@ -18,7 +18,6 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
-import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import org.entando.kubernetes.model.EntandoCustomResourceResolver;
 
 public final class EntandoDatabaseServiceOperationFactory {
@@ -33,7 +32,6 @@ public final class EntandoDatabaseServiceOperationFactory {
 
     public static CustomResourceOperationsImpl<EntandoDatabaseService, EntandoDatabaseServiceList,
             DoneableEntandoDatabaseService> produceAllEntandoDatabaseServices(KubernetesClient client) {
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoDatabaseService", EntandoDatabaseService.class);
         return resolver.resolveOperation(client);
     }
 }

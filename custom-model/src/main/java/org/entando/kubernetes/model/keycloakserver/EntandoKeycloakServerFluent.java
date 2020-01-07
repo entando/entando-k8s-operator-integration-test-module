@@ -20,7 +20,6 @@ import io.fabric8.kubernetes.api.builder.Fluent;
 import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import org.entando.kubernetes.model.EntandoBaseFluent;
 
 public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
@@ -37,7 +36,6 @@ public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A
 
     private EntandoKeycloakServerFluent(ObjectMetaBuilder metadata, EntandoKeycloakServerSpecBuilder spec) {
         super(metadata);
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoKeycloakServer", EntandoKeycloakServer.class);
         this.spec = spec;
     }
 
