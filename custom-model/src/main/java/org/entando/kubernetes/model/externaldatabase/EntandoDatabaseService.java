@@ -38,6 +38,7 @@ public class EntandoDatabaseService extends EntandoBaseCustomResource {
 
     public static final String CRD_NAME = "entandodatabaseservices.entando.org";
 
+    @SuppressWarnings("squid:S1948")//false positive
     private EntandoDatabaseServiceSpec spec;
 
     public EntandoDatabaseService() {

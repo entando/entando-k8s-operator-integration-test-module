@@ -36,6 +36,7 @@ import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 public class EntandoAppPluginLink extends EntandoBaseCustomResource {
 
     public static final String CRD_NAME = "entandoapppluginlinks.entando.org";
+    @SuppressWarnings("squid:S1948")//false positive
     private EntandoAppPluginLinkSpec spec;
 
     public EntandoAppPluginLink() {
