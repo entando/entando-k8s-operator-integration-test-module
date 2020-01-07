@@ -155,7 +155,8 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
         return entandoDeBundles().inNamespace(MY_NAMESPACE).withName(MY_BUNDLE).edit();
     }
 
-    protected CustomResourceOperationsImpl<EntandoDeBundle, CustomResourceList<EntandoDeBundle>, DoneableEntandoDeBundle> entandoDeBundles() {
+    protected CustomResourceOperationsImpl<EntandoDeBundle, CustomResourceList<EntandoDeBundle>,
+            DoneableEntandoDeBundle> entandoDeBundles() {
         return registry.getOperations(EntandoDeBundle.class);
     }
 
