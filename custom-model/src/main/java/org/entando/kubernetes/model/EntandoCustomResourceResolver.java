@@ -130,7 +130,7 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
     private InputStream loadYamlFile() {
         InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(yamlFile);
         if (resourceAsStream == null) {
-            LOGGER.severe(()->format("Could not load yaml file: %s", yamlFile));
+            LOGGER.severe(() -> format("Could not load yaml file: %s", yamlFile));
             throw new IllegalStateException("Could not load yaml file: " + yamlFile);
         }
         return resourceAsStream;
