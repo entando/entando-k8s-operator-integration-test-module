@@ -14,55 +14,55 @@
  *
  */
 
-package org.entando.kubernetes.model.externaldatabase;
+package org.entando.kubernetes.model.debundle;
 
-import io.fabric8.kubernetes.api.builder.Fluent;
 import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import org.entando.kubernetes.model.EntandoBaseFluent;
 
-public class EntandoDatabaseServiceFluent<A extends EntandoDatabaseServiceFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
+public class EntandoDeBundleFluent<A extends EntandoDeBundleFluent<A>> extends EntandoBaseFluent<A> {
 
-    protected EntandoDatabaseServiceSpecBuilder spec;
+    protected EntandoDeBundleSpecBuilder spec;
 
-    protected EntandoDatabaseServiceFluent() {
-        this(new ObjectMetaBuilder(), new EntandoDatabaseServiceSpecBuilder());
+    protected EntandoDeBundleFluent() {
+        this(new ObjectMetaBuilder(), new EntandoDeBundleSpecBuilder());
     }
 
-    protected EntandoDatabaseServiceFluent(EntandoDatabaseServiceSpec spec, ObjectMeta objectMeta) {
-        this(new ObjectMetaBuilder(objectMeta), new EntandoDatabaseServiceSpecBuilder(spec));
+    protected EntandoDeBundleFluent(EntandoDeBundleSpec spec, ObjectMeta objectMeta) {
+        this(new ObjectMetaBuilder(objectMeta), new EntandoDeBundleSpecBuilder(spec));
     }
 
-    private EntandoDatabaseServiceFluent(ObjectMetaBuilder metadata, EntandoDatabaseServiceSpecBuilder spec) {
+    private EntandoDeBundleFluent(ObjectMetaBuilder metadata, EntandoDeBundleSpecBuilder spec) {
         super(metadata);
         this.spec = spec;
     }
 
-    @SuppressWarnings("unchecked")
     public SpecNestedImpl<A> editSpec() {
-        return new SpecNestedImpl<>((A) this, this.spec.build());
+        return new SpecNestedImpl<>(thisAsA(), this.spec.build());
     }
 
-    @SuppressWarnings("unchecked")
     public SpecNestedImpl<A> withNewSpec() {
-        return new SpecNestedImpl<>((A) this);
+        return new SpecNestedImpl<>(thisAsA());
+    }
+
+    public A withSpec(EntandoDeBundleSpec spec) {
+        this.spec = new EntandoDeBundleSpecBuilder(spec);
+        return thisAsA();
     }
 
     @SuppressWarnings("unchecked")
-    public A withSpec(EntandoDatabaseServiceSpec spec) {
-        this.spec = new EntandoDatabaseServiceSpecBuilder(spec);
+    protected A thisAsA() {
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends EntandoDatabaseServiceFluent> extends
-            EntandoDatabaseServiceSpecFluent<SpecNestedImpl<N>> implements
+    public static class SpecNestedImpl<N extends EntandoDeBundleFluent> extends EntandoDeBundleSpecFluent<SpecNestedImpl<N>> implements
             Nested<N> {
 
         private final N parentBuilder;
 
-        SpecNestedImpl(N parentBuilder, EntandoDatabaseServiceSpec item) {
-            super(item);
+        SpecNestedImpl(N parentBuilder, EntandoDeBundleSpec spec) {
+            super(spec);
             this.parentBuilder = parentBuilder;
         }
 
@@ -71,8 +71,8 @@ public class EntandoDatabaseServiceFluent<A extends EntandoDatabaseServiceFluent
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
+        @SuppressWarnings("unchecked")
         public N and() {
             return (N) parentBuilder.withSpec(this.build());
         }

@@ -14,56 +14,66 @@
  *
  */
 
-package org.entando.kubernetes.model;
-
-import static java.util.Optional.ofNullable;
+package org.entando.kubernetes.model.debundle;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 
 @JsonInclude(Include.NON_NULL)
+@JsonSerialize
+@JsonDeserialize
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class EntandoDeploymentSpec implements HasIngress, Serializable {
+public class EntandoDeBundleDetails implements Serializable {
 
-    private Integer replicas = 1;
-    private DbmsImageVendor dbms;
-    private String ingressHostName;
-    private String tlsSecretName;
+    private String name;
+    private String description;
+    @JsonProperty("dist-tags")
+    private Map<String, Object> distTags;
+    private List<String> versions;
+    private List<String> keywords;
 
-    protected EntandoDeploymentSpec() {
+    public EntandoDeBundleDetails(String name, String description, Map<String, Object> distTags, List<String> versions,
+            List<String> keywords) {
+        this.name = name;
+        this.description = description;
+        this.distTags = distTags;
+        this.versions = versions;
+        this.keywords = keywords;
     }
 
-    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsImageVendor dbms) {
-        this.ingressHostName = ingressHostName;
-        this.tlsSecretName = tlsSecretName;
-        this.replicas = replicas;
-        this.dbms = dbms;
+    public EntandoDeBundleDetails() {
     }
 
-    @Override
-    public Optional<String> getIngressHostName() {
-        return Optional.ofNullable(ingressHostName);
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return Optional.ofNullable(tlsSecretName);
+    public String getDescription() {
+        return description;
     }
 
-    public Optional<Integer> getReplicas() {
-        return ofNullable(replicas);
+    public Map<String, Object> getDistTags() {
+        return distTags;
     }
 
-    public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(dbms);
+    public List<String> getVersions() {
+        return versions;
+    }
+
+    public List<String> getKeywords() {
+        return keywords;
     }
 }

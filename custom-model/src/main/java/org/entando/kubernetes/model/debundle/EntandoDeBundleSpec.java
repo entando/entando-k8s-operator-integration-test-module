@@ -14,56 +14,44 @@
  *
  */
 
-package org.entando.kubernetes.model;
-
-import static java.util.Optional.ofNullable;
+package org.entando.kubernetes.model.debundle;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
-import java.util.Optional;
+import java.util.List;
 
+@JsonSerialize
+@JsonDeserialize()
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class EntandoDeploymentSpec implements HasIngress, Serializable {
+public class EntandoDeBundleSpec {
 
-    private Integer replicas = 1;
-    private DbmsImageVendor dbms;
-    private String ingressHostName;
-    private String tlsSecretName;
+    private EntandoDeBundleDetails details;
+    private List<EntandoDeBundleTag> tags;
 
-    protected EntandoDeploymentSpec() {
+    public EntandoDeBundleSpec() {
+        super();
     }
 
-    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsImageVendor dbms) {
-        this.ingressHostName = ingressHostName;
-        this.tlsSecretName = tlsSecretName;
-        this.replicas = replicas;
-        this.dbms = dbms;
+    public EntandoDeBundleSpec(EntandoDeBundleDetails details, List<EntandoDeBundleTag> tags) {
+        this.details = details;
+        this.tags = tags;
     }
 
-    @Override
-    public Optional<String> getIngressHostName() {
-        return Optional.ofNullable(ingressHostName);
+    public EntandoDeBundleDetails getDetails() {
+        return details;
     }
 
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return Optional.ofNullable(tlsSecretName);
-    }
-
-    public Optional<Integer> getReplicas() {
-        return ofNullable(replicas);
-    }
-
-    public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(dbms);
+    public List<EntandoDeBundleTag> getTags() {
+        return tags;
     }
 }

@@ -14,56 +14,62 @@
  *
  */
 
-package org.entando.kubernetes.model;
-
-import static java.util.Optional.ofNullable;
+package org.entando.kubernetes.model.debundle;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
-import java.util.Optional;
+import org.entando.kubernetes.model.EntandoBaseCustomResource;
+import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 
+@JsonSerialize
+@JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class EntandoDeploymentSpec implements HasIngress, Serializable {
+public class EntandoDeBundle extends EntandoBaseCustomResource {
 
-    private Integer replicas = 1;
-    private DbmsImageVendor dbms;
-    private String ingressHostName;
-    private String tlsSecretName;
+    public static final String CRD_NAME = "debundles.entando.org";
 
-    protected EntandoDeploymentSpec() {
+    private EntandoDeBundleSpec spec;
+
+    public EntandoDeBundle() {
+        this(null);
     }
 
-    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsImageVendor dbms) {
-        this.ingressHostName = ingressHostName;
-        this.tlsSecretName = tlsSecretName;
-        this.replicas = replicas;
-        this.dbms = dbms;
+    public EntandoDeBundle(EntandoDeBundleSpec spec) {
+        this(new ObjectMeta(), spec);
+    }
+
+    public EntandoDeBundle(ObjectMeta metadata, EntandoDeBundleSpec spec) {
+        this(metadata, spec, null);
+    }
+
+    public EntandoDeBundle(ObjectMeta metadata, EntandoDeBundleSpec spec, EntandoCustomResourceStatus status) {
+        super(status);
+        super.setMetadata(metadata);
+        this.setSpec(spec);
     }
 
     @Override
-    public Optional<String> getIngressHostName() {
-        return Optional.ofNullable(ingressHostName);
+    public String getDefinitionName() {
+        return CRD_NAME;
     }
 
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return Optional.ofNullable(tlsSecretName);
+    public EntandoDeBundleSpec getSpec() {
+        return spec;
     }
 
-    public Optional<Integer> getReplicas() {
-        return ofNullable(replicas);
+    public void setSpec(EntandoDeBundleSpec spec) {
+        this.spec = spec;
     }
 
-    public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(dbms);
-    }
 }

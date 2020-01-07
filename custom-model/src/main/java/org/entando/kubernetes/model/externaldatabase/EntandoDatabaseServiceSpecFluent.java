@@ -18,7 +18,7 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import org.entando.kubernetes.model.DbmsImageVendor;
 
-public class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabaseServiceSpecFluent> {
+public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabaseServiceSpecFluent> {
 
     private String databaseName;
     private DbmsImageVendor dbms;
@@ -42,33 +42,33 @@ public class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabaseServiceSp
         return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, secretName);
     }
 
-    @SuppressWarnings("unchecked")
     public N withDatabaseName(String databaseName) {
         this.databaseName = databaseName;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withDbms(DbmsImageVendor dbms) {
         this.dbms = dbms;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withHost(String host) {
         this.host = host;
-        return (N) this;
+        return thisAsN();
     }
 
-    @SuppressWarnings("unchecked")
     public N withPort(Integer port) {
         this.port = port;
-        return (N) this;
+        return thisAsN();
+    }
+
+    public N withSecretName(String secretName) {
+        this.secretName = secretName;
+        return thisAsN();
     }
 
     @SuppressWarnings("unchecked")
-    public N withSecretName(String secretName) {
-        this.secretName = secretName;
+    protected N thisAsN() {
         return (N) this;
     }
 }

@@ -14,56 +14,54 @@
  *
  */
 
-package org.entando.kubernetes.model;
-
-import static java.util.Optional.ofNullable;
+package org.entando.kubernetes.model.debundle;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
-import java.util.Optional;
 
+@JsonSerialize
+@JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class EntandoDeploymentSpec implements HasIngress, Serializable {
+public class EntandoDeBundleTag {
 
-    private Integer replicas = 1;
-    private DbmsImageVendor dbms;
-    private String ingressHostName;
-    private String tlsSecretName;
+    private String version;
+    private String integrity;
+    private String shasum;
+    private String tarball;
 
-    protected EntandoDeploymentSpec() {
+    public EntandoDeBundleTag(String version, String integrity, String shasum, String tarball) {
+        this.version = version;
+        this.integrity = integrity;
+        this.shasum = shasum;
+        this.tarball = tarball;
     }
 
-    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsImageVendor dbms) {
-        this.ingressHostName = ingressHostName;
-        this.tlsSecretName = tlsSecretName;
-        this.replicas = replicas;
-        this.dbms = dbms;
+    public EntandoDeBundleTag() {
     }
 
-    @Override
-    public Optional<String> getIngressHostName() {
-        return Optional.ofNullable(ingressHostName);
+    public String getVersion() {
+        return version;
     }
 
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return Optional.ofNullable(tlsSecretName);
+    public String getIntegrity() {
+        return integrity;
     }
 
-    public Optional<Integer> getReplicas() {
-        return ofNullable(replicas);
+    public String getShasum() {
+        return shasum;
     }
 
-    public Optional<DbmsImageVendor> getDbms() {
-        return ofNullable(dbms);
+    public String getTarball() {
+        return tarball;
     }
 }

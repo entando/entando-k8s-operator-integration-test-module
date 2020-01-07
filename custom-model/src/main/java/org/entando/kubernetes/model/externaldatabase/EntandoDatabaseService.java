@@ -18,15 +18,15 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 
 @JsonSerialize
 @JsonDeserialize
@@ -34,6 +34,7 @@ import org.entando.kubernetes.model.app.EntandoBaseCustomResource;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EntandoDatabaseService extends EntandoBaseCustomResource {
 
     public static final String CRD_NAME = "entandodatabaseservices.entando.org";
@@ -55,8 +56,6 @@ public class EntandoDatabaseService extends EntandoBaseCustomResource {
 
     public EntandoDatabaseService(ObjectMeta metadata, EntandoDatabaseServiceSpec spec, EntandoCustomResourceStatus status) {
         super(status);
-        setKind("EntandoDatabaseService");
-        KubernetesDeserializer.registerCustomKind("entando.org/v1#EntandoDatabaseService", EntandoDatabaseService.class);
         super.setMetadata(metadata);
         this.spec = spec;
     }
