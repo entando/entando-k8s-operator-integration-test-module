@@ -46,6 +46,9 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     @Test
     public void testCreateEntandoAppPluginLink() {
         //Given
+        if (true) {
+            throw new AssertionError("This did not work");
+        }
         EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
                 .withNewMetadata().withName(MY_APP_PLUGIN_LINK)
                 .withNamespace(MY_APP_NAMESPACE)
