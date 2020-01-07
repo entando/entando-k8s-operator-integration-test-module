@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.io.Serializable;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 
@@ -32,7 +33,7 @@ import org.entando.kubernetes.model.DbmsImageVendor;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-public class EntandoDatabaseServiceSpec {
+public class EntandoDatabaseServiceSpec implements Serializable {
 
     private String dbms;
     private String host;

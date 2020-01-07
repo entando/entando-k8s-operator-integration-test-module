@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.io.Serializable;
 
 @JsonSerialize
 @JsonDeserialize
@@ -30,7 +31,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
-public class EntandoAppPluginLinkSpec {
+public class EntandoAppPluginLinkSpec implements Serializable {
 
     private String entandoAppNamespace;
     private String entandoAppName;

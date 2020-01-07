@@ -16,6 +16,7 @@
 
 package org.entando.kubernetes.model;
 
+import static java.lang.String.format;
 import static java.lang.Thread.sleep;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
@@ -82,13 +83,6 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
             synchronized (this) {
                 if (this.customResourceDefinition == null) {
                     this.customResourceDefinition = loadCrd(client);
-                    /*There is some confusion as to whether this is still necessary:
-                    KubernetesDeserializer.registerCustomKind(
-                            customResourceDefinition.getSpec().getGroup() + "/"
-                                    + customResourceDefinition.getSpec().getVersion() + "#"
-                                    + customResourceDefinition.getSpec().getNames().getKind(),
-                            customResourceClass
-                    ); */
                 }
             }
             CustomResourceOperationsImpl<R, L, D> oper = (CustomResourceOperationsImpl<R, L, D>) client
@@ -136,7 +130,7 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
     private InputStream loadYamlFile() {
         InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(yamlFile);
         if (resourceAsStream == null) {
-            LOGGER.severe("Could not load yaml file: " + yamlFile);
+            LOGGER.severe(()->format("Could not load yaml file: %s", yamlFile));
             throw new IllegalStateException("Could not load yaml file: " + yamlFile);
         }
         return resourceAsStream;
