@@ -20,6 +20,13 @@ import io.fabric8.kubernetes.api.builder.Builder;
 
 public class EntandoDeBundleBuilder extends EntandoDeBundleFluent<EntandoDeBundleBuilder> implements Builder<EntandoDeBundle> {
 
+    public EntandoDeBundleBuilder() {
+    }
+
+    public EntandoDeBundleBuilder(EntandoDeBundle bundle) {
+        super(bundle.getSpec(), bundle.getMetadata());
+    }
+
     @Override
     public EntandoDeBundle build() {
         return new EntandoDeBundle(super.metadata.build(), super.spec.build());
