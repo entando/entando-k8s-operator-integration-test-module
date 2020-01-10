@@ -25,13 +25,11 @@ spec:
         spec:
           type: object
           properties:
-            items:
+            components:
               type: array
               items:
                 type: object
                 properties:
-                  spec:
-                    type: object
-                  metadata:
-                    type: object
+                  spec: {}
+                  metadata: {}
         entandoStatus: {}

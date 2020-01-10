@@ -51,14 +51,14 @@ import org.entando.kubernetes.model.plugin.EntandoPluginFluent;
 public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAppSpecFluent> {
 
     private static final Map<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> BUILDERS = createBuilderMap();
-    protected List<EntandoBaseFluent<?>> items;
+    protected List<EntandoBaseFluent<?>> components;
 
     public EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
-        this.items = createTagBuilders(spec.getItems());
+        this.components = createComponentBuilders(spec.getComponents());
     }
 
     public EntandoCompositeAppSpecFluent() {
-        this.items = new ArrayList<>();
+        this.components = new ArrayList<>();
     }
 
     private static ConcurrentHashMap<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> createBuilderMap() {
@@ -74,17 +74,17 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         return result;
     }
 
-    public A withItems(List<EntandoBaseCustomResource> items) {
-        this.items = createTagBuilders(items);
+    public A withComponents(List<EntandoBaseCustomResource> components) {
+        this.components = createComponentBuilders(components);
         return thisAsA();
     }
 
-    public A withItems(EntandoBaseCustomResource... items) {
-        return withItems(Arrays.asList(items));
+    public A withComponents(EntandoBaseCustomResource... components) {
+        return withComponents(Arrays.asList(components));
     }
 
-    private List<EntandoBaseFluent<?>> createTagBuilders(List<EntandoBaseCustomResource> items) {
-        return new ArrayList<>(items.stream()
+    private List<EntandoBaseFluent<?>> createComponentBuilders(List<EntandoBaseCustomResource> components) {
+        return new ArrayList<>(components.stream()
                 .map(this::newBuilderFrom)
                 .collect(Collectors.toList()));
     }
@@ -103,7 +103,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public EntandoCompositeAppSpec build() {
-        return new EntandoCompositeAppSpec(this.items.stream()
+        return new EntandoCompositeAppSpec(this.components.stream()
                 .map(Builder.class::cast)
                 .map(Builder::build)
                 .map(EntandoBaseCustomResource.class::cast)
@@ -115,7 +115,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public A addToEntandoKeycloakServers(EntandoKeycloakServer item) {
-        this.items.add(new EntandoKeycloakServerBuilder(item));
+        this.components.add(new EntandoKeycloakServerBuilder(item));
         return thisAsA();
     }
 
@@ -124,7 +124,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public A addToEntandoApps(EntandoApp item) {
-        this.items.add(new EntandoAppBuilder(item));
+        this.components.add(new EntandoAppBuilder(item));
         return thisAsA();
     }
 
@@ -133,7 +133,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public A addToEntandoClusterInfrastructures(EntandoClusterInfrastructure item) {
-        this.items.add(new EntandoClusterInfrastructureBuilder(item));
+        this.components.add(new EntandoClusterInfrastructureBuilder(item));
         return thisAsA();
     }
 
@@ -142,7 +142,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public A addToEntandoPlugins(EntandoPlugin item) {
-        this.items.add(new EntandoPluginBuilder(item));
+        this.components.add(new EntandoPluginBuilder(item));
         return thisAsA();
     }
 
@@ -151,7 +151,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public A addToEntandoAppPluginLinks(EntandoAppPluginLink item) {
-        this.items.add(new EntandoAppPluginLinkBuilder(item));
+        this.components.add(new EntandoAppPluginLinkBuilder(item));
         return thisAsA();
     }
 
@@ -160,7 +160,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public A addToEntandoDatabaseServices(EntandoDatabaseService item) {
-        this.items.add(new EntandoDatabaseServiceBuilder(item));
+        this.components.add(new EntandoDatabaseServiceBuilder(item));
         return thisAsA();
     }
 

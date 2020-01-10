@@ -75,12 +75,12 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
         //When
         EntandoCompositeApp actual = entandoCompositeApps().inNamespace(MY_NAMESPACE).withName(MY_COMPOSITE_APP).get();
         //Then
-        assertThat(actual.getSpec().getItems().get(0).getMetadata().getName(), is(MY_KEYCLOAK));
-        assertThat(actual.getSpec().getItems().get(1).getMetadata().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
-        assertThat(actual.getSpec().getItems().get(2).getMetadata().getName(), is(MY_APP));
-        assertThat(actual.getSpec().getItems().get(3).getMetadata().getName(), is(MY_PLUGIN));
-        assertThat(actual.getSpec().getItems().get(4).getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
-        assertThat(actual.getSpec().getItems().get(5).getMetadata().getName(), is(MY_DATABASE_SERVICE));
+        assertThat(actual.getSpec().getComponents().get(0).getMetadata().getName(), is(MY_KEYCLOAK));
+        assertThat(actual.getSpec().getComponents().get(1).getMetadata().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getComponents().get(2).getMetadata().getName(), is(MY_APP));
+        assertThat(actual.getSpec().getComponents().get(3).getMetadata().getName(), is(MY_PLUGIN));
+        assertThat(actual.getSpec().getComponents().get(4).getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
+        assertThat(actual.getSpec().getComponents().get(5).getMetadata().getName(), is(MY_DATABASE_SERVICE));
         assertThat(actual.getMetadata().getName(), is(MY_COMPOSITE_APP));
     }
 
@@ -110,7 +110,7 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
-                .withItems(
+                .withComponents(
                         new EntandoKeycloakServerBuilder().withNewMetadata().withName(MY_KEYCLOAK).endMetadata().build(),
                         new EntandoClusterInfrastructureBuilder().withNewMetadata().withName(MY_CLUSTER_INFRASTRUCTURE).endMetadata()
                                 .build(),
@@ -125,12 +125,12 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 .done();
         //Then
         assertThat(actual.getMetadata().getName(), is(MY_COMPOSITE_APP));
-        assertThat(actual.getSpec().getItems().get(0).getMetadata().getName(), is(MY_KEYCLOAK));
-        assertThat(actual.getSpec().getItems().get(1).getMetadata().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
-        assertThat(actual.getSpec().getItems().get(2).getMetadata().getName(), is(MY_APP));
-        assertThat(actual.getSpec().getItems().get(3).getMetadata().getName(), is(MY_PLUGIN));
-        assertThat(actual.getSpec().getItems().get(4).getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
-        assertThat(actual.getSpec().getItems().get(5).getMetadata().getName(), is(MY_DATABASE_SERVICE));
+        assertThat(actual.getSpec().getComponents().get(0).getMetadata().getName(), is(MY_KEYCLOAK));
+        assertThat(actual.getSpec().getComponents().get(1).getMetadata().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getComponents().get(2).getMetadata().getName(), is(MY_APP));
+        assertThat(actual.getSpec().getComponents().get(3).getMetadata().getName(), is(MY_PLUGIN));
+        assertThat(actual.getSpec().getComponents().get(4).getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
+        assertThat(actual.getSpec().getComponents().get(5).getMetadata().getName(), is(MY_DATABASE_SERVICE));
         assertThat(actual.getStatus(), is(notNullValue()));
     }
 

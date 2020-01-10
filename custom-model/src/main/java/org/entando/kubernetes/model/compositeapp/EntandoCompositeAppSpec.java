@@ -36,17 +36,17 @@ import org.entando.kubernetes.model.EntandoBaseCustomResource;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntandoCompositeAppSpec {
 
-    private List<EntandoBaseCustomResource> items;
+    private List<EntandoBaseCustomResource> components;
 
     public EntandoCompositeAppSpec() {
         super();
     }
 
-    public EntandoCompositeAppSpec(List<EntandoBaseCustomResource> items) {
-        this.items = items;
+    public EntandoCompositeAppSpec(List<EntandoBaseCustomResource> components) {
+        this.components = components;
     }
 
-    public List<EntandoBaseCustomResource> getItems() {
-        return items;
+    public List<EntandoBaseCustomResource> getComponents() {
+        return components;
     }
 }
