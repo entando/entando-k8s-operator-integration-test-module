@@ -21,6 +21,13 @@ import io.fabric8.kubernetes.api.builder.Builder;
 public class EntandoDatabaseServiceBuilder extends EntandoDatabaseServiceFluent<EntandoDatabaseServiceBuilder> implements
         Builder<EntandoDatabaseService> {
 
+    public EntandoDatabaseServiceBuilder() {
+    }
+
+    public EntandoDatabaseServiceBuilder(EntandoDatabaseService service) {
+        super(service.getSpec(), service.getMetadata());
+    }
+
     @Override
     public EntandoDatabaseService build() {
         return new EntandoDatabaseService(super.metadata.build(), super.spec.build());

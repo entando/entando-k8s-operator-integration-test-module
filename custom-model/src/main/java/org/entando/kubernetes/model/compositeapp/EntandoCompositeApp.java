@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.externaldatabase;
+package org.entando.kubernetes.model.compositeapp;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -23,56 +23,53 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
-import java.util.Optional;
-import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.EntandoBaseCustomResource;
+import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 
-@JsonInclude(Include.NON_NULL)
 @JsonSerialize
 @JsonDeserialize
+@JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoDatabaseServiceSpec implements Serializable {
+public class EntandoCompositeApp extends EntandoBaseCustomResource {
 
-    private DbmsImageVendor dbms;
-    private String host;
-    private Integer port;
-    private String databaseName;
-    private String secretName;
+    public static final String CRD_NAME = "entandocompositeapps.entando.org";
 
-    public EntandoDatabaseServiceSpec() {
+    private EntandoCompositeAppSpec spec;
 
+    public EntandoCompositeApp() {
+        this(null);
     }
 
-    public EntandoDatabaseServiceSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
-        this.dbms = dbms;
-        this.host = host;
-        this.secretName = secretName;
-        this.port = port;
-        this.databaseName = databaseName;
+    public EntandoCompositeApp(EntandoCompositeAppSpec spec) {
+        this(new ObjectMeta(), spec);
     }
 
-    public DbmsImageVendor getDbms() {
-        return dbms;
+    public EntandoCompositeApp(ObjectMeta metadata, EntandoCompositeAppSpec spec) {
+        this(metadata, spec, null);
     }
 
-    public String getHost() {
-        return host;
+    public EntandoCompositeApp(ObjectMeta metadata, EntandoCompositeAppSpec spec, EntandoCustomResourceStatus status) {
+        super(status);
+        super.setMetadata(metadata);
+        this.setSpec(spec);
     }
 
-    public String getSecretName() {
-        return secretName;
+    @Override
+    public String getDefinitionName() {
+        return CRD_NAME;
     }
 
-    public Optional<Integer> getPort() {
-        return Optional.ofNullable(port);
+    public EntandoCompositeAppSpec getSpec() {
+        return spec;
     }
 
-    public String getDatabaseName() {
-        return databaseName;
+    public void setSpec(EntandoCompositeAppSpec spec) {
+        this.spec = spec;
     }
 
 }

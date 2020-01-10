@@ -14,21 +14,21 @@
  *
  */
 
-package org.entando.kubernetes.model.plugin;
+package org.entando.kubernetes.model.interprocesstest;
 
-import io.fabric8.kubernetes.api.builder.Builder;
+import io.fabric8.kubernetes.client.AutoAdaptableKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import org.entando.kubernetes.model.AbstractEntandoCompositeAppTest;
+import org.junit.jupiter.api.Tag;
 
-public class EntandoPluginBuilder extends EntandoPluginFluent<EntandoPluginBuilder> implements Builder<EntandoPlugin> {
+@Tag("inter-process")
+public class EntandoCompositeAppIntegratedTest extends AbstractEntandoCompositeAppTest {
 
-    public EntandoPluginBuilder() {
-    }
-
-    public EntandoPluginBuilder(EntandoPlugin plugin) {
-        super(plugin.getSpec(), plugin.getMetadata());
-    }
+    private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 
     @Override
-    public EntandoPlugin build() {
-        return new EntandoPlugin(super.metadata.build(), super.spec.build());
+    public KubernetesClient getClient() {
+        return client;
     }
+
 }

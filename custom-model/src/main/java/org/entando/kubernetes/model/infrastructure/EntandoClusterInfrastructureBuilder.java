@@ -21,6 +21,13 @@ import io.fabric8.kubernetes.api.builder.Builder;
 public class EntandoClusterInfrastructureBuilder extends EntandoClusterInfrastructureFluent<EntandoClusterInfrastructureBuilder>
         implements Builder<EntandoClusterInfrastructure> {
 
+    public EntandoClusterInfrastructureBuilder() {
+    }
+
+    public EntandoClusterInfrastructureBuilder(EntandoClusterInfrastructure eci) {
+        super(eci.getSpec(), eci.getMetadata());
+    }
+
     @Override
     public EntandoClusterInfrastructure build() {
         return new EntandoClusterInfrastructure(super.metadata.build(), super.spec.build());

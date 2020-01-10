@@ -16,8 +16,19 @@
 
 package org.entando.kubernetes.model.link;
 
-public class EntandoAppPluginLinkBuilder extends EntandoAppPluginLinkFluent<EntandoAppPluginLinkBuilder> {
+import io.fabric8.kubernetes.api.builder.Builder;
 
+public class EntandoAppPluginLinkBuilder extends EntandoAppPluginLinkFluent<EntandoAppPluginLinkBuilder> implements
+        Builder<EntandoAppPluginLink> {
+
+    public EntandoAppPluginLinkBuilder() {
+    }
+
+    public EntandoAppPluginLinkBuilder(EntandoAppPluginLink link) {
+        super(link.getSpec(), link.getMetadata());
+    }
+
+    @Override
     public EntandoAppPluginLink build() {
         return new EntandoAppPluginLink(super.metadata.build(), super.spec.build());
     }

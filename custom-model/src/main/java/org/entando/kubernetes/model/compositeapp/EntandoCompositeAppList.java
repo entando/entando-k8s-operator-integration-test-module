@@ -14,21 +14,14 @@
  *
  */
 
-package org.entando.kubernetes.model.plugin;
+package org.entando.kubernetes.model.compositeapp;
 
-import io.fabric8.kubernetes.api.builder.Builder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.fabric8.kubernetes.client.CustomResourceList;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
-public class EntandoPluginBuilder extends EntandoPluginFluent<EntandoPluginBuilder> implements Builder<EntandoPlugin> {
+@JsonDeserialize
+@RegisterForReflection
+public class EntandoCompositeAppList extends CustomResourceList<EntandoCompositeApp> {
 
-    public EntandoPluginBuilder() {
-    }
-
-    public EntandoPluginBuilder(EntandoPlugin plugin) {
-        super(plugin.getSpec(), plugin.getMetadata());
-    }
-
-    @Override
-    public EntandoPlugin build() {
-        return new EntandoPlugin(super.metadata.build(), super.spec.build());
-    }
 }

@@ -14,21 +14,16 @@
  *
  */
 
-package org.entando.kubernetes.model.plugin;
+package org.entando.kubernetes.model.compositeapp;
 
-import io.fabric8.kubernetes.api.builder.Builder;
+public class EntandoCompositeAppSpecBuilder extends EntandoCompositeAppSpecFluent<EntandoCompositeAppSpecBuilder> {
 
-public class EntandoPluginBuilder extends EntandoPluginFluent<EntandoPluginBuilder> implements Builder<EntandoPlugin> {
-
-    public EntandoPluginBuilder() {
+    public EntandoCompositeAppSpecBuilder() {
+        super();
     }
 
-    public EntandoPluginBuilder(EntandoPlugin plugin) {
-        super(plugin.getSpec(), plugin.getMetadata());
+    public EntandoCompositeAppSpecBuilder(EntandoCompositeAppSpec spec) {
+        super(spec);
     }
 
-    @Override
-    public EntandoPlugin build() {
-        return new EntandoPlugin(super.metadata.build(), super.spec.build());
-    }
 }

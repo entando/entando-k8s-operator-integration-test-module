@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.externaldatabase;
+package org.entando.kubernetes.model.compositeapp;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -24,55 +24,29 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
-import java.util.Optional;
-import org.entando.kubernetes.model.DbmsImageVendor;
+import java.util.List;
+import org.entando.kubernetes.model.EntandoBaseCustomResource;
 
-@JsonInclude(Include.NON_NULL)
 @JsonSerialize
-@JsonDeserialize
+@JsonDeserialize()
+@JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoDatabaseServiceSpec implements Serializable {
+public class EntandoCompositeAppSpec {
 
-    private DbmsImageVendor dbms;
-    private String host;
-    private Integer port;
-    private String databaseName;
-    private String secretName;
+    private List<EntandoBaseCustomResource> components;
 
-    public EntandoDatabaseServiceSpec() {
-
+    public EntandoCompositeAppSpec() {
+        super();
     }
 
-    public EntandoDatabaseServiceSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
-        this.dbms = dbms;
-        this.host = host;
-        this.secretName = secretName;
-        this.port = port;
-        this.databaseName = databaseName;
+    public EntandoCompositeAppSpec(List<EntandoBaseCustomResource> components) {
+        this.components = components;
     }
 
-    public DbmsImageVendor getDbms() {
-        return dbms;
+    public List<EntandoBaseCustomResource> getComponents() {
+        return components;
     }
-
-    public String getHost() {
-        return host;
-    }
-
-    public String getSecretName() {
-        return secretName;
-    }
-
-    public Optional<Integer> getPort() {
-        return Optional.ofNullable(port);
-    }
-
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
 }

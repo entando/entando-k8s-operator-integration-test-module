@@ -21,6 +21,13 @@ import io.fabric8.kubernetes.api.builder.Builder;
 public class EntandoKeycloakServerBuilder extends EntandoKeycloakServerFluent<EntandoKeycloakServerBuilder> implements
         Builder<EntandoKeycloakServer> {
 
+    public EntandoKeycloakServerBuilder() {
+    }
+
+    public EntandoKeycloakServerBuilder(EntandoKeycloakServer server) {
+        super(server.getSpec(), server.getMetadata());
+    }
+
     @Override
     public EntandoKeycloakServer build() {
         return new EntandoKeycloakServer(super.metadata.build(), super.spec.build());
