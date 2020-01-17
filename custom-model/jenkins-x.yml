@@ -31,8 +31,14 @@ pipelineConfig:
         steps:
           - sh: fetch-history-by-days 30
             name: fetch-history-for-sonar
-          - sh: mvn-deploy-release -Pinter-process-verification
-            name: mvn-deploy-release
+#          - sh: mvn-deploy-release -Pinter-process-verification
+#            name: mvn-deploy-release
+          - sh: >-
+               mvn verify -Pin-process-verification -DautoUpdate=true \
+                -DconnectionString=${OWASPDB_URL} \
+                -DdatabasePassword=${OWASPDB_PASSWORD} \
+                -DdatabaseUser=${OWASPDB_USERNAME}
+            name: mvn-load-db
       promote:
         replace: true
         steps: []
