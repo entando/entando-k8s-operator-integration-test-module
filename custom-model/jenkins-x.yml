@@ -34,7 +34,7 @@ pipelineConfig:
 #          - sh: mvn-deploy-release -Pinter-process-verification
 #            name: mvn-deploy-release
           - sh: >-
-               mvn verify -Pin-process-verification -DautoUpdate=false \
+               mvn verify -Pin-process-verification -DautoUpdate=true \
                 -DconnectionString=${OWASPDB_URL} \
                 -DdatabasePassword=${OWASPDB_PASSWORD} \
                 -DdatabaseUser=${OWASPDB_USERNAME}
