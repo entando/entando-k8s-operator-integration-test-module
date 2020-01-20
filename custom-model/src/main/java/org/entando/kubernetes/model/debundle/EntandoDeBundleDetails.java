@@ -41,6 +41,7 @@ public class EntandoDeBundleDetails implements Serializable {
     private String name;
     private String description;
     @JsonProperty("dist-tags")
+    @SuppressWarnings("java:S1948")//because the values will be serializable
     private Map<String, Object> distTags;
     private List<String> versions;
     private List<String> keywords;

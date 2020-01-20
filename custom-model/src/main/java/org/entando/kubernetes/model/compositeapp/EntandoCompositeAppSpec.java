@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.io.Serializable;
 import java.util.List;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 
@@ -34,7 +35,7 @@ import org.entando.kubernetes.model.EntandoBaseCustomResource;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoCompositeAppSpec {
+public class EntandoCompositeAppSpec implements Serializable {
 
     private List<EntandoBaseCustomResource> components;
 

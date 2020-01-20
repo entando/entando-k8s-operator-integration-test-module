@@ -91,7 +91,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
 
     private EntandoBaseFluent<?> newBuilderFrom(EntandoBaseCustomResource r) {
         try {
-            return (EntandoBaseFluent<?>) BUILDERS.get(r.getClass()).getConstructor(r.getClass()).newInstance(r);
+            return BUILDERS.get(r.getClass()).getConstructor(r.getClass()).newInstance(r);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }

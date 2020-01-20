@@ -94,7 +94,7 @@ public abstract class EntandoDeBundleSpecFluent<A extends EntandoDeBundleSpecFlu
 
         @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder.withDetails(build());
+            return (N) parentBuilder.withDetails(super.build());
         }
 
         public N endDetails() {
@@ -114,7 +114,7 @@ public abstract class EntandoDeBundleSpecFluent<A extends EntandoDeBundleSpecFlu
 
         @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder.addToTags(build());
+            return (N) parentBuilder.addToTags(super.build());
         }
 
         public N endTag() {

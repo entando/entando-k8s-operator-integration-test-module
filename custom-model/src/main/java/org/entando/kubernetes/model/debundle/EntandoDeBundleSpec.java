@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.io.Serializable;
 import java.util.List;
 
 @JsonSerialize
@@ -33,7 +34,7 @@ import java.util.List;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoDeBundleSpec {
+public class EntandoDeBundleSpec implements Serializable {
 
     private EntandoDeBundleDetails details;
     private List<EntandoDeBundleTag> tags;

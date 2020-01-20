@@ -40,13 +40,13 @@ public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A
     }
 
     @SuppressWarnings("unchecked")
-    public SpecNestedImpl<A> editSpec() {
-        return new SpecNestedImpl<>((A) this, this.spec.build());
+    public NestedEntandoKeycloakServerFluent<A> editSpec() {
+        return new NestedEntandoKeycloakServerFluent<>((A) this, this.spec.build());
     }
 
     @SuppressWarnings("unchecked")
-    public SpecNestedImpl<A> withNewSpec() {
-        return new SpecNestedImpl<>((A) this);
+    public NestedEntandoKeycloakServerFluent<A> withNewSpec() {
+        return new NestedEntandoKeycloakServerFluent<>((A) this);
     }
 
     @SuppressWarnings("unchecked")
@@ -55,18 +55,18 @@ public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends EntandoKeycloakServerFluent> extends
-            EntandoKeycloakServerSpecFluent<SpecNestedImpl<N>> implements
+    public static class NestedEntandoKeycloakServerFluent<N extends EntandoKeycloakServerFluent> extends
+            EntandoKeycloakServerSpecFluent<NestedEntandoKeycloakServerFluent<N>> implements
             Nested<N> {
 
         private final N parentBuilder;
 
-        SpecNestedImpl(N parentBuilder, EntandoKeycloakServerSpec item) {
+        NestedEntandoKeycloakServerFluent(N parentBuilder, EntandoKeycloakServerSpec item) {
             super(item);
             this.parentBuilder = parentBuilder;
         }
 
-        public SpecNestedImpl(N parentBuilder) {
+        public NestedEntandoKeycloakServerFluent(N parentBuilder) {
             super();
             this.parentBuilder = parentBuilder;
         }
