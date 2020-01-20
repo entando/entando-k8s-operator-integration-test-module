@@ -38,12 +38,12 @@ public class EntandoCompositeAppFluent<A extends EntandoCompositeAppFluent<A>> e
         this.spec = spec;
     }
 
-    public SpecNestedImpl<A> editSpec() {
-        return new SpecNestedImpl<>(thisAsA(), this.spec.build());
+    public NestedEntandoCompositeAppFluent<A> editSpec() {
+        return new NestedEntandoCompositeAppFluent<>(thisAsA(), this.spec.build());
     }
 
-    public SpecNestedImpl<A> withNewSpec() {
-        return new SpecNestedImpl<>(thisAsA());
+    public NestedEntandoCompositeAppFluent<A> withNewSpec() {
+        return new NestedEntandoCompositeAppFluent<>(thisAsA());
     }
 
     public A withSpec(EntandoCompositeAppSpec spec) {
@@ -56,18 +56,18 @@ public class EntandoCompositeAppFluent<A extends EntandoCompositeAppFluent<A>> e
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends EntandoCompositeAppFluent> extends
-            EntandoCompositeAppSpecFluent<SpecNestedImpl<N>> implements
+    public static class NestedEntandoCompositeAppFluent<N extends EntandoCompositeAppFluent> extends
+            EntandoCompositeAppSpecFluent<NestedEntandoCompositeAppFluent<N>> implements
             Nested<N> {
 
         private final N parentBuilder;
 
-        SpecNestedImpl(N parentBuilder, EntandoCompositeAppSpec spec) {
+        NestedEntandoCompositeAppFluent(N parentBuilder, EntandoCompositeAppSpec spec) {
             super(spec);
             this.parentBuilder = parentBuilder;
         }
 
-        public SpecNestedImpl(N parentBuilder) {
+        public NestedEntandoCompositeAppFluent(N parentBuilder) {
             super();
             this.parentBuilder = parentBuilder;
         }

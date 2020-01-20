@@ -40,13 +40,13 @@ public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends Entan
     }
 
     @SuppressWarnings("unchecked")
-    public SpecNestedImpl<A> editSpec() {
-        return new SpecNestedImpl<>((A) this, this.spec.build());
+    public NestedEntandoPluginSpecFluent<A> editSpec() {
+        return new NestedEntandoPluginSpecFluent<>((A) this, this.spec.build());
     }
 
     @SuppressWarnings("unchecked")
-    public SpecNestedImpl<A> withNewSpec() {
-        return new SpecNestedImpl<>((A) this);
+    public NestedEntandoPluginSpecFluent<A> withNewSpec() {
+        return new NestedEntandoPluginSpecFluent<>((A) this);
     }
 
     @SuppressWarnings("unchecked")
@@ -55,17 +55,18 @@ public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends Entan
         return (A) this;
     }
 
-    public static class SpecNestedImpl<N extends EntandoPluginFluent> extends EntandoPluginSpecFluent<SpecNestedImpl<N>> implements
+    public static class NestedEntandoPluginSpecFluent<N extends EntandoPluginFluent> extends
+            EntandoPluginSpecFluent<NestedEntandoPluginSpecFluent<N>> implements
             Nested<N> {
 
         private final N parentBuilder;
 
-        SpecNestedImpl(N parentBuilder, EntandoPluginSpec item) {
+        NestedEntandoPluginSpecFluent(N parentBuilder, EntandoPluginSpec item) {
             super(item);
             this.parentBuilder = parentBuilder;
         }
 
-        public SpecNestedImpl(N parentBuilder) {
+        public NestedEntandoPluginSpecFluent(N parentBuilder) {
             super();
             this.parentBuilder = parentBuilder;
         }
