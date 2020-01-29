@@ -17,6 +17,7 @@
 package org.entando.kubernetes.model.plugin;
 
 import static java.util.Optional.ofNullable;
+import static org.entando.kubernetes.model.Coalescence.coalesce;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -88,14 +89,13 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
         this.ingressPath = ingressPath;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.healthCheckPath = healthCheckPath;
-        this.roles = roles;
-        this.permissions = permissions;
-        this.parameters = parameters;
-        this.connectionConfigNames = connectionConfigNames;
+        this.roles = coalesce(roles, this.roles);
+        this.permissions = coalesce(permissions, this.permissions);
+        this.parameters = coalesce(parameters, this.parameters);
+        this.connectionConfigNames = coalesce(connectionConfigNames, this.connectionConfigNames);
         this.securityLevel = securityLevel;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
-
-        this.companionContainers = companionContainers;
+        this.companionContainers = coalesce(companionContainers, this.companionContainers);
     }
 
     public Map<String, String> getParameters() {

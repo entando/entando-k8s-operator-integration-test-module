@@ -16,6 +16,8 @@
 
 package org.entando.kubernetes.model.debundle;
 
+import static org.entando.kubernetes.model.Coalescence.coalesce;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,8 +28,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
@@ -42,18 +46,18 @@ public class EntandoDeBundleDetails implements Serializable {
     private String description;
     @JsonProperty("dist-tags")
     @SuppressWarnings("java:S1948")//because the values will be serializable
-    private Map<String, Object> distTags;
-    private List<String> versions;
-    private List<String> keywords;
+    private Map<String, Object> distTags = new ConcurrentHashMap<>();
+    private List<String> versions = new ArrayList<>();
+    private List<String> keywords = new ArrayList<>();
     private String thumbnail;
 
     public EntandoDeBundleDetails(String name, String description, Map<String, Object> distTags, List<String> versions,
             List<String> keywords, String thumbnail) {
         this.name = name;
         this.description = description;
-        this.distTags = distTags;
-        this.versions = versions;
-        this.keywords = keywords;
+        this.distTags = coalesce(distTags, this.distTags);
+        this.versions = coalesce(versions, this.versions);
+        this.keywords = coalesce(keywords, this.keywords);
         this.thumbnail = thumbnail;
     }
 

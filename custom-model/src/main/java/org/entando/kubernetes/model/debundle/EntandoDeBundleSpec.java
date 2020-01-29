@@ -16,6 +16,8 @@
 
 package org.entando.kubernetes.model.debundle;
 
+import static org.entando.kubernetes.model.Coalescence.coalesce;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,6 +27,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonSerialize
@@ -37,7 +40,7 @@ import java.util.List;
 public class EntandoDeBundleSpec implements Serializable {
 
     private EntandoDeBundleDetails details;
-    private List<EntandoDeBundleTag> tags;
+    private List<EntandoDeBundleTag> tags = new ArrayList<>();
 
     public EntandoDeBundleSpec() {
         super();
@@ -45,7 +48,7 @@ public class EntandoDeBundleSpec implements Serializable {
 
     public EntandoDeBundleSpec(EntandoDeBundleDetails details, List<EntandoDeBundleTag> tags) {
         this.details = details;
-        this.tags = tags;
+        this.tags = coalesce(tags, this.tags);
     }
 
     public EntandoDeBundleDetails getDetails() {
