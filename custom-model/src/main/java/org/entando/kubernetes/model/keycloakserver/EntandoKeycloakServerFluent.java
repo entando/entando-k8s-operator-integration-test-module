@@ -66,7 +66,7 @@ public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A
             this.parentBuilder = parentBuilder;
         }
 
-        public NestedEntandoKeycloakServerFluent(N parentBuilder) {
+        NestedEntandoKeycloakServerFluent(N parentBuilder) {
             super();
             this.parentBuilder = parentBuilder;
         }
