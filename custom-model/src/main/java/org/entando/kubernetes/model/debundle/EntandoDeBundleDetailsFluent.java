@@ -29,6 +29,7 @@ public abstract class EntandoDeBundleDetailsFluent<N extends EntandoDeBundleDeta
     private Map<String, Object> distTags;
     private List<String> versions;
     private List<String> keywords;
+    private String thumbnail;
 
     public EntandoDeBundleDetailsFluent() {
         this.distTags = new ConcurrentHashMap<>();
@@ -42,10 +43,11 @@ public abstract class EntandoDeBundleDetailsFluent<N extends EntandoDeBundleDeta
         this.distTags = Optional.ofNullable(details.getDistTags()).orElse(new ConcurrentHashMap<>());
         this.versions = Optional.ofNullable(details.getVersions()).orElse(new ArrayList<>());
         this.keywords = Optional.ofNullable(details.getKeywords()).orElse(new ArrayList<>());
+        this.thumbnail = details.getThumbnail();
     }
 
     public EntandoDeBundleDetails build() {
-        return new EntandoDeBundleDetails(name, description, distTags, versions, keywords);
+        return new EntandoDeBundleDetails(name, description, distTags, versions, keywords, thumbnail);
     }
 
     public N withName(String name) {
@@ -75,6 +77,11 @@ public abstract class EntandoDeBundleDetailsFluent<N extends EntandoDeBundleDeta
 
     public N addNewKeyword(String keyword) {
         this.keywords.add(keyword);
+        return thisAsN();
+    }
+
+    public N withThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
         return thisAsN();
     }
 

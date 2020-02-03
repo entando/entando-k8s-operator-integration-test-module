@@ -45,14 +45,16 @@ public class EntandoDeBundleDetails implements Serializable {
     private Map<String, Object> distTags;
     private List<String> versions;
     private List<String> keywords;
+    private String thumbnail;
 
     public EntandoDeBundleDetails(String name, String description, Map<String, Object> distTags, List<String> versions,
-            List<String> keywords) {
+            List<String> keywords, String thumbnail) {
         this.name = name;
         this.description = description;
         this.distTags = distTags;
         this.versions = versions;
         this.keywords = keywords;
+        this.thumbnail = thumbnail;
     }
 
     public EntandoDeBundleDetails() {
@@ -77,4 +79,6 @@ public class EntandoDeBundleDetails implements Serializable {
     public List<String> getKeywords() {
         return keywords;
     }
+
+    public String getThumbnail() { return thumbnail; }
 }
