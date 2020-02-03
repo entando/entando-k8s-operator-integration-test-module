@@ -41,6 +41,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
     public static final String MY_INTEGRITY = "asdfasdf";
     public static final String MY_SHASUM = "AFGAGARG";
     public static final String MY_TARBALL = "http://npm.com/mytarball.tgz";
+    public static final String MY_THUMBNAIL = "Jyt6tAV2CLeDid2LiT34tA";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private EntandoResourceOperationsRegistry registry;
 
@@ -61,6 +62,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
                 .withNewDetails()
                 .withDescription(MY_DESCRIPTION)
                 .withName(MY_BUNDLE)
+                .withThumbnail(MY_THUMBNAIL)
                 .addNewKeyword(MY_KEYWORD)
                 .addNewVersion(MY_VERSION)
                 .addNewDistTag(SOME_TAG, SOME_VALUE)
@@ -81,6 +83,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
         //Then
         assertThat(actual.getSpec().getDetails().getName(), is(MY_BUNDLE));
         assertThat(actual.getSpec().getDetails().getDescription(), is(MY_DESCRIPTION));
+        assertThat(actual.getSpec().getDetails().getThumbnail(), is(MY_THUMBNAIL));
         assertThat(actual.getSpec().getDetails().getDistTags(), is(Collections.singletonMap(SOME_TAG, SOME_VALUE)));
         assertThat(actual.getSpec().getDetails().getKeywords(), is(Collections.singletonList(MY_KEYWORD)));
         assertThat(actual.getSpec().getDetails().getVersions(), is(Collections.singletonList(MY_VERSION)));
@@ -103,6 +106,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
                 .withNewDetails()
                 .withDescription(MY_DESCRIPTION)
                 .withName(MY_BUNDLE)
+                .withThumbnail("H0cFRNTEJt8EZBcL17_iww")
                 .addNewKeyword("another-keyword")
                 .addNewVersion("0.0.2")
                 .addNewDistTag("anotherTag", "anotherValue")
@@ -124,6 +128,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
                 .editDetails()
                 .withDescription(MY_DESCRIPTION)
                 .withName(MY_BUNDLE)
+                .withThumbnail(MY_THUMBNAIL)
                 .withKeywords(Arrays.asList(MY_KEYWORD))
                 .withVersions(Arrays.asList(MY_VERSION))
                 .withDistTags(Collections.singletonMap(SOME_TAG, SOME_VALUE))
@@ -140,6 +145,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
         //Then
         assertThat(actual.getSpec().getDetails().getName(), is(MY_BUNDLE));
         assertThat(actual.getSpec().getDetails().getDescription(), is(MY_DESCRIPTION));
+        assertThat(actual.getSpec().getDetails().getThumbnail(), is(MY_THUMBNAIL));
         assertThat(actual.getSpec().getDetails().getDistTags(), is(Collections.singletonMap(SOME_TAG, SOME_VALUE)));
         assertThat(actual.getSpec().getDetails().getKeywords(), is(Collections.singletonList(MY_KEYWORD)));
         assertThat(actual.getSpec().getDetails().getVersions(), is(Collections.singletonList(MY_VERSION)));

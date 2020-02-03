@@ -49,14 +49,16 @@ public class EntandoDeBundleDetails implements Serializable {
     private Map<String, Object> distTags = new ConcurrentHashMap<>();
     private List<String> versions = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
+    private String thumbnail;
 
     public EntandoDeBundleDetails(String name, String description, Map<String, Object> distTags, List<String> versions,
-            List<String> keywords) {
+            List<String> keywords, String thumbnail) {
         this.name = name;
         this.description = description;
         this.distTags = coalesce(distTags, this.distTags);
         this.versions = coalesce(versions, this.versions);
         this.keywords = coalesce(keywords, this.keywords);
+        this.thumbnail = thumbnail;
     }
 
     public EntandoDeBundleDetails() {
@@ -80,5 +82,9 @@ public class EntandoDeBundleDetails implements Serializable {
 
     public List<String> getKeywords() {
         return keywords;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
     }
 }
