@@ -84,5 +84,7 @@ public class EntandoDeBundleDetails implements Serializable {
         return keywords;
     }
 
-    public String getThumbnail() { return thumbnail; }
+    public String getThumbnail() {
+        return thumbnail;
+    }
 }
