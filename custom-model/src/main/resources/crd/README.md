@@ -10,3 +10,7 @@ to register them:
     `cd entando-k8s-custom-model/src/main/resources/crd`
 3. Create all of the custom resource defintions:    
     `kubectl create -f .`
+
+NB! Please note that any cluster wide operation on a shared Kubernetes cluster comes with an element of risk. Whoever performs 
+these actions needs to have a  good understanding of Custom Resource Definitions on Kubernetes and the possible implications
+updating these could have on existing installations of the Entando Operator.
