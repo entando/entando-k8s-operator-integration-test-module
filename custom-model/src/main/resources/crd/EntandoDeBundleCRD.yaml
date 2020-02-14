@@ -34,7 +34,6 @@ spec:
                     type: string
                 thumbnail:
                   type: string
-                  format: byte
                   maxLength: 320000
             tags:
               type: array
