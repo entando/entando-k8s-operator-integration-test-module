@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.RequiresKeycloak;
@@ -52,7 +51,6 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
     private List<String> connectionConfigNames = new ArrayList<>();
     private List<ExpectedRole> roles = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
-    private Map<String, String> parameters = new ConcurrentHashMap<>();
     private String ingressPath;
     private String keycloakSecretToUse;
     private String healthCheckPath;
@@ -67,6 +65,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
      * Only for use from the builder.
      */
 
+    @SuppressWarnings("unchecked")
     @JsonCreator()
     public EntandoPluginSpec(@JsonProperty("image") String image,
             @JsonProperty("dbms") DbmsImageVendor dbms,
@@ -84,22 +83,17 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse,
             @JsonProperty("companionContainers") List<String> companionContainers
     ) {
-        super(ingressHostName, tlsSecretName, replicas, dbms);
+        super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
         this.image = image;
         this.ingressPath = ingressPath;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.healthCheckPath = healthCheckPath;
         this.roles = coalesce(roles, this.roles);
         this.permissions = coalesce(permissions, this.permissions);
-        this.parameters = coalesce(parameters, this.parameters);
         this.connectionConfigNames = coalesce(connectionConfigNames, this.connectionConfigNames);
         this.securityLevel = securityLevel;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
         this.companionContainers = coalesce(companionContainers, this.companionContainers);
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
     }
 
     public Optional<PluginSecurityLevel> getSecurityLevel() {

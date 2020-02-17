@@ -14,50 +14,65 @@
  *
  */
 
-package org.entando.kubernetes.model.compositeapp;
+package org.entando.kubernetes.model.gitspec;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.entando.kubernetes.model.EntandoBaseCustomResource;
-import org.entando.kubernetes.model.EntandoCustomResourceStatus;
+import java.io.Serializable;
+import java.util.Optional;
 
 @JsonSerialize
-@JsonDeserialize
+@JsonDeserialize()
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoCompositeApp extends EntandoBaseCustomResource<EntandoCompositeAppSpec> {
 
-    public static final String CRD_NAME = "entandocompositeapps.entando.org";
+public class GitSpec implements Serializable {
 
-    public EntandoCompositeApp() {
-        this(null);
+    private String repository;
+    private String secretName;
+    private String targetRef;
+    private GitResponsibility responsibility;
+
+    public GitSpec() {
+        super();
     }
 
-    public EntandoCompositeApp(EntandoCompositeAppSpec spec) {
-        this(new ObjectMeta(), spec);
+    /**
+     * Only for use from the builder.
+     */
+    @JsonCreator
+    public GitSpec(@JsonProperty("repository") String repository, @JsonProperty("secretName") String secretName,
+            @JsonProperty("targetRef") String targetRef, @JsonProperty("backupResponsibility") GitResponsibility responsibility) {
+        this.repository = repository;
+        this.secretName = secretName;
+        this.targetRef = targetRef;
+        this.responsibility = responsibility;
     }
 
-    public EntandoCompositeApp(ObjectMeta metadata, EntandoCompositeAppSpec spec) {
-        this(metadata, spec, null);
+    public String getRepository() {
+        return repository;
     }
 
-    public EntandoCompositeApp(ObjectMeta metadata, EntandoCompositeAppSpec spec, EntandoCustomResourceStatus status) {
-        super(metadata, spec, status);
+    public Optional<String> getSecretName() {
+        return Optional.ofNullable(secretName);
     }
 
-    @Override
-    public String getDefinitionName() {
-        return CRD_NAME;
+    public Optional<String> getTargetRef() {
+        return Optional.ofNullable(targetRef);
     }
 
+    public GitResponsibility getResponsibility() {
+        return responsibility;
+    }
 }

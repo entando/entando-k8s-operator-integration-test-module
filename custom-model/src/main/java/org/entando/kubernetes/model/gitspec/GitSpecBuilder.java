@@ -14,17 +14,14 @@
  *
  */
 
-package org.entando.kubernetes.model;
+package org.entando.kubernetes.model.gitspec;
 
-public class Coalescence {
+public class GitSpecBuilder extends GitSpecFluent<GitSpecBuilder> {
 
-    @SuppressWarnings("unchecked")
-    public static <T> T coalesce(T... t) {
-        for (T item : t) {
-            if (item != null) {
-                return item;
-            }
-        }
-        return null;
+    public GitSpecBuilder() {
+    }
+
+    public GitSpecBuilder(GitSpec gitSpec) {
+        super(gitSpec);
     }
 }

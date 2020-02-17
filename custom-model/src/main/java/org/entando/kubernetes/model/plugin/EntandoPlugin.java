@@ -28,8 +28,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Optional;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.SpecHasIngress;
 
 @JsonSerialize
 @JsonDeserialize
@@ -38,11 +38,9 @@ import org.entando.kubernetes.model.RequiresKeycloak;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoPlugin extends EntandoBaseCustomResource implements RequiresKeycloak, HasIngress {
+public class EntandoPlugin extends EntandoBaseCustomResource<EntandoPluginSpec> implements RequiresKeycloak, SpecHasIngress {
 
     public static final String CRD_NAME = "entandoplugins.entando.org";
-
-    private EntandoPluginSpec spec;
 
     public EntandoPlugin() {
         this(null);
@@ -57,9 +55,7 @@ public class EntandoPlugin extends EntandoBaseCustomResource implements Requires
     }
 
     public EntandoPlugin(ObjectMeta metaData, EntandoPluginSpec spec, EntandoCustomResourceStatus status) {
-        super(status);
-        super.setMetadata(metaData);
-        this.spec = spec;
+        super(metaData, spec, status);
     }
 
     @Override
@@ -67,26 +63,9 @@ public class EntandoPlugin extends EntandoBaseCustomResource implements Requires
         return CRD_NAME;
     }
 
-    public EntandoPluginSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(EntandoPluginSpec spec) {
-        this.spec = spec;
-    }
-
     @Override
     public Optional<String> getKeycloakSecretToUse() {
-        return spec.getKeycloakSecretToUse();
+        return getSpec().getKeycloakSecretToUse();
     }
 
-    @Override
-    public Optional<String> getIngressHostName() {
-        return spec.getIngressHostName();
-    }
-
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return spec.getTlsSecretName();
-    }
 }

@@ -52,6 +52,13 @@ spec:
               pattern: '^([A-Za-z0-9-]{1,63}\.)+[[A-Za-z0-9-]{1,63}$'
             entandoImageVersion:
               type: string
+            backupGitRepo:
+              type: string
+            backupGitSecretName:
+              type: string
+            backupResponsibility:
+              type: string
+              pattern: '^(backup|restore)$'
             replicas:
               type: integer
               minimum: 1
@@ -62,4 +69,5 @@ spec:
             clusterInfrastructureToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
+            parameters: {}
         entandoStatus: {}

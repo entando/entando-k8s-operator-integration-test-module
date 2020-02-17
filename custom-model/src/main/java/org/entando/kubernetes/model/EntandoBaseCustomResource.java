@@ -28,8 +28,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.io.Serializable;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
@@ -59,17 +61,28 @@ import org.entando.kubernetes.model.plugin.EntandoPlugin;
         @Type(value = EntandoDatabaseService.class, name = "EntandoDatabaseService")
 })
 
-public abstract class EntandoBaseCustomResource extends CustomResource implements EntandoCustomResource {
+public abstract class EntandoBaseCustomResource<S extends Serializable> extends CustomResource implements EntandoCustomResource {
 
+    private S spec;
     private EntandoCustomResourceStatus entandoStatus;
 
     protected EntandoBaseCustomResource() {
         super();
     }
 
-    protected EntandoBaseCustomResource(EntandoCustomResourceStatus entandoStatus) {
+    protected EntandoBaseCustomResource(ObjectMeta objectMeta, S spec, EntandoCustomResourceStatus entandoStatus) {
         super();
+        super.setMetadata(objectMeta);
+        this.spec = spec;
         this.entandoStatus = entandoStatus;
+    }
+
+    public S getSpec() {
+        return spec;
+    }
+
+    public void setSpec(S spec) {
+        this.spec = spec;
     }
 
     @Override

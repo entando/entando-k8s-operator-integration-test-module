@@ -118,7 +118,10 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
             return crd;
         } catch (KubernetesClientException e) {
             if (e.getCode() == HttpURLConnection.HTTP_FORBIDDEN) {
-                LOGGER.severe("User does not have permissions to create CRD's. Loading from memory.");
+                LOGGER.warning(
+                        format("User does not have permissions to create CRD's. Assuming CRD's have already been deployed. Loading %s CRD"
+                                        + " from classpath.",
+                                crdName));
                 //The code doesn't have RBAC permission to read the CRD. Let's assume it has already been deployed
                 List<HasMetadata> list = client.load(loadYamlFile()).get();
                 return (CustomResourceDefinition) list.get(0);

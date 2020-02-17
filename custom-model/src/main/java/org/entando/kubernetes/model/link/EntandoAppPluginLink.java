@@ -35,11 +35,9 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoAppPluginLink extends EntandoBaseCustomResource {
+public class EntandoAppPluginLink extends EntandoBaseCustomResource<EntandoAppPluginLinkSpec> {
 
     public static final String CRD_NAME = "entandoapppluginlinks.entando.org";
-    @SuppressWarnings("squid:S1948")//false positive
-    private EntandoAppPluginLinkSpec spec;
 
     public EntandoAppPluginLink() {
         this(null);
@@ -54,18 +52,12 @@ public class EntandoAppPluginLink extends EntandoBaseCustomResource {
     }
 
     public EntandoAppPluginLink(ObjectMeta meta, EntandoAppPluginLinkSpec spec, EntandoCustomResourceStatus entandoStatus) {
-        super(entandoStatus);
-        super.setMetadata(meta);
-        this.spec = spec;
+        super(meta, spec, entandoStatus);
     }
 
     @Override
     public String getDefinitionName() {
         return CRD_NAME;
-    }
-
-    public EntandoAppPluginLinkSpec getSpec() {
-        return spec;
     }
 
 }

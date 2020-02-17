@@ -18,6 +18,9 @@ package org.entando.kubernetes.model.app;
 
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 import org.entando.kubernetes.model.JeeServer;
+import org.entando.kubernetes.model.gitspec.GitSpec;
+import org.entando.kubernetes.model.gitspec.GitSpecBuilder;
+import org.entando.kubernetes.model.gitspec.GitSpecFluent;
 
 public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
 
@@ -27,6 +30,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
     protected String clusterInfrastructureToUse;
     protected String customServerImage;
     protected String ingressPath;
+    private GitSpecBuilder backupGitSpec;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
@@ -36,10 +40,11 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
+        this.backupGitSpec = spec.getBackupGitSpec().map(GitSpecBuilder::new).orElse(new GitSpecBuilder());
     }
 
     public EntandoAppSpecFluent() {
-
+        this.backupGitSpec = new GitSpecBuilder();
     }
 
     public N withStandardServerImage(JeeServer jeeServer) {
@@ -74,9 +79,42 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         return thisAsN();
     }
 
+    public GitSpecBuilderNested<N> editBackupGitSpec() {
+        return new GitSpecBuilderNested<>(thisAsN(), this.backupGitSpec.build());
+    }
+
+    public GitSpecBuilderNested<N> withNewBackupGitSpec() {
+        return new GitSpecBuilderNested<>(thisAsN());
+    }
+
+    public N withBackupGitSpec(GitSpec gitSpec) {
+        this.backupGitSpec = new GitSpecBuilder(gitSpec);
+        return thisAsN();
+    }
+
     public EntandoAppSpec build() {
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
-                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse);
+                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse,
+                this.backupGitSpec.build(), this.parameters);
+    }
+
+    public static class GitSpecBuilderNested<P extends EntandoAppSpecFluent> extends GitSpecFluent<GitSpecBuilderNested<P>> {
+
+        private P parentBuilder;
+
+        public GitSpecBuilderNested(P parentBuilder, GitSpec gitSpec) {
+            super(gitSpec);
+            this.parentBuilder = parentBuilder;
+        }
+
+        public GitSpecBuilderNested(P parentBuilder) {
+            this.parentBuilder = parentBuilder;
+        }
+
+        @SuppressWarnings("unchecked")
+        public P endBackupGitSpec() {
+            return (P) parentBuilder.withBackupGitSpec(super.build());
+        }
     }
 
 }

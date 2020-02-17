@@ -17,6 +17,7 @@
 package org.entando.kubernetes.model;
 
 import static java.util.Optional.ofNullable;
+import static org.entando.kubernetes.model.Coalescence.coalesce;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -25,7 +26,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
@@ -38,15 +41,19 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
     private DbmsImageVendor dbms;
     private String ingressHostName;
     private String tlsSecretName;
+    private Map<String, String> parameters = new ConcurrentHashMap<>();
 
     protected EntandoDeploymentSpec() {
     }
 
-    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsImageVendor dbms) {
+    @SuppressWarnings("unchecked")
+    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsImageVendor dbms,
+            Map<String, String> parameters) {
         this.ingressHostName = ingressHostName;
         this.tlsSecretName = tlsSecretName;
         this.replicas = replicas;
         this.dbms = dbms;
+        this.parameters = coalesce(parameters, this.parameters);
     }
 
     @Override
@@ -66,4 +73,9 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
     public Optional<DbmsImageVendor> getDbms() {
         return ofNullable(dbms);
     }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
 }

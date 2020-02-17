@@ -16,15 +16,18 @@
 
 package org.entando.kubernetes.model;
 
-public class Coalescence {
+import java.util.Optional;
 
-    @SuppressWarnings("unchecked")
-    public static <T> T coalesce(T... t) {
-        for (T item : t) {
-            if (item != null) {
-                return item;
-            }
-        }
-        return null;
+public interface SpecHasIngress extends HasIngress {
+
+    default Optional<String> getIngressHostName() {
+        return getSpec().getIngressHostName();
     }
+
+    HasIngress getSpec();
+
+    default Optional<String> getTlsSecretName() {
+        return getSpec().getTlsSecretName();
+    }
+
 }

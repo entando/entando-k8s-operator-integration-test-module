@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
@@ -47,8 +48,9 @@ public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec impl
     }
 
     public EntandoClusterInfrastructureSpec(DbmsImageVendor dbms, String ingressHostName, String entandoImageVersion,
-            String tlsSecretName, Integer replicas, String keycloakSecretToUse, boolean isDefault) {
-        super(ingressHostName, tlsSecretName, replicas, dbms);
+            String tlsSecretName, Integer replicas, String keycloakSecretToUse, boolean isDefault,
+            Map<String, String> parameters) {
+        super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
         this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.isDefault = isDefault;
