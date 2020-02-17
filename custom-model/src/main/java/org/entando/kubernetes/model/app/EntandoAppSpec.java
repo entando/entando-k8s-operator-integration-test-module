@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
@@ -49,6 +50,8 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
     private String entandoImageVersion;
     private String keycloakSecretToUse;
     private String clusterInfrastructureToUse;
+    private String backupGitRepo;
+    private String backupGitSecretName;
 
     public EntandoAppSpec() {
         super();
@@ -67,14 +70,19 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("entandoImageVersion") String entandoImageVersion,
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
-            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse) {
-        super(ingressHostName, tlsSecretName, replicas, dbms);
+            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse,
+            @JsonProperty("backupGitRepo") String backupGitRepo,
+            @JsonProperty("backupGitSecretName") String backupGitSecretName,
+            @JsonProperty("paramaters") Map<String, String> parameters) {
+        super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
         this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
+        this.backupGitRepo = backupGitRepo;
+        this.backupGitSecretName = backupGitSecretName;
     }
 
     @Override
@@ -100,6 +108,14 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
 
     public Optional<String> getEntandoImageVersion() {
         return ofNullable(entandoImageVersion);
+    }
+
+    public Optional<String> getBackupGitRepo() {
+        return ofNullable(backupGitRepo);
+    }
+
+    public Optional<String> getBackupGitSecretName() {
+        return ofNullable(backupGitSecretName);
     }
 
 }

@@ -28,8 +28,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Optional;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.SpecHasIngress;
 
 @JsonSerialize
 @JsonDeserialize
@@ -38,11 +38,9 @@ import org.entando.kubernetes.model.RequiresKeycloak;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoApp extends EntandoBaseCustomResource implements HasIngress, RequiresKeycloak {
+public class EntandoApp extends EntandoBaseCustomResource<EntandoAppSpec> implements SpecHasIngress, RequiresKeycloak {
 
     public static final String CRD_NAME = "entandoapps.entando.org";
-
-    private EntandoAppSpec spec;
 
     public EntandoApp() {
         this(null);
@@ -57,32 +55,12 @@ public class EntandoApp extends EntandoBaseCustomResource implements HasIngress,
     }
 
     public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec, EntandoCustomResourceStatus status) {
-        super(status);
-        super.setMetadata(metadata);
-        this.setSpec(spec);
+        super(metadata, spec, status);
     }
 
     @Override
     public String getDefinitionName() {
         return CRD_NAME;
-    }
-
-    public EntandoAppSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(EntandoAppSpec spec) {
-        this.spec = spec;
-    }
-
-    @Override
-    public Optional<String> getIngressHostName() {
-        return getSpec().getIngressHostName();
-    }
-
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return getSpec().getTlsSecretName();
     }
 
     @Override

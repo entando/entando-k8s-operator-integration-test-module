@@ -28,8 +28,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Optional;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.HasIngress;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.SpecHasIngress;
 
 @JsonSerialize
 @JsonDeserialize
@@ -38,11 +38,10 @@ import org.entando.kubernetes.model.RequiresKeycloak;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoClusterInfrastructure extends EntandoBaseCustomResource implements HasIngress, RequiresKeycloak {
+public class EntandoClusterInfrastructure extends EntandoBaseCustomResource<EntandoClusterInfrastructureSpec>
+        implements SpecHasIngress, RequiresKeycloak {
 
     public static final String CRD_NAME = "entandoclusterinfrastructures.entando.org";
-
-    private EntandoClusterInfrastructureSpec spec;
 
     public EntandoClusterInfrastructure() {
         this(null);
@@ -56,11 +55,8 @@ public class EntandoClusterInfrastructure extends EntandoBaseCustomResource impl
         this(metadata, spec, null);
     }
 
-    public EntandoClusterInfrastructure(ObjectMeta metadata, EntandoClusterInfrastructureSpec spec,
-            EntandoCustomResourceStatus status) {
-        super(status);
-        super.setMetadata(metadata);
-        this.spec = spec;
+    public EntandoClusterInfrastructure(ObjectMeta metadata, EntandoClusterInfrastructureSpec spec, EntandoCustomResourceStatus status) {
+        super(metadata, spec, status);
     }
 
     @Override
@@ -68,26 +64,8 @@ public class EntandoClusterInfrastructure extends EntandoBaseCustomResource impl
         return CRD_NAME;
     }
 
-    public EntandoClusterInfrastructureSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(EntandoClusterInfrastructureSpec spec) {
-        this.spec = spec;
-    }
-
-    @Override
-    public Optional<String> getIngressHostName() {
-        return getSpec().getIngressHostName();
-    }
-
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return getSpec().getTlsSecretName();
-    }
-
     @Override
     public Optional<String> getKeycloakSecretToUse() {
-        return spec.getKeycloakSecretToUse();
+        return getSpec().getKeycloakSecretToUse();
     }
 }

@@ -35,11 +35,9 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoCompositeApp extends EntandoBaseCustomResource {
+public class EntandoCompositeApp extends EntandoBaseCustomResource<EntandoCompositeAppSpec> {
 
     public static final String CRD_NAME = "entandocompositeapps.entando.org";
-
-    private EntandoCompositeAppSpec spec;
 
     public EntandoCompositeApp() {
         this(null);
@@ -54,22 +52,12 @@ public class EntandoCompositeApp extends EntandoBaseCustomResource {
     }
 
     public EntandoCompositeApp(ObjectMeta metadata, EntandoCompositeAppSpec spec, EntandoCustomResourceStatus status) {
-        super(status);
-        super.setMetadata(metadata);
-        this.setSpec(spec);
+        super(metadata, spec, status);
     }
 
     @Override
     public String getDefinitionName() {
         return CRD_NAME;
-    }
-
-    public EntandoCompositeAppSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(EntandoCompositeAppSpec spec) {
-        this.spec = spec;
     }
 
 }

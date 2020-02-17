@@ -25,10 +25,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.util.Optional;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.HasIngress;
+import org.entando.kubernetes.model.SpecHasIngress;
 
 @JsonSerialize
 @JsonDeserialize
@@ -37,11 +36,9 @@ import org.entando.kubernetes.model.HasIngress;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoKeycloakServer extends EntandoBaseCustomResource implements HasIngress {
+public class EntandoKeycloakServer extends EntandoBaseCustomResource<EntandoKeycloakServerSpec> implements SpecHasIngress {
 
     public static final String CRD_NAME = "entandokeycloakservers.entando.org";
-
-    private EntandoKeycloakServerSpec spec;
 
     public EntandoKeycloakServer() {
         this(null);
@@ -56,9 +53,7 @@ public class EntandoKeycloakServer extends EntandoBaseCustomResource implements 
     }
 
     public EntandoKeycloakServer(ObjectMeta metadata, EntandoKeycloakServerSpec spec, EntandoCustomResourceStatus status) {
-        super(status);
-        this.spec = spec;
-        super.setMetadata(metadata);
+        super(metadata, spec, status);
     }
 
     @Override
@@ -66,21 +61,4 @@ public class EntandoKeycloakServer extends EntandoBaseCustomResource implements 
         return CRD_NAME;
     }
 
-    public EntandoKeycloakServerSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(EntandoKeycloakServerSpec spec) {
-        this.spec = spec;
-    }
-
-    @Override
-    public Optional<String> getIngressHostName() {
-        return getSpec().getIngressHostName();
-    }
-
-    @Override
-    public Optional<String> getTlsSecretName() {
-        return getSpec().getTlsSecretName();
-    }
 }

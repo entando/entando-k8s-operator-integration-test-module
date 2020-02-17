@@ -46,6 +46,7 @@ public class EntandoDeBundleSpec implements Serializable {
         super();
     }
 
+    @SuppressWarnings("unchecked")
     public EntandoDeBundleSpec(EntandoDeBundleDetails details, List<EntandoDeBundleTag> tags) {
         this.details = details;
         this.tags = coalesce(tags, this.tags);

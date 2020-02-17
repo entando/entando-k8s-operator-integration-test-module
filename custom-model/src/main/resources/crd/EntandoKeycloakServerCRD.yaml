@@ -54,5 +54,6 @@ spec:
               type: integer
               minimum: 1
               maximum: 10
+            parameters: {}
         entandoStatus: {}
 

@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.is;
 
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import java.util.Collections;
 import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
@@ -31,6 +32,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
     public static final String MY_CUSTOM_SERVER_IMAGE = "somenamespace/someimage:3.2.2";
     public static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
+    public static final String PARAM_VALUE = "my-value";
+    public static final String PARAM_NAME = "MY_PARAM";
+    public static final String MY_GIT_SECRET = "my-git-secret";
+    public static final String MY_BACKUP_GIT_REPO = "https://github.com/entando/doesnoexist.git";
     protected static final String MY_APP = "my-app";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
@@ -67,6 +72,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .withIngressPath(MY_INGRESS_PATH)
+                .withBackupGitRepo(MY_BACKUP_GIT_REPO)
+                .withBackupGitSecretName(MY_GIT_SECRET)
+                .withIngressPath(MY_INGRESS_PATH)
+                .addNewParameter(PARAM_NAME, PARAM_VALUE)
                 .endSpec()
                 .build();
         entandoApps().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoApp.getMetadata()).withSpec(entandoApp.getSpec()).done();
@@ -86,6 +95,9 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
         assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getBackupGitRepo().get(), is(MY_BACKUP_GIT_REPO));
+        assertThat(actual.getSpec().getBackupGitSecretName().get(), is(MY_GIT_SECRET));
+        assertThat(actual.getSpec().getParameters().get(PARAM_NAME), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
     }
 
@@ -106,7 +118,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withTlsSecretName("another-tls-secret")
                 .withIngressHostName("anotheringress.com")
                 .withKeycloakSecretToUse("another-keycloak-secret")
+                .addNewParameter("anotherparam", "123123")
                 .withClusterInfrastructureToUse("some-cluster-infrastructure")
+                .withBackupGitRepo("git@gitlab.com/foeif")
+                .withBackupGitSecretName("some-secret")
                 .endSpec()
                 .build();
         //When
@@ -124,6 +139,9 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withIngressHostName(MYINGRESS_COM)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withBackupGitRepo(MY_BACKUP_GIT_REPO)
+                .withBackupGitSecretName(MY_GIT_SECRET)
+                .withParameters(Collections.singletonMap(PARAM_NAME, PARAM_VALUE))
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
                 .withStatus(new DbServerStatus("another-qualifier"))
@@ -139,6 +157,9 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
+        assertThat(actual.getSpec().getBackupGitRepo().get(), is(MY_BACKUP_GIT_REPO));
+        assertThat(actual.getSpec().getBackupGitSecretName().get(), is(MY_GIT_SECRET));
+        assertThat(actual.getSpec().getParameters().get(PARAM_NAME), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
     }
 

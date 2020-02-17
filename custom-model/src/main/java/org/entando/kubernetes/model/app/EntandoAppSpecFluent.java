@@ -27,6 +27,8 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
     protected String clusterInfrastructureToUse;
     protected String customServerImage;
     protected String ingressPath;
+    protected String backupGitRepo;
+    protected String backupGitSecretName;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
@@ -36,6 +38,9 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
+        this.backupGitRepo = spec.getBackupGitRepo().orElse(null);
+        this.backupGitSecretName = spec.getBackupGitSecretName().orElse(null);
+
     }
 
     public EntandoAppSpecFluent() {
@@ -45,6 +50,16 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
     public N withStandardServerImage(JeeServer jeeServer) {
         this.standardServerImage = jeeServer;
         this.customServerImage = jeeServer == null ? this.customServerImage : null;
+        return thisAsN();
+    }
+
+    public N withBackupGitRepo(String backupGitRepo) {
+        this.backupGitRepo = backupGitRepo;
+        return thisAsN();
+    }
+
+    public N withBackupGitSecretName(String backupGitSecretName) {
+        this.backupGitSecretName = backupGitSecretName;
         return thisAsN();
     }
 
@@ -76,7 +91,9 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
 
     public EntandoAppSpec build() {
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
-                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse);
+                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse,
+                this.backupGitRepo, this.backupGitSecretName,
+                this.parameters);
     }
 
 }

@@ -54,6 +54,7 @@ public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpec
     }
 
     public EntandoKeycloakServerSpec build() {
-        return new EntandoKeycloakServerSpec(imageName, dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas, isDefault);
+        return new EntandoKeycloakServerSpec(imageName, dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas, isDefault,
+                parameters);
     }
 }

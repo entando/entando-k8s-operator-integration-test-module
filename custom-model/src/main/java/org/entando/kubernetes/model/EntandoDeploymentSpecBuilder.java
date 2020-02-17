@@ -16,21 +16,27 @@
 
 package org.entando.kubernetes.model;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSpecBuilder> {
 
     protected DbmsImageVendor dbms;
     protected String ingressHostName;
     protected String tlsSecretName;
     protected Integer replicas = 1;
+    protected Map<String, String> parameters;
 
     protected EntandoDeploymentSpecBuilder(EntandoDeploymentSpec spec) {
         this.dbms = spec.getDbms().orElse(null);
         this.ingressHostName = spec.getIngressHostName().orElse(null);
         this.replicas = spec.getReplicas().orElse(null);
         this.tlsSecretName = spec.getTlsSecretName().orElse(null);
+        this.parameters = new ConcurrentHashMap<>(spec.getParameters());
     }
 
     protected EntandoDeploymentSpecBuilder() {
+        this.parameters = new ConcurrentHashMap<>();
     }
 
     public final N withDbms(DbmsImageVendor dbms) {
@@ -50,6 +56,17 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
 
     public final N withIngressHostName(String ingressHostName) {
         this.ingressHostName = ingressHostName;
+        return thisAsN();
+    }
+
+    public N withParameters(Map<String, String> parameters) {
+        this.parameters.clear();
+        this.parameters.putAll(parameters);
+        return thisAsN();
+    }
+
+    public N addNewParameter(String name, String value) {
+        this.parameters.put(name, value);
         return thisAsN();
     }
 

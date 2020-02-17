@@ -35,12 +35,9 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoDatabaseService extends EntandoBaseCustomResource {
+public class EntandoDatabaseService extends EntandoBaseCustomResource<EntandoDatabaseServiceSpec> {
 
     public static final String CRD_NAME = "entandodatabaseservices.entando.org";
-
-    @SuppressWarnings("squid:S1948")//false positive
-    private EntandoDatabaseServiceSpec spec;
 
     public EntandoDatabaseService() {
         this(null);
@@ -55,22 +52,12 @@ public class EntandoDatabaseService extends EntandoBaseCustomResource {
     }
 
     public EntandoDatabaseService(ObjectMeta metadata, EntandoDatabaseServiceSpec spec, EntandoCustomResourceStatus status) {
-        super(status);
-        super.setMetadata(metadata);
-        this.spec = spec;
+        super(metadata, spec, status);
     }
 
     @Override
     public String getDefinitionName() {
         return CRD_NAME;
-    }
-
-    public EntandoDatabaseServiceSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(EntandoDatabaseServiceSpec spec) {
-        this.spec = spec;
     }
 
 }

@@ -35,11 +35,9 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoDeBundle extends EntandoBaseCustomResource {
+public class EntandoDeBundle extends EntandoBaseCustomResource<EntandoDeBundleSpec> {
 
     public static final String CRD_NAME = "entandodebundles.entando.org";
-
-    private EntandoDeBundleSpec spec;
 
     public EntandoDeBundle() {
         this(null);
@@ -54,22 +52,11 @@ public class EntandoDeBundle extends EntandoBaseCustomResource {
     }
 
     public EntandoDeBundle(ObjectMeta metadata, EntandoDeBundleSpec spec, EntandoCustomResourceStatus status) {
-        super(status);
-        super.setMetadata(metadata);
-        this.setSpec(spec);
+        super(metadata, spec, status);
     }
 
     @Override
     public String getDefinitionName() {
         return CRD_NAME;
     }
-
-    public EntandoDeBundleSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(EntandoDeBundleSpec spec) {
-        this.spec = spec;
-    }
-
 }

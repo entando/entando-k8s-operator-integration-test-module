@@ -51,6 +51,7 @@ public class EntandoDeBundleDetails implements Serializable {
     private List<String> keywords = new ArrayList<>();
     private String thumbnail;
 
+    @SuppressWarnings("unchecked")
     public EntandoDeBundleDetails(String name, String description, Map<String, Object> distTags, List<String> versions,
             List<String> keywords, String thumbnail) {
         this.name = name;

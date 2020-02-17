@@ -33,6 +33,7 @@ import io.fabric8.kubernetes.client.KubernetesClientException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import org.entando.kubernetes.model.AbstractServerStatus;
 import org.entando.kubernetes.model.DbServerStatus;
 import org.entando.kubernetes.model.DbmsImageVendor;
@@ -83,7 +84,8 @@ public class EntandoCustomResourceStatusTest {
         populateStatus(webServerStatus);
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServer();
         keycloakServer.getMetadata().setGeneration(3L);
-        keycloakServer.setSpec(new EntandoKeycloakServerSpec(null, DbmsImageVendor.ORACLE, null, null, null, 1, true));
+        keycloakServer
+                .setSpec(new EntandoKeycloakServerSpec(null, DbmsImageVendor.ORACLE, null, null, null, 1, true, Collections.emptyMap()));
         keycloakServer.getMetadata().setName("test-keycloak");
         keycloakServer.setStatus(new EntandoCustomResourceStatus());
         keycloakServer.getStatus().putServerStatus(dbServerStatus);

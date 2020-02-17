@@ -18,8 +18,6 @@ package org.entando.kubernetes.model.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 
 public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
@@ -27,7 +25,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     protected final List<String> connectionConfigNames;
     protected final List<ExpectedRole> roles;
     protected final List<Permission> permissions;
-    protected final Map<String, String> parameters;
     private final List<String> companionContainers;
     protected String image;
     protected String ingressPath;
@@ -46,7 +43,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         this.permissions = new ArrayList<>(spec.getPermissions());
         this.connectionConfigNames = new ArrayList<>(spec.getConnectionConfigNames());
         this.roles = new ArrayList<>(spec.getRoles());
-        this.parameters = new ConcurrentHashMap<>(spec.getParameters());
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.companionContainers = new ArrayList<>(spec.getCompanionContainers());
     }
@@ -56,7 +52,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         connectionConfigNames = new ArrayList<>();
         roles = new ArrayList<>();
         permissions = new ArrayList<>();
-        parameters = new ConcurrentHashMap<>();
         this.companionContainers = new ArrayList<>();
     }
 
@@ -105,11 +100,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         return thisAsN();
     }
 
-    public N addNewParameter(String name, String value) {
-        this.parameters.put(name, value);
-        return thisAsN();
-    }
-
     public N withHealthCheckPath(String healthCheckPath) {
         this.healthCheckPath = healthCheckPath;
         return thisAsN();
@@ -136,12 +126,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     public N withPermissions(List<Permission> permissions) {
         this.permissions.clear();
         this.permissions.addAll(permissions);
-        return thisAsN();
-    }
-
-    public N withParameters(Map<String, String> parameters) {
-        this.parameters.clear();
-        this.parameters.putAll(parameters);
         return thisAsN();
     }
 
