@@ -34,6 +34,7 @@ import org.entando.kubernetes.model.DbmsImageVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.gitspec.GitSpec;
 
 @JsonSerialize
 @JsonDeserialize()
@@ -50,8 +51,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
     private String entandoImageVersion;
     private String keycloakSecretToUse;
     private String clusterInfrastructureToUse;
-    private String backupGitRepo;
-    private String backupGitSecretName;
+    private GitSpec backupGitSpec;
 
     public EntandoAppSpec() {
         super();
@@ -71,8 +71,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
             @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse,
-            @JsonProperty("backupGitRepo") String backupGitRepo,
-            @JsonProperty("backupGitSecretName") String backupGitSecretName,
+            @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("paramaters") Map<String, String> parameters) {
         super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
         this.standardServerImage = standardServerImage;
@@ -81,8 +80,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
         this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
-        this.backupGitRepo = backupGitRepo;
-        this.backupGitSecretName = backupGitSecretName;
+        this.backupGitSpec = backupGitSpec;
     }
 
     @Override
@@ -110,12 +108,8 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
         return ofNullable(entandoImageVersion);
     }
 
-    public Optional<String> getBackupGitRepo() {
-        return ofNullable(backupGitRepo);
-    }
-
-    public Optional<String> getBackupGitSecretName() {
-        return ofNullable(backupGitSecretName);
+    public Optional<GitSpec> getBackupGitSpec() {
+        return ofNullable(backupGitSpec);
     }
 
 }

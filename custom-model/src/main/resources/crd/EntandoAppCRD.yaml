@@ -56,6 +56,9 @@ spec:
               type: string
             backupGitSecretName:
               type: string
+            backupResponsibility:
+              type: string
+              pattern: '^(backup|restore)$'
             replicas:
               type: integer
               minimum: 1
