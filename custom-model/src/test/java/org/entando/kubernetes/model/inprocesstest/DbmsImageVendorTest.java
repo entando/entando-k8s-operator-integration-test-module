@@ -38,8 +38,8 @@ public class DbmsImageVendorTest {
                 .usingDatabase("mydb")
                 .buildConnectionString(), is("jdbc:oracle:thin:@//myhost.com:1234/mydb"));
         assertThat("the oracleMavenRepo config is present", DbmsImageVendor.ORACLE.getAdditionalConfig().stream().anyMatch(configVariable ->
-                configVariable.getConfigKey().equals("oracleMavenRepo") && configVariable.getEnvironmentVariable()
-                        .equals("ORACLE_MAVEN_REPO")));
+                configVariable.getConfigKey().equals("oracleTablespace") && configVariable.getEnvironmentVariable()
+                        .equals("TABLESPACE")));
 
     }
 }
