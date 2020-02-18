@@ -75,9 +75,6 @@ public enum DbmsImageVendor {
         @Override
         public Collection<ConfigVariable> getAdditionalConfig() {
             return Arrays.asList(
-                    new ConfigVariable("oracleMavenRepo", "ORACLE_MAVEN_REPO"),
-                    new ConfigVariable("oracleRepoUser", "ORACLE_REPO_USER"),
-                    new ConfigVariable("oracleRepoPassword", "ORACLE_REPO_PASSWORD"),
                     new ConfigVariable("oracleTablespace", "TABLESPACE")
             );
         }
