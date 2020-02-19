@@ -18,9 +18,11 @@ package org.entando.kubernetes.model.keycloakserver;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -46,12 +48,20 @@ public class EntandoKeycloakServerSpec extends EntandoDeploymentSpec {
         super();
     }
 
-    public EntandoKeycloakServerSpec(String imageName, DbmsVendor dbms, String ingressHostName, String entandoImageVersion,
-            String tlsSecretName, int replicas, boolean isDefault, Map<String, String> parameters) {
+    @JsonCreator
+    public EntandoKeycloakServerSpec(
+            @JsonProperty("imageName") String imageName,
+            @JsonProperty("dbms") DbmsVendor dbms,
+            @JsonProperty("ingressHostName") String ingressHostName,
+            @JsonProperty("entandoImageVersion") String entandoImageVersion,
+            @JsonProperty("tlsSecretName") String tlsSecretName,
+            @JsonProperty("replicas") Integer replicas,
+            @JsonProperty("isDefault") Boolean isDefault,
+            @JsonProperty("parameters") Map<String, String> parameters) {
         super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
         this.imageName = imageName;
         this.entandoImageVersion = entandoImageVersion;
-        this.isDefault = isDefault;
+        this.isDefault = Boolean.TRUE == isDefault;
     }
 
     public Optional<String> getImageName() {

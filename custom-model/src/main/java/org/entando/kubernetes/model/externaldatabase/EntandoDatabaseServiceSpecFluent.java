@@ -29,7 +29,8 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     private String host;
     private Integer port;
     private String secretName;
-    private Map<String, String> parameters = new ConcurrentHashMap<>();
+    private Map<String, String> jdbcParameters = new ConcurrentHashMap<>();
+    private String tablespace;
 
     public EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
         this.databaseName = spec.getDatabaseName();
@@ -37,7 +38,8 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
         this.host = spec.getHost();
         this.port = spec.getPort().orElse(null);
         this.secretName = spec.getSecretName();
-        this.parameters = coalesce(spec.getParameters(), this.parameters);
+        this.tablespace = spec.getTablespace().orElse(null);
+        this.jdbcParameters = coalesce(spec.getJdbcParameters(), this.jdbcParameters);
     }
 
     public EntandoDatabaseServiceSpecFluent() {
@@ -45,7 +47,7 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     }
 
     public EntandoDatabaseServiceSpec build() {
-        return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, secretName, parameters);
+        return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, tablespace, secretName, jdbcParameters);
     }
 
     public N withDatabaseName(String databaseName) {
@@ -73,13 +75,18 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
         return thisAsN();
     }
 
-    public N withParameters(Map<String, String> parameters) {
-        this.parameters = new ConcurrentHashMap<>(parameters);
+    public N withJdbcParameters(Map<String, String> parameters) {
+        this.jdbcParameters = new ConcurrentHashMap<>(parameters);
         return thisAsN();
     }
 
-    public N addToParameters(String name, String value) {
-        this.parameters.put(name, value);
+    public N addToJdbcParameters(String name, String value) {
+        this.jdbcParameters.put(name, value);
+        return thisAsN();
+    }
+
+    public N withTablespace(String tablespace) {
+        this.tablespace = tablespace;
         return thisAsN();
     }
 
@@ -87,4 +94,5 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     protected N thisAsN() {
         return (N) this;
     }
+
 }

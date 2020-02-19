@@ -18,6 +18,7 @@ package org.entando.kubernetes.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
@@ -32,6 +33,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
 
     public static final String MY_PARAM_VALUE = "my-param-value";
     public static final String MY_PARAM = "my-param";
+    public static final String MY_TABLESPACE = "my_tablespace";
     protected static final String MY_EXTERNAL_DATABASE = "my-external-database";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String MY_DB = "my_db";
@@ -57,8 +59,9 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withDatabaseName(MY_DB)
                 .withHost(MYHOST_COM)
                 .withPort(PORT_1521)
+                .withTablespace(MY_TABLESPACE)
                 .withSecretName(MY_DB_SECRET)
-                .addToParameters(MY_PARAM, MY_PARAM_VALUE)
+                .addToJdbcParameters(MY_PARAM, MY_PARAM_VALUE)
                 .withDbms(DbmsVendor.ORACLE)
                 .endSpec()
                 .build();
@@ -71,8 +74,9 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
         assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
         assertThat(actual.getSpec().getPort().get(), is(PORT_1521));
         assertThat(actual.getSpec().getDbms(), is(DbmsVendor.ORACLE));
+        assertThat(actual.getSpec().getTablespace().get(), is(MY_TABLESPACE));
         assertThat(actual.getSpec().getSecretName(), is(MY_DB_SECRET));
-        assertThat(actual.getSpec().getParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
+        assertThat(actual.getSpec().getJdbcParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_EXTERNAL_DATABASE));
     }
 
@@ -86,7 +90,8 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withNewSpec()
                 .withDatabaseName("other_db")
                 .withHost("otherhost.com")
-                .withParameters(Collections.singletonMap("asdfasdf", "afafafaf"))
+                .withTablespace(MY_TABLESPACE)
+                .withJdbcParameters(Collections.singletonMap("asdfasdf", "afafafaf"))
                 .withPort(5555)
                 .withSecretName("othersecret")
                 .withDbms(DbmsVendor.POSTGRESQL)
@@ -104,7 +109,8 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withDatabaseName(MY_DB)
                 .withHost(MYHOST_COM)
                 .withPort(PORT_1521)
-                .addToParameters(MY_PARAM, MY_PARAM_VALUE)
+                .withTablespace(MY_TABLESPACE)
+                .withJdbcParameters(Collections.singletonMap(MY_PARAM, MY_PARAM_VALUE))
                 .withSecretName(MY_DB_SECRET)
                 .withDbms(DbmsVendor.ORACLE)
                 .endSpec()
@@ -117,8 +123,10 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
         assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
         assertThat(actual.getSpec().getPort().get(), is(PORT_1521));
         assertThat(actual.getSpec().getDbms(), is(DbmsVendor.ORACLE));
-        assertThat(actual.getSpec().getParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
+        assertThat(actual.getSpec().getJdbcParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
+        assertThat(actual.getSpec().getJdbcParameters().get("asdfasdf"), is(nullValue()));
         assertThat(actual.getSpec().getSecretName(), is(MY_DB_SECRET));
+        assertThat(actual.getSpec().getTablespace().get(), is(MY_TABLESPACE));
         assertThat(actual.getMetadata().getLabels().get("my-label"), is("my-value"));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());

@@ -46,10 +46,12 @@ spec:
               type: integer
             databaseName:
               type: string
+            tablespace:
+              type: string
             secretName:
               type: string
             dbms:
               type: string
               pattern: '^(mysql|oracle|postgresql|none)$'
-            parameters: {}
+            jdbcParameters: {}
         entandoStatus: {}

@@ -18,9 +18,11 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -42,21 +44,30 @@ public class EntandoDatabaseServiceSpec implements Serializable {
     private String host;
     private Integer port;
     private String databaseName;
+    private String tablespace;
     private String secretName;
-    private Map<String, String> parameters;
+    private Map<String, String> jdbcParameters;
 
     public EntandoDatabaseServiceSpec() {
 
     }
 
-    public EntandoDatabaseServiceSpec(DbmsVendor dbms, String host, Integer port, String databaseName, String secretName,
-            Map<String, String> parameters) {
+    @JsonCreator
+    public EntandoDatabaseServiceSpec(
+            @JsonProperty("dbms") DbmsVendor dbms,
+            @JsonProperty("host") String host,
+            @JsonProperty("port") Integer port,
+            @JsonProperty("databaseName") String databaseName,
+            @JsonProperty("tablespace") String tablespace,
+            @JsonProperty("secretName") String secretName,
+            @JsonProperty("jdbcParameters") Map<String, String> jdbcParameters) {
         this.dbms = dbms;
         this.host = host;
+        this.tablespace = tablespace;
         this.secretName = secretName;
         this.port = port;
         this.databaseName = databaseName;
-        this.parameters = parameters;
+        this.jdbcParameters = jdbcParameters;
     }
 
     public DbmsVendor getDbms() {
@@ -79,7 +90,11 @@ public class EntandoDatabaseServiceSpec implements Serializable {
         return databaseName;
     }
 
-    public Map<String, String> getParameters() {
-        return parameters;
+    public Map<String, String> getJdbcParameters() {
+        return jdbcParameters;
+    }
+
+    public Optional<String> getTablespace() {
+        return Optional.ofNullable(tablespace);
     }
 }

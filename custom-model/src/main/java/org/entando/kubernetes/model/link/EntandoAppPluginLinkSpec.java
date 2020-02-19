@@ -18,9 +18,11 @@ package org.entando.kubernetes.model.link;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -44,8 +46,12 @@ public class EntandoAppPluginLinkSpec implements Serializable {
         //Required for JSON deserialization
     }
 
-    public EntandoAppPluginLinkSpec(String entandoAppNamespace, String entandoAppName, String entandoPluginNamespace,
-            String entandoPluginName) {
+    @JsonCreator
+    public EntandoAppPluginLinkSpec(
+            @JsonProperty("entandoAppNamespace") String entandoAppNamespace,
+            @JsonProperty("entandoAppName") String entandoAppName,
+            @JsonProperty("entandoPluginNamespace") String entandoPluginNamespace,
+            @JsonProperty("entandoPluginName") String entandoPluginName) {
         this.entandoAppNamespace = entandoAppNamespace;
         this.entandoAppName = entandoAppName;
         this.entandoPluginNamespace = entandoPluginNamespace;
