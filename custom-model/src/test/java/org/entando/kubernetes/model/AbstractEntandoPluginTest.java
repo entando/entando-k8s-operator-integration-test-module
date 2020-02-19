@@ -68,7 +68,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withImage(IMAGE)
                 .addNewConnectionConfigName(SOME_CONNECTION)
                 .withReplicas(5)
@@ -90,7 +90,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         //When
         EntandoPlugin actual = entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).get();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
@@ -123,7 +123,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.POSTGRESQL)
+                .withDbms(DbmsVendor.POSTGRESQL)
                 .withImage("entando/enoatherplugin:1.0.2")
                 .addNewConnectionConfigName("another-connection")
                 .withReplicas(5)
@@ -144,7 +144,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withImage(IMAGE)
                 .withConnectionConfigNames(Arrays.asList(SOME_CONNECTION))
                 .withReplicas(5)
@@ -163,7 +163,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));

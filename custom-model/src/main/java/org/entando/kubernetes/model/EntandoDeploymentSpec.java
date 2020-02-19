@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class EntandoDeploymentSpec implements HasIngress, Serializable {
 
     private Integer replicas = 1;
-    private DbmsImageVendor dbms;
+    private DbmsVendor dbms;
     private String ingressHostName;
     private String tlsSecretName;
     private Map<String, String> parameters = new ConcurrentHashMap<>();
@@ -47,7 +47,7 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
     }
 
     @SuppressWarnings("unchecked")
-    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsImageVendor dbms,
+    protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsVendor dbms,
             Map<String, String> parameters) {
         this.ingressHostName = ingressHostName;
         this.tlsSecretName = tlsSecretName;
@@ -70,7 +70,7 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
         return ofNullable(replicas);
     }
 
-    public Optional<DbmsImageVendor> getDbms() {
+    public Optional<DbmsVendor> getDbms() {
         return ofNullable(dbms);
     }
 

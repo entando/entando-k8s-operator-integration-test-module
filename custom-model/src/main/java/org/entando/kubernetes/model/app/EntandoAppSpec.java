@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Map;
 import java.util.Optional;
-import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.RequiresKeycloak;
@@ -63,7 +63,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
     @JsonCreator
     public EntandoAppSpec(@JsonProperty("standardServerImage") JeeServer standardServerImage,
             @JsonProperty("customServerImage") String customServerImage,
-            @JsonProperty("dbms") DbmsImageVendor dbms,
+            @JsonProperty("dbms") DbmsVendor dbms,
             @JsonProperty("ingressHostName") String ingressHostName,
             @JsonProperty("ingressPath") String ingressPath,
             @JsonProperty("replicas") int replicas,

@@ -51,7 +51,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withEntandoImageVersion(SNAPSHOT)
                 .withImageName(ENTANDO_SOMEKEYCLOAK)
                 .withReplicas(5)
@@ -66,7 +66,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
         EntandoKeycloakServer actual = keycloakServers().inNamespace(MY_NAMESPACE).withName(MY_KEYCLOAK).get();
 
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
@@ -85,7 +85,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.POSTGRESQL)
+                .withDbms(DbmsVendor.POSTGRESQL)
                 .withEntandoImageVersion("6.2.0-SNAPSHOT")
                 .withIngressHostName(MYHOST_COM)
                 .withImageName("entando/anotherkeycloak")
@@ -101,7 +101,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withEntandoImageVersion(SNAPSHOT)
                 .withImageName(ENTANDO_SOMEKEYCLOAK)
                 .withIngressHostName(MYHOST_COM)
@@ -116,7 +116,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));

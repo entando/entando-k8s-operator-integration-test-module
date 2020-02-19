@@ -25,8 +25,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
-import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.DbmsVendor;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
@@ -37,25 +38,28 @@ import org.entando.kubernetes.model.DbmsImageVendor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntandoDatabaseServiceSpec implements Serializable {
 
-    private DbmsImageVendor dbms;
+    private DbmsVendor dbms;
     private String host;
     private Integer port;
     private String databaseName;
     private String secretName;
+    private Map<String, String> parameters;
 
     public EntandoDatabaseServiceSpec() {
 
     }
 
-    public EntandoDatabaseServiceSpec(DbmsImageVendor dbms, String host, Integer port, String databaseName, String secretName) {
+    public EntandoDatabaseServiceSpec(DbmsVendor dbms, String host, Integer port, String databaseName, String secretName,
+            Map<String, String> parameters) {
         this.dbms = dbms;
         this.host = host;
         this.secretName = secretName;
         this.port = port;
         this.databaseName = databaseName;
+        this.parameters = parameters;
     }
 
-    public DbmsImageVendor getDbms() {
+    public DbmsVendor getDbms() {
         return dbms;
     }
 
@@ -75,4 +79,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
         return databaseName;
     }
 
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
 }

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.RequiresKeycloak;
 
@@ -68,7 +68,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
     @SuppressWarnings("unchecked")
     @JsonCreator()
     public EntandoPluginSpec(@JsonProperty("image") String image,
-            @JsonProperty("dbms") DbmsImageVendor dbms,
+            @JsonProperty("dbms") DbmsVendor dbms,
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("ingressPath") String ingressPath,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,

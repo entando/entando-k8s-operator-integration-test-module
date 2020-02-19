@@ -29,7 +29,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.entando.kubernetes.model.DbServerStatus;
-import org.entando.kubernetes.model.DbmsImageVendor;
+import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoControllerFailure;
 import org.entando.kubernetes.model.EntandoCustomResource;
@@ -162,7 +162,7 @@ public class DummyBean {
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withImage(IMAGE)
                 .addNewConnectionConfigName(SOME_CONNECTION)
                 .withReplicas(5)
@@ -184,7 +184,7 @@ public class DummyBean {
         EntandoPluginList list = entandoPlugins().inNamespace(MY_NAMESPACE).list();
         EntandoPlugin actual = list.getItems().get(0);
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
@@ -214,7 +214,7 @@ public class DummyBean {
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
                 .withStandardServerImage(JeeServer.WILDFLY)
@@ -231,7 +231,7 @@ public class DummyBean {
         EntandoAppList list = entandoApps().inNamespace(MY_NAMESPACE).list();
         EntandoApp actual = list.getItems().get(0);
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
@@ -263,7 +263,7 @@ public class DummyBean {
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withEntandoImageVersion(SNAPSHOT)
                 .withImageName(ENTANDO_SOMEKEYCLOAK)
                 .withReplicas(5)
@@ -278,7 +278,7 @@ public class DummyBean {
         EntandoKeycloakServerList list = keycloakServers().inNamespace(MY_NAMESPACE).list();
         EntandoKeycloakServer actual = list.getItems().get(0);
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
@@ -295,7 +295,7 @@ public class DummyBean {
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withEntandoImageVersion(SNAPSHOT)
                 .withReplicas(5)
                 .withIngressHostName(MYHOST_COM)
@@ -310,7 +310,7 @@ public class DummyBean {
         EntandoClusterInfrastructureList list = entandoInfrastructure().inNamespace(MY_NAMESPACE).list();
         EntandoClusterInfrastructure actual = list.getItems().get(0);
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
@@ -357,7 +357,7 @@ public class DummyBean {
                 .withHost(MYHOST_COM)
                 .withPort(PORT_1521)
                 .withSecretName(MY_DB_SECRET)
-                .withDbms(DbmsImageVendor.ORACLE)
+                .withDbms(DbmsVendor.ORACLE)
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
@@ -369,7 +369,7 @@ public class DummyBean {
         assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
         assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
         assertThat(actual.getSpec().getPort().get(), is(PORT_1521));
-        assertThat(actual.getSpec().getDbms(), is(DbmsImageVendor.ORACLE));
+        assertThat(actual.getSpec().getDbms(), is(DbmsVendor.ORACLE));
         assertThat(actual.getSpec().getSecretName(), is(MY_DB_SECRET));
         assertThat(actual.getMetadata().getName(), is(MY_EXTERNAL_DATABASE));
     }

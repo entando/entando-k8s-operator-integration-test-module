@@ -16,15 +16,20 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-import org.entando.kubernetes.model.DbmsImageVendor;
+import static org.entando.kubernetes.model.Coalescence.coalesce;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import org.entando.kubernetes.model.DbmsVendor;
 
 public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabaseServiceSpecFluent> {
 
     private String databaseName;
-    private DbmsImageVendor dbms;
+    private DbmsVendor dbms;
     private String host;
     private Integer port;
     private String secretName;
+    private Map<String, String> parameters = new ConcurrentHashMap<>();
 
     public EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
         this.databaseName = spec.getDatabaseName();
@@ -32,6 +37,7 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
         this.host = spec.getHost();
         this.port = spec.getPort().orElse(null);
         this.secretName = spec.getSecretName();
+        this.parameters = coalesce(spec.getParameters(), this.parameters);
     }
 
     public EntandoDatabaseServiceSpecFluent() {
@@ -39,7 +45,7 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     }
 
     public EntandoDatabaseServiceSpec build() {
-        return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, secretName);
+        return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, secretName, parameters);
     }
 
     public N withDatabaseName(String databaseName) {
@@ -47,7 +53,7 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
         return thisAsN();
     }
 
-    public N withDbms(DbmsImageVendor dbms) {
+    public N withDbms(DbmsVendor dbms) {
         this.dbms = dbms;
         return thisAsN();
     }
@@ -64,6 +70,16 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
 
     public N withSecretName(String secretName) {
         this.secretName = secretName;
+        return thisAsN();
+    }
+
+    public N withParameters(Map<String, String> parameters) {
+        this.parameters = new ConcurrentHashMap<>(parameters);
+        return thisAsN();
+    }
+
+    public N addToParameters(String name, String value) {
+        this.parameters.put(name, value);
         return thisAsN();
     }
 

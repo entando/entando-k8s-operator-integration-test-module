@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSpecBuilder> {
 
-    protected DbmsImageVendor dbms;
+    protected DbmsVendor dbms;
     protected String ingressHostName;
     protected String tlsSecretName;
     protected Integer replicas = 1;
@@ -39,7 +39,7 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         this.parameters = new ConcurrentHashMap<>();
     }
 
-    public final N withDbms(DbmsImageVendor dbms) {
+    public final N withDbms(DbmsVendor dbms) {
         this.dbms = dbms;
         return thisAsN();
     }

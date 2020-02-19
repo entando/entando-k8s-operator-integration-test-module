@@ -51,4 +51,5 @@ spec:
             dbms:
               type: string
               pattern: '^(mysql|oracle|postgresql|none)$'
+            parameters: {}
         entandoStatus: {}

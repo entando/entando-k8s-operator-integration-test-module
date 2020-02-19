@@ -51,7 +51,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withEntandoImageVersion(SNAPSHOT)
                 .withReplicas(5)
                 .withIngressHostName(MYHOST_COM)
@@ -66,7 +66,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         EntandoClusterInfrastructure actual = entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
                 .get();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
@@ -87,7 +87,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.POSTGRESQL)
+                .withDbms(DbmsVendor.POSTGRESQL)
                 .withEntandoImageVersion("6.2.0-SNAPSHOT")
                 .withIngressHostName(MYHOST_COM)
                 .withReplicas(3)
@@ -104,7 +104,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withEntandoImageVersion(SNAPSHOT)
                 .withIngressHostName(MYHOST_COM)
                 .withReplicas(5)
@@ -119,7 +119,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));

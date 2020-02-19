@@ -63,7 +63,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
                 .withStandardServerImage(JeeServer.WILDFLY)
@@ -87,7 +87,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         //When
         EntandoApp actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).get();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
@@ -117,7 +117,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
-                .withDbms(DbmsImageVendor.POSTGRESQL)
+                .withDbms(DbmsVendor.POSTGRESQL)
                 .withEntandoImageVersion("6.2.0-SNAPSHOT")
                 .withCustomServerImage("asdfasdf/asdf:2")
                 .withStandardServerImage(JeeServer.WILDFLY)
@@ -141,7 +141,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .editMetadata().addToLabels(MY_LABEL, MY_VALUE)
                 .endMetadata()
                 .editSpec()
-                .withDbms(DbmsImageVendor.MYSQL)
+                .withDbms(DbmsVendor.MYSQL)
                 .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
                 .withStandardServerImage(JeeServer.WILDFLY)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
@@ -163,7 +163,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsImageVendor.MYSQL));
+        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
