@@ -16,6 +16,8 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
+import static org.entando.kubernetes.model.Coalescence.coalesce;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -29,6 +31,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;
 
 @JsonInclude(Include.NON_NULL)
@@ -46,7 +49,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
     private String databaseName;
     private String tablespace;
     private String secretName;
-    private Map<String, String> jdbcParameters;
+    private Map<String, String> jdbcParameters = new ConcurrentHashMap<>();
 
     public EntandoDatabaseServiceSpec() {
 
@@ -67,7 +70,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
         this.secretName = secretName;
         this.port = port;
         this.databaseName = databaseName;
-        this.jdbcParameters = jdbcParameters;
+        this.jdbcParameters = coalesce(jdbcParameters, this.jdbcParameters);
     }
 
     public DbmsVendor getDbms() {
