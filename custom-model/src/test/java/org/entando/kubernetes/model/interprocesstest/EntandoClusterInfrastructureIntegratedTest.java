@@ -26,9 +26,10 @@ import org.entando.kubernetes.model.DbServerStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
 import org.entando.kubernetes.model.WebServerStatus;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-@Tag("inter-process")
+@Tags({@Tag("inter-process"),@Tag("pre-deployment") })
 public class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoClusterInfrastructureTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();

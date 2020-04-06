@@ -24,11 +24,12 @@ import org.entando.kubernetes.model.AbstractEntandoKeycloakServerTest;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @EnableRuleMigrationSupport
-@Tag("in-process")
+@Tags({@Tag("in-process"),@Tag("pre-deployment") })
 public class EntandoKeycloakServerMockedTest extends AbstractEntandoKeycloakServerTest {
 
     @Rule

@@ -45,9 +45,10 @@ import org.entando.kubernetes.model.WebServerStatus;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerSpec;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-@Tag("in-process")
+@Tags({@Tag("in-process"),@Tag("pre-deployment") })
 public class EntandoCustomResourceStatusTest {
 
     private static void populateStatus(AbstractServerStatus dbServerStatus) {

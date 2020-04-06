@@ -24,11 +24,12 @@ import org.entando.kubernetes.model.AbstractEntandoAppPluginLinkTest;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkBuilder;
 import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @EnableRuleMigrationSupport
-@Tag("in-process")
+@Tags({@Tag("in-process"),@Tag("pre-deployment") })
 public class EntandoAppPluginLinkMockedTest extends AbstractEntandoAppPluginLinkTest {
 
     @Rule
