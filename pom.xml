@@ -5,7 +5,7 @@
     <groupId>org.entando</groupId>
     <artifactId>entando-quarkus-parent</artifactId>
     <version>6.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Entando Quarkus Parent POM</name>
     <description>Entando QaurkusParent POM</description>
