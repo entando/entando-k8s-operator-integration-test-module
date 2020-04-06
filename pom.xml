@@ -48,14 +48,14 @@
         <tag>HEAD</tag>
     </scm>
     <properties>
-        <github.organization>entando-k8s-infrastructure</github.organization>
+        <github.organization>entando-k8s</github.organization>
         <preDeploymentTestGroups></preDeploymentTestGroups>
         <postDeploymentTestGroups></postDeploymentTestGroups>
         <checkstyleConfigLocation>
-            https://raw.githubusercontent.com/entando-k8s/entando-quarkus-parent/v${project.parent.version}/checkstyle.xml
+            https://raw.githubusercontent.com/entando-k8s/${project.parent.artifactId}/v${project.parent.version}/checkstyle.xml
         </checkstyleConfigLocation>
         <owaspSuppressionFileLocation>
-            https://raw.githubusercontent.com/entando-k8s/entando-quarkus-parent/v${project.parent.version}/owasp-dependency-check-suppression.xml
+            https://raw.githubusercontent.com/entando-k8s/${project.parent.artifactId}/v${project.parent.version}/owasp-dependency-check-suppression.xml
         </owaspSuppressionFileLocation>
         <!--dependencies -->
         <resteasy.version>3.9.3.Final</resteasy.version>
