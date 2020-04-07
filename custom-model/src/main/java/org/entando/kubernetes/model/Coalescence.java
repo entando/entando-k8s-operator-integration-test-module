@@ -18,6 +18,9 @@ package org.entando.kubernetes.model;
 
 public class Coalescence {
 
+    private Coalescence() {
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T coalesce(T... t) {
         for (T item : t) {

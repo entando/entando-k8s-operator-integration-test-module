@@ -62,7 +62,7 @@ public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec impl
         super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
         this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
-        this.isDefault = Boolean.TRUE == isDefault;
+        this.isDefault = Boolean.TRUE.equals(isDefault);
     }
 
     public boolean isDefault() {

@@ -61,7 +61,7 @@ public class EntandoKeycloakServerSpec extends EntandoDeploymentSpec {
         super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
         this.imageName = imageName;
         this.entandoImageVersion = entandoImageVersion;
-        this.isDefault = Boolean.TRUE == isDefault;
+        this.isDefault = Boolean.TRUE.equals(isDefault);
     }
 
     public Optional<String> getImageName() {
