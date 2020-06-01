@@ -27,6 +27,7 @@ public enum DbmsVendor {
     MYSQL,
     POSTGRESQL,
     ORACLE,
+    EMBEDDED,
     NONE;
 
     @JsonValue
