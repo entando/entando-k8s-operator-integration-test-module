@@ -24,6 +24,14 @@
       ]]></notes>
         <gav>io.quarkus:quarkus-kubernetes-client:1.2.0.Final</gav>
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+        <cve>CVE-2019-10169</cve>
+        <cve>CVE-2020-1728</cve>
+        <cve>CVE-2020-1718</cve>
+        <cve>CVE-2020-1724</cve>
+        <cve>CVE-2020-1714</cve>
+        <cve>CVE-2020-1758</cve>
+        <cve>CVE-2020-1698</cve>
+        <cve>CVE-2019-10170</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
@@ -38,5 +46,21 @@
         <cve>CVE-2020-1697</cve>
         <cve>CVE-2020-1744</cve>
         <cve>CVE-2019-14837</cve>
+        <cve>CVE-2019-10169</cve>
+        <cve>CVE-2020-1728</cve>
+        <cve>CVE-2020-1718</cve>
+        <cve>CVE-2020-1724</cve>
+        <cve>CVE-2020-1714</cve>
+        <cve>CVE-2020-1758</cve>
+        <cve>CVE-2020-1698</cve>
+        <cve>CVE-2019-10170</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
+        server is updated.
+      ]]></notes>
+        <gav regex="true">org\.jboss\.resteasy:resteasy-.*:3\.9\.3\.Final</gav>
+        <cve>CVE-2020-1695</cve>
     </suppress>
 </suppressions>
