@@ -62,7 +62,7 @@ spec:
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
             dbms:
               type: string
-              pattern: '^(mysql|oracle|postgresql|none)?$'
+              pattern: '^(mysql|oracle|postgresql|embedded|none)?$'
             securityLevel:
               type: string
             parameters:

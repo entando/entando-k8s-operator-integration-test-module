@@ -43,7 +43,7 @@ spec:
               type: string
             dbms:
               type: string
-              pattern: '^(mysql|oracle|postgresql|none)$'
+              pattern: '^(mysql|oracle|postgresql|embedded|none)$'
             tlsSecretName:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
