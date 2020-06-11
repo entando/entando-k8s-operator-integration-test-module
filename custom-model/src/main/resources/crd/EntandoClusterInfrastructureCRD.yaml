@@ -33,7 +33,7 @@ spec:
           properties:
             dbms:
               type: string
-              pattern: '^(mysql|oracle|postgresql|none)$'
+              pattern: '^(mysql|oracle|postgresql|embedded|none)$'
             ingressHostName:
               type: string
               pattern: '^([A-Za-z0-9-]{1,63}\.)+[[A-Za-z0-9-]{1,63}$'
