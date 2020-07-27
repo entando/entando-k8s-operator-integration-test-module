@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.entando</groupId>
     <artifactId>entando-quarkus-parent</artifactId>
-    <version>6.1.0-SNAPSHOT</version>
+    <version>6.1.8</version>
     <packaging>pom</packaging>
 
     <name>Entando Quarkus Parent POM</name>
@@ -71,7 +71,9 @@
         <guava.version>24.1.1-jre</guava.version>
         <snakeyaml.version>1.23</snakeyaml.version>
         <slf4j.version>1.7.16</slf4j.version>
-        <postgresql.driver.version>42.2.8</postgresql.driver.version>
+        <postgresql.driver.version>42.2.14</postgresql.driver.version>
+        <ojdbc8.version>19.3.0.0</ojdbc8.version>
+        <mysql-connector-java.version>8.0.21</mysql-connector-java.version>
         <!-- test dependencies -->
 
         <junit.version>5.4.2</junit.version>
@@ -80,8 +82,6 @@
         <hamcrest.version>2.1</hamcrest.version>
         <jaway.jsonpath.version>2.4.0</jaway.jsonpath.version>
         <jakarta.validation.api.version>2.0.2</jakarta.validation.api.version>
-
-       
     </properties>
     <issueManagement>
         <system>Github</system>
@@ -185,8 +185,18 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.driver.version}</version>
-                <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oracle.ojdbc</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>${ojdbc8.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
