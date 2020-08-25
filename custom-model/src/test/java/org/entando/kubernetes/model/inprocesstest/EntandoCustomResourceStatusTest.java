@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-@Tags({@Tag("in-process"),@Tag("pre-deployment") })
+@Tags({@Tag("in-process"), @Tag("pre-deployment")})
 public class EntandoCustomResourceStatusTest {
 
     private static void populateStatus(AbstractServerStatus dbServerStatus) {
@@ -86,7 +86,8 @@ public class EntandoCustomResourceStatusTest {
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServer();
         keycloakServer.getMetadata().setGeneration(3L);
         keycloakServer
-                .setSpec(new EntandoKeycloakServerSpec(null, DbmsVendor.ORACLE, null, null, null, 1, true, Collections.emptyMap()));
+                .setSpec(new EntandoKeycloakServerSpec(null, DbmsVendor.ORACLE, null, null, null, 1, true, "myServiceAccount",
+                        Collections.emptyMap()));
         keycloakServer.getMetadata().setName("test-keycloak");
         keycloakServer.setStatus(new EntandoCustomResourceStatus());
         keycloakServer.getStatus().putServerStatus(dbServerStatus);

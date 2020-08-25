@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.RequiresClusterInfrastructure;
 import org.entando.kubernetes.model.RequiresKeycloak;
 
 @JsonSerialize
@@ -44,7 +45,7 @@ import org.entando.kubernetes.model.RequiresKeycloak;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoPluginSpec extends EntandoDeploymentSpec implements RequiresKeycloak {
+public class EntandoPluginSpec extends EntandoDeploymentSpec implements RequiresKeycloak, RequiresClusterInfrastructure {
 
     private String image;
     private PluginSecurityLevel securityLevel;
@@ -54,7 +55,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
     private String ingressPath;
     private String keycloakSecretToUse;
     private String healthCheckPath;
-    private String clusterInfrastructureToUse;
+    private String clusterInfrastructureSecretToUse;
     private List<String> companionContainers = new ArrayList<>();
 
     public EntandoPluginSpec() {
@@ -78,12 +79,13 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("ingressHostName") String ingressHostName,
             @JsonProperty("roles") List<ExpectedRole> roles,
             @JsonProperty("permissions") List<Permission> permissions,
+            @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
-            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse,
+            @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
             @JsonProperty("companionContainers") List<String> companionContainers
     ) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters);
         this.image = image;
         this.ingressPath = ingressPath;
         this.keycloakSecretToUse = keycloakSecretToUse;
@@ -92,7 +94,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
         this.permissions = coalesce(permissions, this.permissions);
         this.connectionConfigNames = coalesce(connectionConfigNames, this.connectionConfigNames);
         this.securityLevel = securityLevel;
-        this.clusterInfrastructureToUse = clusterInfrastructureToUse;
+        this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.companionContainers = coalesce(companionContainers, this.companionContainers);
     }
 
@@ -125,8 +127,8 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
         return ofNullable(keycloakSecretToUse);
     }
 
-    public Optional<String> getClusterInfrastructureTouse() {
-        return ofNullable(clusterInfrastructureToUse);
+    public Optional<String> getClusterInfrastructureSecretToUse() {
+        return ofNullable(clusterInfrastructureSecretToUse);
     }
 
     public List<String> getConnectionConfigNames() {
