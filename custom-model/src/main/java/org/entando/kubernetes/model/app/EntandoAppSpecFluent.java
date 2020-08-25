@@ -27,7 +27,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
     protected JeeServer standardServerImage;
     protected String entandoImageVersion;
     protected String keycloakSecretToUse;
-    protected String clusterInfrastructureToUse;
+    protected String clusterInfrastructureSecretToUse;
     protected String customServerImage;
     protected String ingressPath;
     private GitSpecBuilder backupGitSpec;
@@ -38,7 +38,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         this.standardServerImage = spec.getStandardServerImage().orElse(null);
         this.customServerImage = spec.getCustomServerImage().orElse(null);
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
-        this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
+        this.clusterInfrastructureSecretToUse = spec.getClusterInfrastructureSecretToUse().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
         this.backupGitSpec = spec.getBackupGitSpec().map(GitSpecBuilder::new).orElse(new GitSpecBuilder());
     }
@@ -74,8 +74,8 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         return thisAsN();
     }
 
-    public N withClusterInfrastructureToUse(String name) {
-        this.clusterInfrastructureToUse = name;
+    public N withClusterInfrastructureSecretToUse(String name) {
+        this.clusterInfrastructureSecretToUse = name;
         return thisAsN();
     }
 
@@ -94,7 +94,8 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
 
     public EntandoAppSpec build() {
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
-                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse, this.clusterInfrastructureToUse,
+                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse,
+                this.clusterInfrastructureSecretToUse,
                 this.backupGitSpec.build(), this.serviceAccountToUse, this.parameters);
     }
 

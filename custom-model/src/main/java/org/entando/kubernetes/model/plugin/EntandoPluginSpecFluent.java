@@ -29,13 +29,13 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     protected String image;
     protected String ingressPath;
     protected String keycloakSecretToUse;
-    protected String clusterInfrastructureToUse;
+    protected String clusterInfrastructureSecretToUse;
     protected String healthCheckPath;
     protected PluginSecurityLevel securityLevel;
 
     public EntandoPluginSpecFluent(EntandoPluginSpec spec) {
         super(spec);
-        this.clusterInfrastructureToUse = spec.getClusterInfrastructureTouse().orElse(null);
+        this.clusterInfrastructureSecretToUse = spec.getClusterInfrastructureSecretToUse().orElse(null);
         this.ingressPath = spec.getIngressPath();
         this.healthCheckPath = spec.getHealthCheckPath();
         this.securityLevel = spec.getSecurityLevel().orElse(null);
@@ -55,8 +55,8 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         this.companionContainers = new ArrayList<>();
     }
 
-    public N withClusterInfrastructureToUse(String name) {
-        this.clusterInfrastructureToUse = name;
+    public N withClusterInfrastructureSecretToUse(String name) {
+        this.clusterInfrastructureSecretToUse = name;
         return thisAsN();
     }
 
@@ -133,6 +133,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakSecretToUse,
                 healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions,
                 serviceAccountToUse, parameters, connectionConfigNames,
-                clusterInfrastructureToUse, companionContainers);
+                clusterInfrastructureSecretToUse, companionContainers);
     }
 }

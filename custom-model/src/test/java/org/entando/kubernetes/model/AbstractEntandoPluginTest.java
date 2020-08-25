@@ -82,7 +82,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
-                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
         entandoPlugins().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoPlugin.getMetadata()).withSpec(entandoPlugin.getSpec())
@@ -109,7 +109,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getIngressPath(), is(INGRESS_PATH));
         assertThat(actual.getSpec().getHealthCheckPath(), is(ACTUATOR_HEALTH));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getStatus(), is(notNullValue()));
     }
@@ -135,7 +135,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .addNewParameter(PARAMETER_NAME, "A")
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse("another-keycloak-secret")
-                .withClusterInfrastructureToUse("another-cluster-infrastructure")
+                .withClusterInfrastructureSecretToUse("another-cluster-infrastructure")
                 .endSpec()
                 .build();
         //When
@@ -156,7 +156,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withParameters(Collections.singletonMap(PARAMETER_NAME, PARAMETER_VALUE))
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
-                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
                 .withStatus(new DbServerStatus("another-qualifier"))
@@ -180,7 +180,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getSecurityLevel().get(), is(STRICT));
         assertThat(actual.getSpec().getParameters().get(PARAMETER_NAME), is(PARAMETER_VALUE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
     }
 

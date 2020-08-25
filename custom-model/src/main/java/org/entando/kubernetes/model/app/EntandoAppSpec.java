@@ -33,6 +33,7 @@ import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.JeeServer;
+import org.entando.kubernetes.model.RequiresClusterInfrastructure;
 import org.entando.kubernetes.model.RequiresKeycloak;
 import org.entando.kubernetes.model.gitspec.GitSpec;
 
@@ -43,14 +44,14 @@ import org.entando.kubernetes.model.gitspec.GitSpec;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKeycloak {
+public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKeycloak, RequiresClusterInfrastructure {
 
     private JeeServer standardServerImage;
     private String customServerImage;
     private String ingressPath;
     private String entandoImageVersion;
     private String keycloakSecretToUse;
-    private String clusterInfrastructureToUse;
+    private String clusterInfrastructureSecretToUse;
     private GitSpec backupGitSpec;
 
     public EntandoAppSpec() {
@@ -70,7 +71,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("entandoImageVersion") String entandoImageVersion,
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
-            @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse,
+            @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("paramaters") Map<String, String> parameters) {
@@ -80,7 +81,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
         this.ingressPath = ingressPath;
         this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
-        this.clusterInfrastructureToUse = clusterInfrastructureToUse;
+        this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.backupGitSpec = backupGitSpec;
     }
 
@@ -93,8 +94,8 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
         return ofNullable(ingressPath);
     }
 
-    public Optional<String> getClusterInfrastructureTouse() {
-        return ofNullable(clusterInfrastructureToUse);
+    public Optional<String> getClusterInfrastructureSecretToUse() {
+        return ofNullable(clusterInfrastructureSecretToUse);
     }
 
     public Optional<JeeServer> getStandardServerImage() {

@@ -175,7 +175,7 @@ public class DummyBean {
                 .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
-                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
@@ -202,7 +202,7 @@ public class DummyBean {
         assertThat(actual.getSpec().getIngressPath(), is(INGRESS_PATH));
         assertThat(actual.getSpec().getHealthCheckPath(), is(ACTUATOR_HEALTH));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getStatus() != null, is(true));
     }
@@ -222,7 +222,7 @@ public class DummyBean {
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
-                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
@@ -242,7 +242,7 @@ public class DummyBean {
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
-        assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
 
         //Test statuses
