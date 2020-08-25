@@ -47,6 +47,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     private static final String MY_LABEL = "my-label";
     private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final Integer MY_REPLICAS = 5;
+    public static final String MY_SERVICE_ACCOUNT = "myServiceAccount";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -133,6 +134,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withResponsibility(GitResponsibility.PULL)
                 .withTargertRef("pr1")
                 .endBackupGitSpec()
+                .withServiceAccountToUse("someserviceacount")
                 .endSpec()
                 .build();
         //When
@@ -156,6 +158,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withResponsibility(GitResponsibility.PUSH)
                 .withTargertRef("master")
                 .endBackupGitSpec()
+                .withServiceAccountToUse(MY_SERVICE_ACCOUNT)
                 .withParameters(Collections.singletonMap(PARAM_NAME, PARAM_VALUE))
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
@@ -172,6 +175,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getClusterInfrastructureTouse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
+        assertThat(actual.getSpec().getServiceAccountToUse().get(), is(MY_SERVICE_ACCOUNT));
         assertThat(actual.getSpec().getBackupGitSpec().get().getRepository(), is(MY_BACKUP_GIT_REPO));
         assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
         assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));

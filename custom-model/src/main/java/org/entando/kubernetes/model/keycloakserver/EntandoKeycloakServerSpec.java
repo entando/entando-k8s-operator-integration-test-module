@@ -57,8 +57,9 @@ public class EntandoKeycloakServerSpec extends EntandoDeploymentSpec {
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("isDefault") Boolean isDefault,
+            @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("parameters") Map<String, String> parameters) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters);
         this.imageName = imageName;
         this.entandoImageVersion = entandoImageVersion;
         this.isDefault = Boolean.TRUE.equals(isDefault);
