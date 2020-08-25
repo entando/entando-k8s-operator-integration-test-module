@@ -16,6 +16,7 @@
 
 package org.entando.kubernetes.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,6 +26,8 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
     protected String ingressHostName;
     protected String tlsSecretName;
     protected Integer replicas = 1;
+    protected String serviceAccountToUse;
+
     protected Map<String, String> parameters;
 
     protected EntandoDeploymentSpecBuilder(EntandoDeploymentSpec spec) {
@@ -32,6 +35,7 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         this.ingressHostName = spec.getIngressHostName().orElse(null);
         this.replicas = spec.getReplicas().orElse(null);
         this.tlsSecretName = spec.getTlsSecretName().orElse(null);
+        this.serviceAccountToUse = spec.getServiceAccountToUse().orElse(null);
         this.parameters = new ConcurrentHashMap<>(spec.getParameters());
     }
 
@@ -46,6 +50,11 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
 
     public final N withTlsSecretName(String tlsSecretName) {
         this.tlsSecretName = tlsSecretName;
+        return thisAsN();
+    }
+
+    public final N withServiceAccountToUse(String serviceAccountToUse) {
+        this.serviceAccountToUse = serviceAccountToUse;
         return thisAsN();
     }
 

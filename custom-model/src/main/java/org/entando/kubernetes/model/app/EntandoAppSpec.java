@@ -72,8 +72,9 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
             @JsonProperty("clusterInfrastructureToUse") String clusterInfrastructureToUse,
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
+            @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("paramaters") Map<String, String> parameters) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;

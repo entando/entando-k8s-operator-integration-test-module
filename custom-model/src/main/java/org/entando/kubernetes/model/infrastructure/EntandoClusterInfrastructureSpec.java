@@ -58,8 +58,9 @@ public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec impl
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
             @JsonProperty("isDefault") Boolean isDefault,
+            @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("parameters") Map<String, String> parameters) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, parameters);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters);
         this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.isDefault = Boolean.TRUE.equals(isDefault);
