@@ -82,6 +82,7 @@
         <hamcrest.version>2.1</hamcrest.version>
         <jaway.jsonpath.version>2.4.0</jaway.jsonpath.version>
         <jakarta.validation.api.version>2.0.2</jakarta.validation.api.version>
+        <java-semver.version>0.9.0</java-semver.version>
     </properties>
     <issueManagement>
         <system>Github</system>
@@ -111,6 +112,11 @@
                 <version>${quarkus.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.zafarkhaja</groupId>
+                <artifactId>java-semver</artifactId>
+                <version>${java-semver.version}</version>
             </dependency>
 
             <!--Transitive deps to override -->
