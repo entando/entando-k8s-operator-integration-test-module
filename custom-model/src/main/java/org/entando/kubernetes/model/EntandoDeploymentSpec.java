@@ -44,12 +44,13 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
     private String serviceAccountToUse;
     private Map<String, String> parameters = new ConcurrentHashMap<>();
     private EntandoResourceRequirements resourceRequirements;
+
     protected EntandoDeploymentSpec() {
     }
 
     @SuppressWarnings("unchecked")
     protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsVendor dbms,
-            String serviceAccountToUse, Map<String, String> parameters,  EntandoResourceRequirements resourceRequirements) {
+            String serviceAccountToUse, Map<String, String> parameters, EntandoResourceRequirements resourceRequirements) {
         this.ingressHostName = ingressHostName;
         this.tlsSecretName = tlsSecretName;
         this.replicas = replicas;
@@ -84,7 +85,8 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
     public Optional<String> getServiceAccountToUse() {
         return ofNullable(serviceAccountToUse);
     }
-    public Optional<EntandoResourceRequirements> getResourceRequirements(){
+
+    public Optional<EntandoResourceRequirements> getResourceRequirements() {
         return Optional.ofNullable(resourceRequirements);
     }
 }
