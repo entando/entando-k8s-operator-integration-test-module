@@ -96,7 +96,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse,
                 this.clusterInfrastructureSecretToUse,
-                this.backupGitSpec.build(), this.serviceAccountToUse, this.parameters);
+                this.backupGitSpec.build(), this.serviceAccountToUse, this.parameters, this.resourceRequirements);
     }
 
     public static class GitSpecBuilderNested<P extends EntandoAppSpecFluent> extends GitSpecFluent<GitSpecBuilderNested<P>> {

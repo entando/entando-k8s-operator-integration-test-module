@@ -16,9 +16,9 @@
 
 package org.entando.kubernetes.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.entando.kubernetes.model.app.EntandoAppSpecFluent;
 
 public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSpecBuilder> {
 
@@ -29,6 +29,7 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
     protected String serviceAccountToUse;
 
     protected Map<String, String> parameters;
+    protected EntandoResourceRequirements resourceRequirements;
 
     protected EntandoDeploymentSpecBuilder(EntandoDeploymentSpec spec) {
         this.dbms = spec.getDbms().orElse(null);
@@ -37,6 +38,7 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         this.tlsSecretName = spec.getTlsSecretName().orElse(null);
         this.serviceAccountToUse = spec.getServiceAccountToUse().orElse(null);
         this.parameters = new ConcurrentHashMap<>(spec.getParameters());
+        this.resourceRequirements = spec.getResourceRequirements().orElse(null);
     }
 
     protected EntandoDeploymentSpecBuilder() {
@@ -79,8 +81,45 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         return thisAsN();
     }
 
+    public EntandoResourceRequirementsNested editResourceRequirements() {
+        return new EntandoResourceRequirementsNested(thisAsN(), resourceRequirements);
+    }
+
+    public EntandoResourceRequirementsNested withNewResourceRequirements() {
+        return new EntandoResourceRequirementsNested(thisAsN());
+    }
+
+    public N withResourceRequirements(EntandoResourceRequirements resourceRequirements) {
+        this.resourceRequirements = resourceRequirements;
+        return thisAsN();
+    }
+
     @SuppressWarnings("unchecked")
     protected N thisAsN() {
         return (N) this;
     }
+
+    public class EntandoResourceRequirementsNested extends EntandoResourceRequirementsFluent<EntandoResourceRequirementsNested> {
+
+        private N parent;
+
+        public EntandoResourceRequirementsNested(N parent, EntandoResourceRequirements resourceRequirements) {
+            super(resourceRequirements);
+            this.parent = parent;
+        }
+
+        public EntandoResourceRequirementsNested(N parent) {
+            this.parent = parent;
+        }
+
+        public N done() {
+            this.parent.withResourceRequirements(build());
+            return this.parent;
+        }
+
+        public N endResourceRequirements() {
+            return done();
+        }
+    }
+
 }

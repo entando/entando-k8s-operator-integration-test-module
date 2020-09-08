@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.EntandoResourceRequirements;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
@@ -58,8 +59,9 @@ public class EntandoKeycloakServerSpec extends EntandoDeploymentSpec {
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("isDefault") Boolean isDefault,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters);
+            @JsonProperty("parameters") Map<String, String> parameters,
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, resourceRequirements);
         this.imageName = imageName;
         this.entandoImageVersion = entandoImageVersion;
         this.isDefault = Boolean.TRUE.equals(isDefault);

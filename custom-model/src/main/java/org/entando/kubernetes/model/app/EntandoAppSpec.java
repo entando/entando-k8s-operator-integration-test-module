@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.EntandoResourceRequirements;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.RequiresClusterInfrastructure;
 import org.entando.kubernetes.model.RequiresKeycloak;
@@ -74,8 +75,9 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("paramaters") Map<String, String> parameters) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters);
+            @JsonProperty("paramaters") Map<String, String> parameters,
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters,resourceRequirements);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;

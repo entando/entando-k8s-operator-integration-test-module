@@ -56,6 +56,6 @@ public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfr
 
     public EntandoClusterInfrastructureSpec build() {
         return new EntandoClusterInfrastructureSpec(dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas,
-                keycloakSecretToUse, isDefault, this.serviceAccountToUse, parameters);
+                keycloakSecretToUse, isDefault, this.serviceAccountToUse, parameters, resourceRequirements);
     }
 }
