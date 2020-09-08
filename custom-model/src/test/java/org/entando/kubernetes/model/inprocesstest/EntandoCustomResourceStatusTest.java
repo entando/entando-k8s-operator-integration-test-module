@@ -40,6 +40,7 @@ import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoControllerFailureBuilder;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 import org.entando.kubernetes.model.EntandoDeploymentPhase;
+import org.entando.kubernetes.model.EntandoResourceRequirements;
 import org.entando.kubernetes.model.SampleWriter;
 import org.entando.kubernetes.model.WebServerStatus;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
@@ -87,7 +88,7 @@ public class EntandoCustomResourceStatusTest {
         keycloakServer.getMetadata().setGeneration(3L);
         keycloakServer
                 .setSpec(new EntandoKeycloakServerSpec(null, DbmsVendor.ORACLE, null, null, null, 1, true, "myServiceAccount",
-                        Collections.emptyMap()));
+                        Collections.emptyMap(), new EntandoResourceRequirements()));
         keycloakServer.getMetadata().setName("test-keycloak");
         keycloakServer.setStatus(new EntandoCustomResourceStatus());
         keycloakServer.getStatus().putServerStatus(dbServerStatus);

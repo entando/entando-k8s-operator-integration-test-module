@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.EntandoResourceRequirements;
 import org.entando.kubernetes.model.RequiresClusterInfrastructure;
 import org.entando.kubernetes.model.RequiresKeycloak;
 
@@ -83,9 +84,10 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
             @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
-            @JsonProperty("companionContainers") List<String> companionContainers
+            @JsonProperty("companionContainers") List<String> companionContainers,
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements
     ) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, resourceRequirements);
         this.image = image;
         this.ingressPath = ingressPath;
         this.keycloakSecretToUse = keycloakSecretToUse;

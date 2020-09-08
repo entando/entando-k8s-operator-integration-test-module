@@ -48,6 +48,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final Integer MY_REPLICAS = 5;
     public static final String MY_SERVICE_ACCOUNT = "myServiceAccount";
+    public static final String CPU_LIMIT = "100m";
+    public static final String CPU_REQUEST = "10m";
+    public static final String FILE_UPLOAD_LIMIT = "10000mb";
+    public static final String MEMORY_LIMIT = "1Gi";
+    public static final String MEMORY_REQUEST = "0.1gi";
+    public static final String STORAGE_LIMIT = "2Gi";
+    public static final String STORAGE_REQUEST = "0.2Gi";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -80,6 +87,15 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withResponsibility(GitResponsibility.PUSH)
                 .withTargertRef("master")
                 .endBackupGitSpec()
+                .withNewResourceRequirements()
+                .withCpuLimit(CPU_LIMIT)
+                .withCpuRequest(CPU_REQUEST)
+                .withFileUploadLimit(FILE_UPLOAD_LIMIT)
+                .withMemoryLimit(MEMORY_LIMIT)
+                .withMemoryRequest(MEMORY_REQUEST)
+                .withStorageLimit(STORAGE_LIMIT)
+                .withStorageRequest(STORAGE_REQUEST)
+                .endResourceRequirements()
                 .withIngressPath(MY_INGRESS_PATH)
                 .addNewParameter(PARAM_NAME, PARAM_VALUE)
                 .endSpec()
@@ -105,6 +121,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
         assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
         assertThat(actual.getSpec().getBackupGitSpec().get().getTargetRef().get(), is("master"));
+        assertThat(actual.getSpec().getResourceRequirements().get().getCpuLimit().get(), is(CPU_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getCpuRequest().get(), is(CPU_REQUEST));
+        assertThat(actual.getSpec().getResourceRequirements().get().getFileUploadLimit().get(), is(FILE_UPLOAD_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getMemoryLimit().get(), is(MEMORY_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getMemoryRequest().get(), is(MEMORY_REQUEST));
+        assertThat(actual.getSpec().getResourceRequirements().get().getStorageLimit().get(), is(STORAGE_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getStorageRequest().get(), is(STORAGE_REQUEST));
         assertThat(actual.getSpec().getParameters().get(PARAM_NAME), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
     }
@@ -134,6 +157,15 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withResponsibility(GitResponsibility.PULL)
                 .withTargertRef("pr1")
                 .endBackupGitSpec()
+                .withNewResourceRequirements()
+                .withCpuLimit("123")
+                .withCpuRequest("123")
+                .withFileUploadLimit("123")
+                .withMemoryLimit("123")
+                .withMemoryRequest("123")
+                .withStorageLimit("123")
+                .withStorageRequest("123")
+                .endResourceRequirements()
                 .withServiceAccountToUse("someserviceacount")
                 .endSpec()
                 .build();
@@ -152,12 +184,21 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withIngressHostName(MYINGRESS_COM)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
-                .withNewBackupGitSpec()
+                .editBackupGitSpec()
                 .withRepository(MY_BACKUP_GIT_REPO)
                 .withSecretName(MY_GIT_SECRET)
                 .withResponsibility(GitResponsibility.PUSH)
                 .withTargertRef("master")
                 .endBackupGitSpec()
+                .editResourceRequirements()
+                .withCpuLimit(CPU_LIMIT)
+                .withCpuRequest(CPU_REQUEST)
+                .withFileUploadLimit(FILE_UPLOAD_LIMIT)
+                .withMemoryLimit(MEMORY_LIMIT)
+                .withMemoryRequest(MEMORY_REQUEST)
+                .withStorageLimit(STORAGE_LIMIT)
+                .withStorageRequest(STORAGE_REQUEST)
+                .endResourceRequirements()
                 .withServiceAccountToUse(MY_SERVICE_ACCOUNT)
                 .withParameters(Collections.singletonMap(PARAM_NAME, PARAM_VALUE))
                 .endSpec()
@@ -180,6 +221,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
         assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
         assertThat(actual.getSpec().getBackupGitSpec().get().getTargetRef().get(), is("master"));
+        assertThat(actual.getSpec().getResourceRequirements().get().getCpuLimit().get(), is(CPU_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getCpuRequest().get(), is(CPU_REQUEST));
+        assertThat(actual.getSpec().getResourceRequirements().get().getFileUploadLimit().get(), is(FILE_UPLOAD_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getMemoryLimit().get(), is(MEMORY_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getMemoryRequest().get(), is(MEMORY_REQUEST));
+        assertThat(actual.getSpec().getResourceRequirements().get().getStorageLimit().get(), is(STORAGE_LIMIT));
+        assertThat(actual.getSpec().getResourceRequirements().get().getStorageRequest().get(), is(STORAGE_REQUEST));
         assertThat(actual.getSpec().getParameters().get(PARAM_NAME), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
     }
