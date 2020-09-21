@@ -120,6 +120,11 @@
             </dependency>
 
             <!--Transitive deps to override -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.27</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
