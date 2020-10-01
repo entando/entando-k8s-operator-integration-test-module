@@ -54,6 +54,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
     private String keycloakSecretToUse;
     private String clusterInfrastructureSecretToUse;
     private GitSpec backupGitSpec;
+    private String ecrGitSshSecretName;
 
     public EntandoAppSpec() {
         super();
@@ -76,8 +77,9 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("paramaters") Map<String, String> parameters,
-            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters,resourceRequirements);
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
+            @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName) {
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, resourceRequirements);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
@@ -85,6 +87,11 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.backupGitSpec = backupGitSpec;
+        this.ecrGitSshSecretName = ecrGitSshSecretName;
+    }
+
+    public Optional<String> getEcrGitSshSecretName() {
+        return ofNullable(ecrGitSshSecretName);
     }
 
     @Override
