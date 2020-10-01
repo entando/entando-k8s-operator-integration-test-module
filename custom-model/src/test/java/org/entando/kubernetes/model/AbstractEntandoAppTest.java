@@ -55,6 +55,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     public static final String MEMORY_REQUEST = "0.1gi";
     public static final String STORAGE_LIMIT = "2Gi";
     public static final String STORAGE_REQUEST = "0.2Gi";
+    private static final String MY_GIT_SECRET_NAME = "my-git-secret-name";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -79,6 +80,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
+                .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
                 .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .withIngressPath(MY_INGRESS_PATH)
                 .withNewBackupGitSpec()
@@ -121,6 +123,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
         assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
         assertThat(actual.getSpec().getBackupGitSpec().get().getTargetRef().get(), is("master"));
+        assertThat(actual.getSpec().getEcrGitSshSecretName().get(), is(MY_GIT_SECRET_NAME));
         assertThat(actual.getSpec().getResourceRequirements().get().getCpuLimit().get(), is(CPU_LIMIT));
         assertThat(actual.getSpec().getResourceRequirements().get().getCpuRequest().get(), is(CPU_REQUEST));
         assertThat(actual.getSpec().getResourceRequirements().get().getFileUploadLimit().get(), is(FILE_UPLOAD_LIMIT));
@@ -157,6 +160,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withResponsibility(GitResponsibility.PULL)
                 .withTargertRef("pr1")
                 .endBackupGitSpec()
+                .withEcrGitSshSecretname("somesecret-that-doesnt-exst")
                 .withNewResourceRequirements()
                 .withCpuLimit("123")
                 .withCpuRequest("123")
@@ -190,6 +194,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withResponsibility(GitResponsibility.PUSH)
                 .withTargertRef("master")
                 .endBackupGitSpec()
+                .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
                 .editResourceRequirements()
                 .withCpuLimit(CPU_LIMIT)
                 .withCpuRequest(CPU_REQUEST)
@@ -221,6 +226,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
         assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
         assertThat(actual.getSpec().getBackupGitSpec().get().getTargetRef().get(), is("master"));
+        assertThat(actual.getSpec().getEcrGitSshSecretName().get(), is(MY_GIT_SECRET_NAME));
         assertThat(actual.getSpec().getResourceRequirements().get().getCpuLimit().get(), is(CPU_LIMIT));
         assertThat(actual.getSpec().getResourceRequirements().get().getCpuRequest().get(), is(CPU_REQUEST));
         assertThat(actual.getSpec().getResourceRequirements().get().getFileUploadLimit().get(), is(FILE_UPLOAD_LIMIT));
