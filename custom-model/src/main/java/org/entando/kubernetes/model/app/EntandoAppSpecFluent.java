@@ -31,6 +31,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
     protected String customServerImage;
     protected String ingressPath;
     private GitSpecBuilder backupGitSpec;
+    private String ecrGitSshSecretName;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
@@ -41,6 +42,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         this.clusterInfrastructureSecretToUse = spec.getClusterInfrastructureSecretToUse().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
         this.backupGitSpec = spec.getBackupGitSpec().map(GitSpecBuilder::new).orElse(new GitSpecBuilder());
+        this.ecrGitSshSecretName = spec.getEcrGitSshSecretName().orElse(null);
     }
 
     public EntandoAppSpecFluent() {
@@ -74,6 +76,11 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         return thisAsN();
     }
 
+    public N withEcrGitSshSecretname(String ecrGitSshSecretName) {
+        this.ecrGitSshSecretName = ecrGitSshSecretName;
+        return thisAsN();
+    }
+
     public N withClusterInfrastructureSecretToUse(String name) {
         this.clusterInfrastructureSecretToUse = name;
         return thisAsN();
@@ -96,7 +103,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse,
                 this.clusterInfrastructureSecretToUse,
-                this.backupGitSpec.build(), this.serviceAccountToUse, this.parameters, this.resourceRequirements);
+                this.backupGitSpec.build(), this.serviceAccountToUse, this.parameters, this.resourceRequirements, this.ecrGitSshSecretName);
     }
 
     public static class GitSpecBuilderNested<P extends EntandoAppSpecFluent> extends GitSpecFluent<GitSpecBuilderNested<P>> {
