@@ -38,7 +38,7 @@
         Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
         server is updated.
       ]]></notes>
-        <gav regex="true">org\.keycloak:keycloak-.*:11\.0\.0</gav>
+        <gav regex="true">org\.keycloak:keycloak-.*:11\.0\.2</gav>
         <cve>CVE-2020-1728</cve>
     </suppress>
     <suppress>
@@ -48,5 +48,6 @@
       ]]></notes>
         <gav regex="true">org\.jboss\.resteasy:resteasy-.*:3\.9\.3\.Final</gav>
         <cve>CVE-2020-1695</cve>
+        <cve>CVE-2020-25633</cve>
     </suppress>
 </suppressions>
