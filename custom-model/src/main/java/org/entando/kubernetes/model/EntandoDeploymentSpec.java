@@ -24,11 +24,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
@@ -42,7 +43,7 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
     private String ingressHostName;
     private String tlsSecretName;
     private String serviceAccountToUse;
-    private Map<String, String> parameters = new ConcurrentHashMap<>();
+    private List<EnvVar> parameters = new ArrayList<>();
     private EntandoResourceRequirements resourceRequirements;
 
     protected EntandoDeploymentSpec() {
@@ -50,7 +51,7 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
 
     @SuppressWarnings("unchecked")
     protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsVendor dbms,
-            String serviceAccountToUse, Map<String, String> parameters, EntandoResourceRequirements resourceRequirements) {
+            String serviceAccountToUse, List<EnvVar> parameters, EntandoResourceRequirements resourceRequirements) {
         this.ingressHostName = ingressHostName;
         this.tlsSecretName = tlsSecretName;
         this.replicas = replicas;
@@ -78,7 +79,7 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
         return ofNullable(dbms);
     }
 
-    public Map<String, String> getParameters() {
+    public List<EnvVar> getParameters() {
         return parameters;
     }
 

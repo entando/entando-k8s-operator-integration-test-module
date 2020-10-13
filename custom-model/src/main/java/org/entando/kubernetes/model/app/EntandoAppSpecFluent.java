@@ -25,7 +25,6 @@ import org.entando.kubernetes.model.gitspec.GitSpecFluent;
 public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
 
     protected JeeServer standardServerImage;
-    protected String entandoImageVersion;
     protected String keycloakSecretToUse;
     protected String clusterInfrastructureSecretToUse;
     protected String customServerImage;
@@ -35,7 +34,6 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
-        this.entandoImageVersion = spec.getEntandoImageVersion().orElse(null);
         this.standardServerImage = spec.getStandardServerImage().orElse(null);
         this.customServerImage = spec.getCustomServerImage().orElse(null);
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
@@ -63,11 +61,6 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
     public N withCustomServerImage(String customServerImage) {
         this.customServerImage = customServerImage;
         this.standardServerImage = customServerImage == null ? standardServerImage : null;
-        return thisAsN();
-    }
-
-    public N withEntandoImageVersion(String entandoImageVersion) {
-        this.entandoImageVersion = entandoImageVersion;
         return thisAsN();
     }
 
@@ -101,7 +94,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
 
     public EntandoAppSpec build() {
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
-                this.replicas, this.entandoImageVersion, this.tlsSecretName, this.keycloakSecretToUse,
+                this.replicas, this.tlsSecretName, this.keycloakSecretToUse,
                 this.clusterInfrastructureSecretToUse,
                 this.backupGitSpec.build(), this.serviceAccountToUse, this.parameters, this.resourceRequirements, this.ecrGitSshSecretName);
     }

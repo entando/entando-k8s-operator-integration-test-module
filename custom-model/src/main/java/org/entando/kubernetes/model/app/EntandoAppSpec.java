@@ -27,7 +27,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
@@ -50,7 +52,6 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
     private JeeServer standardServerImage;
     private String customServerImage;
     private String ingressPath;
-    private String entandoImageVersion;
     private String keycloakSecretToUse;
     private String clusterInfrastructureSecretToUse;
     private GitSpec backupGitSpec;
@@ -70,20 +71,18 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("ingressHostName") String ingressHostName,
             @JsonProperty("ingressPath") String ingressPath,
             @JsonProperty("replicas") int replicas,
-            @JsonProperty("entandoImageVersion") String entandoImageVersion,
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
             @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("paramaters") Map<String, String> parameters,
+            @JsonProperty("paramaters") List<EnvVar> parameters,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, resourceRequirements);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
-        this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.backupGitSpec = backupGitSpec;
@@ -113,10 +112,6 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
 
     public Optional<String> getCustomServerImage() {
         return ofNullable(customServerImage);
-    }
-
-    public Optional<String> getEntandoImageVersion() {
-        return ofNullable(entandoImageVersion);
     }
 
     public Optional<GitSpec> getBackupGitSpec() {

@@ -31,7 +31,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
 
     protected static final String MY_ENTANDO_CLUSTER_INFRASTRUCTURE = "my-entando-cluster-infrastructure";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
-    private static final String SNAPSHOT = "6.1.0-SNAPSHOT";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
@@ -52,7 +51,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withEntandoImageVersion(SNAPSHOT)
                 .withReplicas(5)
                 .withIngressHostName(MYHOST_COM)
                 .withTlsSecretName(MY_TLS_SECRET)
@@ -67,7 +65,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
@@ -88,7 +85,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.POSTGRESQL)
-                .withEntandoImageVersion("6.2.0-SNAPSHOT")
                 .withIngressHostName(MYHOST_COM)
                 .withReplicas(3)
                 .withKeycloakSecretToUse("some-othersecret")
@@ -105,7 +101,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .endMetadata()
                 .editSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withEntandoImageVersion(SNAPSHOT)
                 .withIngressHostName(MYHOST_COM)
                 .withReplicas(5)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
@@ -120,7 +115,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .done();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
