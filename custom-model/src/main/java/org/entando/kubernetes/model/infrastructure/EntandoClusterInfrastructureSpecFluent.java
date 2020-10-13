@@ -21,14 +21,12 @@ import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfrastructureSpecFluent> extends
         EntandoDeploymentSpecBuilder<N> {
 
-    private String entandoImageVersion;
     private String keycloakSecretToUse;
     private boolean isDefault;
 
     public EntandoClusterInfrastructureSpecFluent(EntandoClusterInfrastructureSpec spec) {
         super(spec);
         this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
-        this.entandoImageVersion = spec.getEntandoImageVersion().orElse(null);
         this.isDefault = spec.isDefault();
     }
 
@@ -48,14 +46,8 @@ public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfr
         return (N) this;
     }
 
-    @SuppressWarnings("unchecked")
-    public N withEntandoImageVersion(String entandoImageVersion) {
-        this.entandoImageVersion = entandoImageVersion;
-        return (N) this;
-    }
-
     public EntandoClusterInfrastructureSpec build() {
-        return new EntandoClusterInfrastructureSpec(dbms, ingressHostName, entandoImageVersion, tlsSecretName, replicas,
+        return new EntandoClusterInfrastructureSpec(dbms, ingressHostName, tlsSecretName, replicas,
                 keycloakSecretToUse, isDefault, this.serviceAccountToUse, parameters, resourceRequirements);
     }
 }

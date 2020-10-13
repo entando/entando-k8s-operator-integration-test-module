@@ -19,6 +19,7 @@ package org.entando.kubernetes.model;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     private static final String MY_LABEL = "my-label";
     private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final Integer MY_REPLICAS = 5;
-    public static final String MY_SERVICE_ACCOUNT = "myServiceAccount";
+    public static final String MY_SERVICE_ACCOUNT = "my-service-account";
     public static final String CPU_LIMIT = "100m";
     public static final String CPU_REQUEST = "10m";
     public static final String FILE_UPLOAD_LIMIT = "10000mb";
@@ -74,7 +75,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
-                .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
                 .withStandardServerImage(JeeServer.WILDFLY)
                 .withReplicas(MY_REPLICAS)
                 .withTlsSecretName(MY_TLS_SECRET)
@@ -102,12 +102,12 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .addNewParameter(PARAM_NAME, PARAM_VALUE)
                 .endSpec()
                 .build();
+
         entandoApps().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoApp.getMetadata()).withSpec(entandoApp.getSpec()).done();
         //When
         EntandoApp actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
@@ -131,7 +131,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getResourceRequirements().get().getMemoryRequest().get(), is(MEMORY_REQUEST));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageLimit().get(), is(STORAGE_LIMIT));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageRequest().get(), is(STORAGE_REQUEST));
-        assertThat(actual.getSpec().getParameters().get(PARAM_NAME), is(PARAM_VALUE));
+        assertThat(findParameter( actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
     }
 
@@ -145,7 +145,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.POSTGRESQL)
-                .withEntandoImageVersion("6.2.0-SNAPSHOT")
                 .withCustomServerImage("asdfasdf/asdf:2")
                 .withStandardServerImage(JeeServer.WILDFLY)
                 .withReplicas(4)
@@ -180,7 +179,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .endMetadata()
                 .editSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
                 .withStandardServerImage(JeeServer.WILDFLY)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withReplicas(5)
@@ -205,7 +203,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withStorageRequest(STORAGE_REQUEST)
                 .endResourceRequirements()
                 .withServiceAccountToUse(MY_SERVICE_ACCOUNT)
-                .withParameters(Collections.singletonMap(PARAM_NAME, PARAM_VALUE))
+                .withParameters(Collections.singletonList(new EnvVar(PARAM_NAME, PARAM_VALUE, null)))
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
                 .withStatus(new DbServerStatus("another-qualifier"))
@@ -213,7 +211,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .done();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getStandardServerImage().isPresent(), is(false));//overridden by customServerImage
@@ -234,12 +231,14 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getResourceRequirements().get().getMemoryRequest().get(), is(MEMORY_REQUEST));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageLimit().get(), is(STORAGE_LIMIT));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageRequest().get(), is(STORAGE_REQUEST));
-        assertThat(actual.getSpec().getParameters().get(PARAM_NAME), is(PARAM_VALUE));
+        assertThat(findParameter(actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
     }
 
     protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) {
+        entandoApp.setApiVersion("entando.org/v1");
         entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
+        EntandoApp entandoApp1 = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).get();
         return entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit();
     }
 

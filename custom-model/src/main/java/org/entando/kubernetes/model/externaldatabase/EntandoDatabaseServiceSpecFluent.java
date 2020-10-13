@@ -75,8 +75,8 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
         return thisAsN();
     }
 
-    public N withJdbcParameters(Map<String, String> parameters) {
-        this.jdbcParameters = new ConcurrentHashMap<>(parameters);
+    public N withJdbcParameters(Map<String, String> jdbcParameters) {
+        this.jdbcParameters = new ConcurrentHashMap<>(jdbcParameters);
         return thisAsN();
     }
 

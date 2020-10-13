@@ -18,10 +18,12 @@ package org.entando.kubernetes.model;
 
 import static org.awaitility.Awaitility.await;
 
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import java.time.Duration;
+import java.util.Optional;
 
 public interface CustomResourceTestUtil {
 
@@ -45,6 +47,10 @@ public interface CustomResourceTestUtil {
                 }
             });
         }
+    }
+
+    default Optional<EnvVar> findParameter(EntandoDeploymentSpec spec, String name) {
+        return spec.getParameters().stream().filter(envVar -> envVar.getName().equals(name)).findAny();
     }
 
     KubernetesClient getClient();

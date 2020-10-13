@@ -16,9 +16,9 @@
 
 package org.entando.kubernetes.model;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import org.entando.kubernetes.model.app.EntandoAppSpecFluent;
+import io.fabric8.kubernetes.api.model.EnvVar;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSpecBuilder> {
 
@@ -28,7 +28,7 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
     protected Integer replicas = 1;
     protected String serviceAccountToUse;
 
-    protected Map<String, String> parameters;
+    protected List<EnvVar> parameters;
     protected EntandoResourceRequirements resourceRequirements;
 
     protected EntandoDeploymentSpecBuilder(EntandoDeploymentSpec spec) {
@@ -37,12 +37,12 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         this.replicas = spec.getReplicas().orElse(null);
         this.tlsSecretName = spec.getTlsSecretName().orElse(null);
         this.serviceAccountToUse = spec.getServiceAccountToUse().orElse(null);
-        this.parameters = new ConcurrentHashMap<>(spec.getParameters());
+        this.parameters = new ArrayList<>(spec.getParameters());
         this.resourceRequirements = spec.getResourceRequirements().orElse(null);
     }
 
     protected EntandoDeploymentSpecBuilder() {
-        this.parameters = new ConcurrentHashMap<>();
+        this.parameters = new ArrayList<>();
     }
 
     public final N withDbms(DbmsVendor dbms) {
@@ -70,14 +70,14 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         return thisAsN();
     }
 
-    public N withParameters(Map<String, String> parameters) {
+    public N withParameters(List<EnvVar> parameters) {
         this.parameters.clear();
-        this.parameters.putAll(parameters);
+        this.parameters.addAll(parameters);
         return thisAsN();
     }
 
     public N addNewParameter(String name, String value) {
-        this.parameters.put(name, value);
+        this.parameters.add(new EnvVar(name, value, null));
         return thisAsN();
     }
 

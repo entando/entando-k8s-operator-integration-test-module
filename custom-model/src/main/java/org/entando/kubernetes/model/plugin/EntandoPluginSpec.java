@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +82,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("roles") List<ExpectedRole> roles,
             @JsonProperty("permissions") List<Permission> permissions,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
+            @JsonProperty("parameters") List<EnvVar> parameters,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
             @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
             @JsonProperty("companionContainers") List<String> companionContainers,

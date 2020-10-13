@@ -195,7 +195,6 @@ public class DummyBean {
         assertThat(actual.getSpec().getConnectionConfigNames(), is(Arrays.asList(SOME_CONNECTION)));
         assertThat(actual.getSpec().getPermissions().get(0).getClientId(), is(ENTANDO_APP));
         assertThat(actual.getSpec().getPermissions().get(0).getRole(), is(SUPERUSER));
-        assertThat(actual.getSpec().getParameters().get(PARAMETER_NAME), is(PARAMETER_VALUE));
         assertThat(actual.getSpec().getRoles().get(0).getCode(), is(ADMIN));
         assertThat(actual.getSpec().getRoles().get(0).getName(), is(ADMINISTRATOR));
         assertThat(actual.getSpec().getSecurityLevel().get(), is(STRICT));
@@ -216,7 +215,6 @@ public class DummyBean {
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
-                .withEntandoImageVersion(ENTANDO_IMAGE_VERSION)
                 .withStandardServerImage(JeeServer.WILDFLY)
                 .withReplicas(5)
                 .withTlsSecretName(MY_TLS_SECRET)
@@ -232,7 +230,6 @@ public class DummyBean {
         EntandoApp actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoImageVersion().get(), is(ENTANDO_IMAGE_VERSION));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
@@ -264,7 +261,6 @@ public class DummyBean {
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withEntandoImageVersion(SNAPSHOT)
                 .withImageName(ENTANDO_SOMEKEYCLOAK)
                 .withReplicas(5)
                 .withDefault(true)
@@ -279,7 +275,6 @@ public class DummyBean {
         EntandoKeycloakServer actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
@@ -296,7 +291,6 @@ public class DummyBean {
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withEntandoImageVersion(SNAPSHOT)
                 .withReplicas(5)
                 .withIngressHostName(MYHOST_COM)
                 .withTlsSecretName(MY_TLS_SECRET)
@@ -311,7 +305,6 @@ public class DummyBean {
         EntandoClusterInfrastructure actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoImageVersion().get(), is(SNAPSHOT));
         assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));

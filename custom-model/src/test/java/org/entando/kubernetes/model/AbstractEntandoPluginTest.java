@@ -21,6 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import java.util.Arrays;
@@ -102,7 +103,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getCompanionContainers(), is(Arrays.asList(MY_COMPANION_CONTAINER)));
         assertThat(actual.getSpec().getPermissions().get(0).getClientId(), is(ENTANDO_APP));
         assertThat(actual.getSpec().getPermissions().get(0).getRole(), is(SUPERUSER));
-        assertThat(actual.getSpec().getParameters().get(PARAMETER_NAME), is(PARAMETER_VALUE));
+        assertThat(findParameter(actual.getSpec(), PARAMETER_NAME).get().getValue(), is(PARAMETER_VALUE));
         assertThat(actual.getSpec().getRoles().get(0).getCode(), is(ADMIN));
         assertThat(actual.getSpec().getRoles().get(0).getName(), is(ADMINISTRATOR));
         assertThat(actual.getSpec().getSecurityLevel().get(), is(STRICT));
@@ -153,7 +154,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withPermissions(Arrays.asList(new Permission(ENTANDO_APP, SUPERUSER)))
                 .withRoles(Arrays.asList(new ExpectedRole(ADMIN, ADMINISTRATOR)))
-                .withParameters(Collections.singletonMap(PARAMETER_NAME, PARAMETER_VALUE))
+                .withParameters(Collections.singletonList(new EnvVar(PARAMETER_NAME, PARAMETER_VALUE, null)))
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
@@ -178,7 +179,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getRoles().get(0).getCode(), is(ADMIN));
         assertThat(actual.getSpec().getRoles().get(0).getName(), is(ADMINISTRATOR));
         assertThat(actual.getSpec().getSecurityLevel().get(), is(STRICT));
-        assertThat(actual.getSpec().getParameters().get(PARAMETER_NAME), is(PARAMETER_VALUE));
+        assertThat(findParameter(actual.getSpec(), PARAMETER_NAME).get().getValue(), is(PARAMETER_VALUE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));

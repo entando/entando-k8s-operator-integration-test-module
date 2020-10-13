@@ -87,8 +87,8 @@ public class EntandoCustomResourceStatusTest {
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServer();
         keycloakServer.getMetadata().setGeneration(3L);
         keycloakServer
-                .setSpec(new EntandoKeycloakServerSpec(null, DbmsVendor.ORACLE, null, null, null, 1, true, "myServiceAccount",
-                        Collections.emptyMap(), new EntandoResourceRequirements()));
+                .setSpec(new EntandoKeycloakServerSpec(null, DbmsVendor.ORACLE, null, null, 1, true, "my-service-account",
+                        Collections.emptyList(), new EntandoResourceRequirements()));
         keycloakServer.getMetadata().setName("test-keycloak");
         keycloakServer.setStatus(new EntandoCustomResourceStatus());
         keycloakServer.getStatus().putServerStatus(dbServerStatus);

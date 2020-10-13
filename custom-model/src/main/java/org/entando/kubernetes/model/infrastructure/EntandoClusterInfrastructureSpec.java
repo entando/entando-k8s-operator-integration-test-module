@@ -25,8 +25,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpec;
@@ -42,7 +43,6 @@ import org.entando.kubernetes.model.RequiresKeycloak;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec implements RequiresKeycloak {
 
-    private String entandoImageVersion;
     private String keycloakSecretToUse;
     private boolean isDefault;
 
@@ -54,26 +54,20 @@ public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec impl
     public EntandoClusterInfrastructureSpec(
             @JsonProperty("dbms") DbmsVendor dbms,
             @JsonProperty("ingressHostName") String ingressHostName,
-            @JsonProperty("entandoImageVersion") String entandoImageVersion,
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
             @JsonProperty("isDefault") Boolean isDefault,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
+            @JsonProperty("parameters") List<EnvVar> parameters,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, resourceRequirements);
-        this.entandoImageVersion = entandoImageVersion;
         this.keycloakSecretToUse = keycloakSecretToUse;
         this.isDefault = Boolean.TRUE.equals(isDefault);
     }
 
     public boolean isDefault() {
         return isDefault;
-    }
-
-    public Optional<String> getEntandoImageVersion() {
-        return Optional.ofNullable(entandoImageVersion);
     }
 
     @Override
