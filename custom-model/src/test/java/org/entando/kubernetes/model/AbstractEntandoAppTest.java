@@ -131,7 +131,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getResourceRequirements().get().getMemoryRequest().get(), is(MEMORY_REQUEST));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageLimit().get(), is(STORAGE_LIMIT));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageRequest().get(), is(STORAGE_REQUEST));
-        assertThat(findParameter( actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
+        assertThat(findParameter(actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
     }
 
