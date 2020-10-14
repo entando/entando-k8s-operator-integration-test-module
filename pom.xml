@@ -354,6 +354,34 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>io.github.phillipuniverse</groupId>
+                    <artifactId>githook-maven-plugin</artifactId>
+                    <version>1.0.5</version>
+                    <configuration>
+                        <hooks>
+                            <pre-commit>
+                                <![CDATA[
+                                echo "Validating..."
+                                git pull origin master
+                                MODEL_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-custom-model" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
+                                COMMON_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-operator-common" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
+                                sed -i "s:\(.*<entando-k8s-custom-model.version>6.2.5</entando-k8s-custom-model.version>.*\):\1${MODEL_VERSION}\3:g" pom.xml
+                                sed -i "s:\(.*<entando-k8s-operator-common.version>6.2.18</entando-k8s-operator-common.version>.*\):\1${COMMON_VERSION}\3:g" pom.xml
+                                mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verification
+                                ]]>
+                            </pre-commit>
+                        </hooks>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>install</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-maven-plugin</artifactId>
                     <version>${quarkus.version}</version>
