@@ -361,13 +361,21 @@
                         <hooks>
                             <pre-commit>
                                 <![CDATA[
-                                echo "Validating..."
-                                git pull origin master
-                                MODEL_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-custom-model" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
-                                COMMON_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-operator-common" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
-                                sed -i "s:\(.*<entando-k8s-custom-model.version>\)\(.*\)\(</entando-k8s-custom-model.version>.*\):\1${MODEL_VERSION}\3:g" pom.xml
-                                sed -i "s:\(.*<entando-k8s-operator-common.version>\)\(.*\)\(</entando-k8s-operator-common.version>.*\):\1${COMMON_VERSION}\3:g" pom.xml
-                                mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verification
+echo "Validating..."
+git fetch origin
+if [ -n "$(git rev-list $(git branch --show-current)..origin/master)" ]; then
+  echo "The local branch $(git branch --show-current) is not up to date."
+  echo "Please run 'pull origin master' first."
+  exit 1
+fi
+cd $(git rev-parse --show-toplevel)
+
+MODEL_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-custom-model" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
+COMMON_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-operator-common" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
+sed -i "s:\(.*<entando-k8s-custom-model.version>\)\(.*\)\(</entando-k8s-custom-model.version>.*\):\1${MODEL_VERSION}\3:g" pom.xml
+sed -i "s:\(.*<entando-k8s-operator-common.version>\)\(.*\)\(</entando-k8s-operator-common.version>.*\):\1${COMMON_VERSION}\3:g" pom.xml
+git add pom.xml
+mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verification
                                 ]]>
                             </pre-commit>
                         </hooks>
@@ -423,21 +431,23 @@
                             </configuration>
                         </execution>
                     </executions>
-                </plugin>                
+                </plugin>
             </plugins>
         </pluginManagement>
-    
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8.2</version></plugin>
-    
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M1</version></plugin>
-    </plugins>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M1</version>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
