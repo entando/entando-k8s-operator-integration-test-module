@@ -1,0 +1,6 @@
+supportOpenshift: true
+preview:
+  image:
+    repository:
+    tag:
+    pullPolicy: IfNotPresent
