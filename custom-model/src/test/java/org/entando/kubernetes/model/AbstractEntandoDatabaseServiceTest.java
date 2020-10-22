@@ -63,6 +63,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withSecretName(MY_DB_SECRET)
                 .addToJdbcParameters(MY_PARAM, MY_PARAM_VALUE)
                 .withDbms(DbmsVendor.ORACLE)
+                .withCreateDeployment(true)
                 .endSpec()
                 .build();
         externalDatabases().inNamespace(MY_NAMESPACE).createNew().withMetadata(externalDatabase.getMetadata())
@@ -70,12 +71,13 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
         //When
         EntandoDatabaseService actual = externalDatabases().inNamespace(MY_NAMESPACE).withName(MY_EXTERNAL_DATABASE).get();
         //Then
-        assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
-        assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
+        assertThat(actual.getSpec().getDatabaseName().get(), is(MY_DB));
+        assertThat(actual.getSpec().getHost().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getPort().get(), is(PORT_1521));
         assertThat(actual.getSpec().getDbms(), is(DbmsVendor.ORACLE));
+        assertThat(actual.getSpec().getCreateDeployment().get(), is(true));
         assertThat(actual.getSpec().getTablespace().get(), is(MY_TABLESPACE));
-        assertThat(actual.getSpec().getSecretName(), is(MY_DB_SECRET));
+        assertThat(actual.getSpec().getSecretName().get(), is(MY_DB_SECRET));
         assertThat(actual.getSpec().getJdbcParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_EXTERNAL_DATABASE));
     }
@@ -95,6 +97,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withPort(5555)
                 .withSecretName("othersecret")
                 .withDbms(DbmsVendor.POSTGRESQL)
+                .withCreateDeployment(false)
                 .endSpec()
                 .build();
         //When
@@ -112,6 +115,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withTablespace(MY_TABLESPACE)
                 .withJdbcParameters(Collections.singletonMap(MY_PARAM, MY_PARAM_VALUE))
                 .withSecretName(MY_DB_SECRET)
+                .withCreateDeployment(true)
                 .withDbms(DbmsVendor.ORACLE)
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
@@ -119,13 +123,14 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
-        assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
-        assertThat(actual.getSpec().getHost(), is(MYHOST_COM));
+        assertThat(actual.getSpec().getDatabaseName().get(), is(MY_DB));
+        assertThat(actual.getSpec().getHost().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getPort().get(), is(PORT_1521));
         assertThat(actual.getSpec().getDbms(), is(DbmsVendor.ORACLE));
+        assertThat(actual.getSpec().getCreateDeployment().get(), is(true));
         assertThat(actual.getSpec().getJdbcParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
         assertThat(actual.getSpec().getJdbcParameters().get("asdfasdf"), is(nullValue()));
-        assertThat(actual.getSpec().getSecretName(), is(MY_DB_SECRET));
+        assertThat(actual.getSpec().getSecretName().get(), is(MY_DB_SECRET));
         assertThat(actual.getSpec().getTablespace().get(), is(MY_TABLESPACE));
         assertThat(actual.getMetadata().getLabels().get("my-label"), is("my-value"));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());

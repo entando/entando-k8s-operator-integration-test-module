@@ -31,14 +31,16 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     private String secretName;
     private Map<String, String> jdbcParameters = new ConcurrentHashMap<>();
     private String tablespace;
+    private Boolean createDeployment;
 
     public EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
-        this.databaseName = spec.getDatabaseName();
+        this.databaseName = spec.getDatabaseName().orElse(null);
         this.dbms = spec.getDbms();
-        this.host = spec.getHost();
+        this.host = spec.getHost().orElse(null);
         this.port = spec.getPort().orElse(null);
-        this.secretName = spec.getSecretName();
+        this.secretName = spec.getSecretName().orElse(null);
         this.tablespace = spec.getTablespace().orElse(null);
+        this.createDeployment = spec.getCreateDeployment().orElse(null);
         this.jdbcParameters = coalesce(spec.getJdbcParameters(), this.jdbcParameters);
     }
 
@@ -47,11 +49,16 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     }
 
     public EntandoDatabaseServiceSpec build() {
-        return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, tablespace, secretName, jdbcParameters);
+        return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, tablespace, secretName, createDeployment, jdbcParameters);
     }
 
     public N withDatabaseName(String databaseName) {
         this.databaseName = databaseName;
+        return thisAsN();
+    }
+
+    public N withCreateDeployment(Boolean createDeployment) {
+        this.createDeployment = createDeployment;
         return thisAsN();
     }
 

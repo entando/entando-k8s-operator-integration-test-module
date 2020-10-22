@@ -82,13 +82,14 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("roles") List<ExpectedRole> roles,
             @JsonProperty("permissions") List<Permission> permissions,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") List<EnvVar> parameters,
+            @JsonProperty("parameters") Map<String, String> parameters,
+            @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
             @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
             @JsonProperty("companionContainers") List<String> companionContainers,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements
     ) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, resourceRequirements);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
         this.image = image;
         this.ingressPath = ingressPath;
         this.keycloakSecretToUse = keycloakSecretToUse;

@@ -154,7 +154,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withPermissions(Arrays.asList(new Permission(ENTANDO_APP, SUPERUSER)))
                 .withRoles(Arrays.asList(new ExpectedRole(ADMIN, ADMINISTRATOR)))
-                .withParameters(Collections.singletonList(new EnvVar(PARAMETER_NAME, PARAMETER_VALUE, null)))
+                .withEnvironmentVariables(Collections.singletonList(new EnvVar(PARAMETER_NAME, PARAMETER_VALUE, null)))
                 .withSecurityLevel(STRICT)
                 .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
