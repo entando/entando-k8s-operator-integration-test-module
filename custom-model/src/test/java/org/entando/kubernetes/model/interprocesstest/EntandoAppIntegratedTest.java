@@ -22,7 +22,7 @@ import org.entando.kubernetes.model.AbstractEntandoAppTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 
-@Tags({@Tag("inter-process"),@Tag("pre-deployment") })
+@Tags({@Tag("inter-process"), @Tag("pre-deployment")})
 public class EntandoAppIntegratedTest extends AbstractEntandoAppTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();

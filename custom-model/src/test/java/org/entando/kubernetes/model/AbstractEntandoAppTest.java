@@ -203,7 +203,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withStorageRequest(STORAGE_REQUEST)
                 .endResourceRequirements()
                 .withServiceAccountToUse(MY_SERVICE_ACCOUNT)
-                .withParameters(Collections.singletonList(new EnvVar(PARAM_NAME, PARAM_VALUE, null)))
+                .withEnvironmentVariables(Collections.singletonList(new EnvVar(PARAM_NAME, PARAM_VALUE, null)))
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
                 .withStatus(new DbServerStatus("another-qualifier"))

@@ -28,7 +28,9 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @JsonInclude(Include.NON_NULL)
@@ -43,7 +45,8 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
     private String ingressHostName;
     private String tlsSecretName;
     private String serviceAccountToUse;
-    private List<EnvVar> parameters = new ArrayList<>();
+    private Map<String, String> parameters = new HashMap<>();
+    private List<EnvVar> environmentVariables = new ArrayList<>();
     private EntandoResourceRequirements resourceRequirements;
 
     protected EntandoDeploymentSpec() {
@@ -51,14 +54,20 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
 
     @SuppressWarnings("unchecked")
     protected EntandoDeploymentSpec(String ingressHostName, String tlsSecretName, Integer replicas, DbmsVendor dbms,
-            String serviceAccountToUse, List<EnvVar> parameters, EntandoResourceRequirements resourceRequirements) {
+            String serviceAccountToUse, Map<String, String> parameters, List<EnvVar> environmentVariables,
+            EntandoResourceRequirements resourceRequirements) {
         this.ingressHostName = ingressHostName;
         this.tlsSecretName = tlsSecretName;
         this.replicas = replicas;
         this.dbms = dbms;
         this.serviceAccountToUse = serviceAccountToUse;
-        this.parameters = coalesce(parameters, this.parameters);
+        this.parameters = parameters;
+        this.environmentVariables = coalesce(environmentVariables, this.environmentVariables);
         this.resourceRequirements = resourceRequirements;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     @Override
@@ -79,8 +88,8 @@ public abstract class EntandoDeploymentSpec implements HasIngress, Serializable 
         return ofNullable(dbms);
     }
 
-    public List<EnvVar> getParameters() {
-        return parameters;
+    public List<EnvVar> getEnvironmentVariables() {
+        return environmentVariables;
     }
 
     public Optional<String> getServiceAccountToUse() {

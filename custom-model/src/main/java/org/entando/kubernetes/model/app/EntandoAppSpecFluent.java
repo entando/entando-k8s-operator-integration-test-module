@@ -16,6 +16,7 @@
 
 package org.entando.kubernetes.model.app;
 
+import java.util.HashMap;
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.gitspec.GitSpec;
@@ -96,7 +97,8 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.tlsSecretName, this.keycloakSecretToUse,
                 this.clusterInfrastructureSecretToUse,
-                this.backupGitSpec.build(), this.serviceAccountToUse, this.parameters, this.resourceRequirements, this.ecrGitSshSecretName);
+                this.backupGitSpec.build(), this.serviceAccountToUse, new HashMap<>(), this.environmentVariables, this.resourceRequirements,
+                this.ecrGitSshSecretName);
     }
 
     public static class GitSpecBuilderNested<P extends EntandoAppSpecFluent> extends GitSpecFluent<GitSpecBuilderNested<P>> {

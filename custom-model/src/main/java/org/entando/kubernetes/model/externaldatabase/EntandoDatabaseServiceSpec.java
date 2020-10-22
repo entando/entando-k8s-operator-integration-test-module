@@ -49,6 +49,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
     private String databaseName;
     private String tablespace;
     private String secretName;
+    private Boolean createDeployment;
     private Map<String, String> jdbcParameters = new ConcurrentHashMap<>();
 
     public EntandoDatabaseServiceSpec() {
@@ -63,6 +64,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
             @JsonProperty("databaseName") String databaseName,
             @JsonProperty("tablespace") String tablespace,
             @JsonProperty("secretName") String secretName,
+            @JsonProperty("createDeployment") Boolean createDeployment,
             @JsonProperty("jdbcParameters") Map<String, String> jdbcParameters) {
         this.dbms = dbms;
         this.host = host;
@@ -70,6 +72,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
         this.secretName = secretName;
         this.port = port;
         this.databaseName = databaseName;
+        this.createDeployment = createDeployment;
         this.jdbcParameters = coalesce(jdbcParameters, this.jdbcParameters);
     }
 
@@ -77,20 +80,20 @@ public class EntandoDatabaseServiceSpec implements Serializable {
         return dbms;
     }
 
-    public String getHost() {
-        return host;
+    public Optional<String> getHost() {
+        return Optional.ofNullable(host);
     }
 
-    public String getSecretName() {
-        return secretName;
+    public Optional<String> getSecretName() {
+        return Optional.ofNullable(secretName);
     }
 
     public Optional<Integer> getPort() {
         return Optional.ofNullable(port);
     }
 
-    public String getDatabaseName() {
-        return databaseName;
+    public Optional<String> getDatabaseName() {
+        return Optional.ofNullable(databaseName);
     }
 
     public Map<String, String> getJdbcParameters() {
@@ -99,5 +102,9 @@ public class EntandoDatabaseServiceSpec implements Serializable {
 
     public Optional<String> getTablespace() {
         return Optional.ofNullable(tablespace);
+    }
+
+    public Optional<Boolean> getCreateDeployment() {
+        return Optional.ofNullable(this.createDeployment);
     }
 }

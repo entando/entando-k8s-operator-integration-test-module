@@ -28,7 +28,7 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
     protected Integer replicas = 1;
     protected String serviceAccountToUse;
 
-    protected List<EnvVar> parameters;
+    protected List<EnvVar> environmentVariables;
     protected EntandoResourceRequirements resourceRequirements;
 
     protected EntandoDeploymentSpecBuilder(EntandoDeploymentSpec spec) {
@@ -37,12 +37,12 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         this.replicas = spec.getReplicas().orElse(null);
         this.tlsSecretName = spec.getTlsSecretName().orElse(null);
         this.serviceAccountToUse = spec.getServiceAccountToUse().orElse(null);
-        this.parameters = new ArrayList<>(spec.getParameters());
+        this.environmentVariables = new ArrayList<>(spec.getEnvironmentVariables());
         this.resourceRequirements = spec.getResourceRequirements().orElse(null);
     }
 
     protected EntandoDeploymentSpecBuilder() {
-        this.parameters = new ArrayList<>();
+        this.environmentVariables = new ArrayList<>();
     }
 
     public final N withDbms(DbmsVendor dbms) {
@@ -70,14 +70,14 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         return thisAsN();
     }
 
-    public N withParameters(List<EnvVar> parameters) {
-        this.parameters.clear();
-        this.parameters.addAll(parameters);
+    public N withEnvironmentVariables(List<EnvVar> environmentVariables) {
+        this.environmentVariables.clear();
+        this.environmentVariables.addAll(environmentVariables);
         return thisAsN();
     }
 
     public N addNewParameter(String name, String value) {
-        this.parameters.add(new EnvVar(name, value, null));
+        this.environmentVariables.add(new EnvVar(name, value, null));
         return thisAsN();
     }
 

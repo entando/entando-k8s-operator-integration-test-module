@@ -17,6 +17,7 @@
 package org.entando.kubernetes.model.plugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 
@@ -132,7 +133,7 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     public EntandoPluginSpec build() {
         return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakSecretToUse,
                 healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions,
-                serviceAccountToUse, parameters, connectionConfigNames,
+                serviceAccountToUse, new HashMap<>(), environmentVariables, connectionConfigNames,
                 clusterInfrastructureSecretToUse, companionContainers, resourceRequirements);
     }
 }

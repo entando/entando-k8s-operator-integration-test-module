@@ -16,6 +16,7 @@
 
 package org.entando.kubernetes.model.infrastructure;
 
+import java.util.HashMap;
 import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 
 public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfrastructureSpecFluent> extends
@@ -48,6 +49,6 @@ public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfr
 
     public EntandoClusterInfrastructureSpec build() {
         return new EntandoClusterInfrastructureSpec(dbms, ingressHostName, tlsSecretName, replicas,
-                keycloakSecretToUse, isDefault, this.serviceAccountToUse, parameters, resourceRequirements);
+                keycloakSecretToUse, isDefault, this.serviceAccountToUse, new HashMap<>(), environmentVariables, resourceRequirements);
     }
 }

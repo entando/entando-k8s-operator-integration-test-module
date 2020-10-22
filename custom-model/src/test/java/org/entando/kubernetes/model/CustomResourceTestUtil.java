@@ -50,7 +50,7 @@ public interface CustomResourceTestUtil {
     }
 
     default Optional<EnvVar> findParameter(EntandoDeploymentSpec spec, String name) {
-        return spec.getParameters().stream().filter(envVar -> envVar.getName().equals(name)).findAny();
+        return spec.getEnvironmentVariables().stream().filter(envVar -> envVar.getName().equals(name)).findAny();
     }
 
     KubernetesClient getClient();
