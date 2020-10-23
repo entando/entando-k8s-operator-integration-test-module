@@ -28,6 +28,7 @@ import org.entando.kubernetes.controller.common.CreateExternalServiceCommand;
 import org.entando.kubernetes.controller.database.DatabaseDeployable;
 import org.entando.kubernetes.controller.database.DatabaseDeploymentResult;
 import org.entando.kubernetes.controller.database.DbmsDockerVendorStrategy;
+import org.entando.kubernetes.controller.database.ExternalDatabaseDeployment;
 import org.entando.kubernetes.controller.k8sclient.SimpleK8SClient;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 
@@ -53,12 +54,23 @@ public class EntandoDatabaseServiceController extends AbstractDbAwareController<
     @Override
     protected void synchronizeDeploymentState(EntandoDatabaseService newEntandoDatabaseService) {
         if (newEntandoDatabaseService.getSpec().getCreateDeployment().orElse(false)) {
-            DatabaseDeployable<EntandoDatabaseService> deployable = new DatabaseDeployable<>(
-                    DbmsDockerVendorStrategy.forVendor(newEntandoDatabaseService.getSpec().getDbms()), newEntandoDatabaseService, "db");
+            DatabaseDeployable<EntandoDatabaseService> deployable = new DatabaseDeployable<EntandoDatabaseService>(
+                    DbmsDockerVendorStrategy.forVendor(newEntandoDatabaseService.getSpec().getDbms()), newEntandoDatabaseService,
+                    ExternalDatabaseDeployment.NAME_QUALIFIER, newEntandoDatabaseService.getSpec().getPort().orElse(null)) {
+                @Override
+                protected String getDatabaseAdminSecretName() {
+                    return getCustomResource().getSpec().getSecretName().orElse(super.getDatabaseAdminSecretName());
+                }
+
+                @Override
+                protected String getDatabaseName() {
+                    return getCustomResource().getSpec().getDatabaseName().orElse(super.getDatabaseName());
+                }
+            };
             DatabaseDeploymentResult result = new DeployCommand<>(deployable).execute(k8sClient, Optional.ofNullable(keycloakClient));
             k8sClient.entandoResources().updateStatus(newEntandoDatabaseService, result.getStatus());
         } else {
-            CreateExternalServiceCommand command = new CreateExternalServiceCommand(newEntandoDatabaseService, "db");
+            CreateExternalServiceCommand command = new CreateExternalServiceCommand(newEntandoDatabaseService);
             command.execute(k8sClient);
             k8sClient.entandoResources().updateStatus(newEntandoDatabaseService, command.getStatus());
         }
