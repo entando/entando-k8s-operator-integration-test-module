@@ -44,7 +44,7 @@ canary:
   host: acme.com
 
 service:
-  name: entando-k8s-database-service
+  name: entando-k8s-database-service-controller
   type: ClusterIP
   externalPort: 80
   internalPort: 8080

@@ -2,7 +2,7 @@ apiVersion: skaffold/v1beta2
 kind: Config
 build:
   artifacts:
-  - image: entando/entando-k8s-database-service
+  - image: entando/entando-k8s-database-service-controller
     context: .
     docker: {}
   tagPolicy:
@@ -15,13 +15,13 @@ profiles:
 - name: jvm
   build:
     artifacts:
-    - image: entando/entando-k8s-database-service
+    - image: entando/entando-k8s-database-service-controller
       docker:
         dockerfile: Dockerfile.jvm
 - name: native
   build:
     artifacts:
-    - image: entando/entando-k8s-database-service
+    - image: entando/entando-k8s-database-service-controller
       docker:
         dockerfile: Dockerfile.native
 - name: dev
@@ -33,8 +33,8 @@ profiles:
   deploy:
     helm:
       releases:
-      - name: entando-k8s-database-service
-        chartPath: charts/entando-k8s-database-service
+      - name: entando-k8s-database-service-controller
+        chartPath: charts/entando-k8s-database-service-controller
         setValueTemplates:
           image.repository: '{{.DOCKER_REGISTRY}}/{{.IMAGE_NAME}}'
           image.tag: '{{.DIGEST_HEX}}'
