@@ -18,6 +18,7 @@ package org.entando.kubernetes.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertSame;
 
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
@@ -33,7 +34,10 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
-    private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
+    private static final String MY_KEYCLOAK_NAME = "my-keycloak-name";
+    private static final String MY_KEYCLOAK_REALM = "my-keycloak-realm";
+    private static final String MY_PUBLIC_CLIENT = "my-public-client";
+    private static final String MY_KEYCLOAK_NAME_SPACE = "my-keycloak-namespace";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -54,7 +58,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withReplicas(5)
                 .withIngressHostName(MYHOST_COM)
                 .withTlsSecretName(MY_TLS_SECRET)
-                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
+                .withKeycloakToUse(MY_KEYCLOAK_NAME_SPACE, MY_KEYCLOAK_NAME, MY_KEYCLOAK_REALM, MY_PUBLIC_CLIENT)
                 .withDefault(true)
                 .endSpec()
                 .build();
@@ -65,8 +69,9 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .get();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
-        assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
@@ -87,7 +92,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withDbms(DbmsVendor.POSTGRESQL)
                 .withIngressHostName(MYHOST_COM)
                 .withReplicas(3)
-                .withKeycloakSecretToUse("some-othersecret")
+                .withKeycloakToUse("some-namespace", "some-name", "some-realm","some-client")
                 .withTlsSecretName("some-othersecret")
                 .withDefault(false)
                 .endSpec()
@@ -103,7 +108,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withDbms(DbmsVendor.MYSQL)
                 .withIngressHostName(MYHOST_COM)
                 .withReplicas(5)
-                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
+                .withKeycloakToUse(MY_KEYCLOAK_NAME_SPACE, MY_KEYCLOAK_NAME, MY_KEYCLOAK_REALM, MY_PUBLIC_CLIENT)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withDefault(true)
                 .endSpec()
@@ -115,12 +120,18 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .done();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().isDefault(), is(true));
         assertThat(actual.getMetadata().getName(), is(MY_ENTANDO_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getPublicClientId().get(), is(MY_PUBLIC_CLIENT));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());

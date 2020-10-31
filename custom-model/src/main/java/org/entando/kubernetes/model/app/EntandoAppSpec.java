@@ -33,11 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
 import org.entando.kubernetes.model.JeeServer;
+import org.entando.kubernetes.model.KeycloakToUse;
 import org.entando.kubernetes.model.RequiresClusterInfrastructure;
-import org.entando.kubernetes.model.RequiresKeycloak;
 import org.entando.kubernetes.model.gitspec.GitSpec;
 
 @JsonSerialize
@@ -47,12 +46,11 @@ import org.entando.kubernetes.model.gitspec.GitSpec;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKeycloak, RequiresClusterInfrastructure {
+public class EntandoAppSpec extends KeycloakAwareSpec implements RequiresClusterInfrastructure {
 
     private JeeServer standardServerImage;
     private String customServerImage;
     private String ingressPath;
-    private String keycloakSecretToUse;
     private String clusterInfrastructureSecretToUse;
     private GitSpec backupGitSpec;
     private String ecrGitSshSecretName;
@@ -72,7 +70,7 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("ingressPath") String ingressPath,
             @JsonProperty("replicas") int replicas,
             @JsonProperty("tlsSecretName") String tlsSecretName,
-            @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
+            @JsonProperty("keycloakToUse") KeycloakToUse keycloakToUse,
             @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
@@ -80,11 +78,11 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements,
+                keycloakToUse);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
-        this.keycloakSecretToUse = keycloakSecretToUse;
         this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.backupGitSpec = backupGitSpec;
         this.ecrGitSshSecretName = ecrGitSshSecretName;
@@ -92,11 +90,6 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
 
     public Optional<String> getEcrGitSshSecretName() {
         return ofNullable(ecrGitSshSecretName);
-    }
-
-    @Override
-    public Optional<String> getKeycloakSecretToUse() {
-        return ofNullable(keycloakSecretToUse);
     }
 
     public Optional<String> getIngressPath() {

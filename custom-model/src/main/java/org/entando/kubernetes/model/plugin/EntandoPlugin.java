@@ -25,10 +25,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.util.Optional;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.RequiresKeycloak;
 import org.entando.kubernetes.model.SpecHasIngress;
 
 @JsonSerialize
@@ -38,7 +36,7 @@ import org.entando.kubernetes.model.SpecHasIngress;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoPlugin extends EntandoBaseCustomResource<EntandoPluginSpec> implements RequiresKeycloak, SpecHasIngress {
+public class EntandoPlugin extends EntandoBaseCustomResource<EntandoPluginSpec> implements SpecHasIngress {
 
     public static final String CRD_NAME = "entandoplugins.entando.org";
 
@@ -61,11 +59,6 @@ public class EntandoPlugin extends EntandoBaseCustomResource<EntandoPluginSpec> 
     @Override
     public String getDefinitionName() {
         return CRD_NAME;
-    }
-
-    @Override
-    public Optional<String> getKeycloakSecretToUse() {
-        return getSpec().getKeycloakSecretToUse();
     }
 
 }

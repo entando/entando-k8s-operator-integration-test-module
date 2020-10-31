@@ -20,6 +20,8 @@ import static org.entando.kubernetes.model.plugin.PluginSecurityLevel.STRICT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertFalse;
 
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.client.CustomResourceList;
@@ -39,6 +41,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     protected static final String MY_PLUGIN = "my-plugin";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     private static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
+    private static final String MY_KEYCLOAK_NAME = "my-keycloak-name";
+    private static final String MY_KEYCLOAK_REALM = "my-keycloak-realm";
+    private static final String MY_KEYCLOAK_NAME_SPACE = "my-keycloak-namespace";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
     private static final String IMAGE = "entando/someplugin:1.0.2";
@@ -52,7 +57,6 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     private static final String ADMINISTRATOR = "Administrator";
     private static final String PARAMETER_NAME = "env";
     private static final String PARAMETER_VALUE = "B";
-    private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -82,7 +86,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .addNewCompanionContainer(MY_COMPANION_CONTAINER)
                 .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
-                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
+                .withKeycloakToUse(MY_KEYCLOAK_NAME_SPACE, MY_KEYCLOAK_NAME)
                 .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
@@ -93,8 +97,10 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
-        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
-        assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertFalse(actual.getSpec().getKeycloakToUse().get().getRealm().isPresent());
+        assertFalse(actual.getSpec().getKeycloakToUse().get().getPublicClientId().isPresent());
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
@@ -135,7 +141,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .addNewCompanionContainer(MY_COMPANION_CONTAINER)
                 .addNewParameter(PARAMETER_NAME, "A")
                 .withSecurityLevel(STRICT)
-                .withKeycloakSecretToUse("another-keycloak-secret")
+                .withKeycloakToUse("some-namespace", "another-keycloak", "somerealm")
                 .withClusterInfrastructureSecretToUse("another-cluster-infrastructure")
                 .endSpec()
                 .build();
@@ -156,7 +162,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withRoles(Arrays.asList(new ExpectedRole(ADMIN, ADMINISTRATOR)))
                 .withEnvironmentVariables(Collections.singletonList(new EnvVar(PARAMETER_NAME, PARAMETER_VALUE, null)))
                 .withSecurityLevel(STRICT)
-                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
+                .withKeycloakToUse(MY_KEYCLOAK_NAME_SPACE, MY_KEYCLOAK_NAME)
                 .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .withStatus(new WebServerStatus("some-qualifier"))
@@ -166,8 +172,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
-        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
-        assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertFalse(actual.getSpec().getKeycloakToUse().get().getRealm().isPresent());
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
