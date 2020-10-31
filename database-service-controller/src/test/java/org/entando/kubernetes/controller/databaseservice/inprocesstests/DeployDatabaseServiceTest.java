@@ -45,7 +45,7 @@ public class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTrave
     @BeforeEach
     void createReusedSecrets() {
         client.secrets().overwriteControllerSecret(buildInfrastructureSecret());
-        client.secrets().overwriteControllerSecret(buildKeycloakSecret());
+        emulateKeycloakDeployment(client);
         databaseServiceController = new EntandoDatabaseServiceController(client, keycloakClient);
     }
 
