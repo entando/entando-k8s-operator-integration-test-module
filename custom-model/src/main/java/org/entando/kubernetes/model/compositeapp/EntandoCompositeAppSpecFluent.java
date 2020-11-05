@@ -53,11 +53,11 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     private static final Map<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> BUILDERS = createBuilderMap();
     protected List<EntandoBaseFluent<?>> components;
 
-    public EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
+    protected EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
         this.components = createComponentBuilders(spec.getComponents());
     }
 
-    public EntandoCompositeAppSpecFluent() {
+    protected EntandoCompositeAppSpecFluent() {
         this.components = new ArrayList<>();
     }
 
@@ -71,6 +71,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         result.put(EntandoAppPluginLink.class, EntandoAppPluginLinkBuilder.class);
         result.put(EntandoDatabaseService.class, EntandoDatabaseServiceBuilder.class);
         result.put(EntandoDeBundle.class, EntandoDeBundleBuilder.class);
+        result.put(EntandoCustomResourceReference.class, EntandoCustomResourceReferenceBuilder.class);
         return result;
     }
 
@@ -143,6 +144,15 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
 
     public A addToEntandoPlugins(EntandoPlugin item) {
         this.components.add(new EntandoPluginBuilder(item));
+        return thisAsA();
+    }
+
+    public EntandoCustomResourceReferenceNested<A> addNewEntandoCustomResourceReference() {
+        return new EntandoCustomResourceReferenceNested<>(thisAsA());
+    }
+
+    public A addToEntandoCustomResourceReferences(EntandoCustomResourceReference item) {
+        this.components.add(new EntandoCustomResourceReferenceBuilder(item));
         return thisAsA();
     }
 
@@ -285,6 +295,27 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         }
 
         public N endEntandoDatabaseService() {
+            return and();
+        }
+    }
+
+    public static class EntandoCustomResourceReferenceNested<N extends EntandoCompositeAppSpecFluent> extends
+            EntandoCustomResourceReferenceFluent<EntandoCustomResourceReferenceNested<N>> implements Nested<N> {
+
+        private final N parentBuilder;
+
+        public EntandoCustomResourceReferenceNested(N parentBuilder) {
+            super();
+            this.parentBuilder = parentBuilder;
+        }
+
+        @SuppressWarnings("unchecked")
+        public N and() {
+            return (N) parentBuilder
+                    .addToEntandoCustomResourceReferences(new EntandoCustomResourceReference(super.metadata.build(), super.spec.build()));
+        }
+
+        public N endEntandoCustomResourceReference() {
             return and();
         }
     }

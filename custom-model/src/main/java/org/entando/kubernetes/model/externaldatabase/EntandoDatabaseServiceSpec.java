@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -102,7 +103,7 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
     }
 
     public Map<String, String> getJdbcParameters() {
-        return jdbcParameters;
+        return this.jdbcParameters == null ? Collections.emptyMap() : this.jdbcParameters;
     }
 
     public Optional<String> getTablespace() {

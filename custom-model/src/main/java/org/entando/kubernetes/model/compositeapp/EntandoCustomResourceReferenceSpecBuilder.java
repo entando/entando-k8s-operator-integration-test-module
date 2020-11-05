@@ -16,14 +16,16 @@
 
 package org.entando.kubernetes.model.compositeapp;
 
-public class EntandoCompositeAppSpecBuilder extends EntandoCompositeAppSpecFluent<EntandoCompositeAppSpecBuilder> {
+public class EntandoCustomResourceReferenceSpecBuilder extends
+        EntandoCustomResourceReferenceSpecFluent<EntandoCustomResourceReferenceSpecBuilder> {
 
-    public EntandoCompositeAppSpecBuilder() {
+    public EntandoCustomResourceReferenceSpecBuilder() {
         super();
     }
 
-    public EntandoCompositeAppSpecBuilder(EntandoCompositeAppSpec spec) {
+    public EntandoCustomResourceReferenceSpecBuilder(EntandoCustomResourceReferenceSpec spec) {
         super(spec);
     }
+
 
 }

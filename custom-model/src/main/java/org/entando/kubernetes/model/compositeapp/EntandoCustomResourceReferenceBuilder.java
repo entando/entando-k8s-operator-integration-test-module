@@ -17,12 +17,26 @@
 package org.entando.kubernetes.model.compositeapp;
 
 import io.fabric8.kubernetes.api.builder.Builder;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 
-public class EntandoCompositeAppBuilder extends EntandoCompositeAppFluent<EntandoCompositeAppBuilder> implements
-        Builder<EntandoCompositeApp> {
+public class EntandoCustomResourceReferenceBuilder extends
+        EntandoCustomResourceReferenceFluent<EntandoCustomResourceReferenceBuilder> implements
+        Builder<EntandoCustomResourceReference> {
+
+    public EntandoCustomResourceReferenceBuilder() {
+    }
+
+    public EntandoCustomResourceReferenceBuilder(EntandoCustomResourceReferenceSpec spec,
+            ObjectMeta objectMeta) {
+        super(spec, objectMeta);
+    }
+
+    public EntandoCustomResourceReferenceBuilder(EntandoCustomResourceReference reference) {
+        this(reference.getSpec(), reference.getMetadata());
+    }
 
     @Override
-    public EntandoCompositeApp build() {
-        return new EntandoCompositeApp(super.metadata.build(), super.spec.build());
+    public EntandoCustomResourceReference build() {
+        return new EntandoCustomResourceReference(super.metadata.build(), super.spec.build());
     }
 }

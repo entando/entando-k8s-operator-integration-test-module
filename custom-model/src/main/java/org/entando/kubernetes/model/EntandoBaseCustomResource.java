@@ -33,6 +33,7 @@ import io.fabric8.kubernetes.client.CustomResource;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
 import org.entando.kubernetes.model.app.EntandoApp;
+import org.entando.kubernetes.model.compositeapp.EntandoCustomResourceReference;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
@@ -58,7 +59,8 @@ import org.entando.kubernetes.model.plugin.EntandoPlugin;
         @Type(value = EntandoApp.class, name = "EntandoApp"),
         @Type(value = EntandoPlugin.class, name = "EntandoPlugin"),
         @Type(value = EntandoAppPluginLink.class, name = "EntandoAppPluginLink"),
-        @Type(value = EntandoDatabaseService.class, name = "EntandoDatabaseService")
+        @Type(value = EntandoDatabaseService.class, name = "EntandoDatabaseService"),
+        @Type(value = EntandoCustomResourceReference.class, name = "EntandoCustomResourceReference")
 })
 
 public abstract class EntandoBaseCustomResource<S extends Serializable> extends CustomResource implements EntandoCustomResource {

@@ -26,6 +26,8 @@ import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.compositeapp.DoneableEntandoCompositeApp;
 import org.entando.kubernetes.model.compositeapp.EntandoCompositeApp;
 import org.entando.kubernetes.model.compositeapp.EntandoCompositeAppBuilder;
+import org.entando.kubernetes.model.compositeapp.EntandoCustomResourceReference;
+import org.entando.kubernetes.model.compositeapp.EntandoCustomResourceReferenceBuilder;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureBuilder;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
@@ -44,6 +46,7 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
     public static final String MY_APP_PLUGIN_LINK = "my-app-plugin-link";
     public static final String MY_DATABASE_SERVICE = "my-database-service";
     private static final String MY_NAMESPACE = "my-namespace";
+    public static final String MY_PLUGIN_REF = "my-plugin-ref";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -65,8 +68,15 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 .endEntandoClusterInfrastructure()
                 .addNewEntandoApp().withNewMetadata().withName(MY_APP).endMetadata().endEntandoApp()
                 .addNewEntandoPlugin().withNewMetadata().withName(MY_PLUGIN).endMetadata().endEntandoPlugin()
-                .addNewEntandoAppPluginLink().withNewMetadata().withName(MY_APP_PLUGIN_LINK).endMetadata().endEntandoAppPluginLink()
+                .addNewEntandoAppPluginLink().withNewMetadata().withName(MY_APP_PLUGIN_LINK).endMetadata().editSpec().endSpec()
+                .endEntandoAppPluginLink()
                 .addNewEntandoDatabaseService().withNewMetadata().withName(MY_DATABASE_SERVICE).endMetadata().endEntandoDatabaseService()
+                .addNewEntandoCustomResourceReference().withNewMetadata().withName(MY_PLUGIN_REF).endMetadata().withNewSpec()
+                .withTargetKind("EntandoPlugin")
+                .withTargetName(MY_PLUGIN)
+                .withTargetNamespace(MY_NAMESPACE)
+                .endSpec()
+                .endEntandoCustomResourceReference()
                 .endSpec()
                 .build();
         entandoCompositeApps().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoCompositeApp.getMetadata())
@@ -81,6 +91,11 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
         assertThat(actual.getSpec().getComponents().get(3).getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getSpec().getComponents().get(4).getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
         assertThat(actual.getSpec().getComponents().get(5).getMetadata().getName(), is(MY_DATABASE_SERVICE));
+        assertThat(actual.getSpec().getComponents().get(6).getMetadata().getName(), is(MY_PLUGIN_REF));
+        EntandoCustomResourceReference ref = (EntandoCustomResourceReference) actual.getSpec().getComponents().get(6);
+        assertThat(ref.getSpec().getTargetKind(), is("EntandoPlugin"));
+        assertThat(ref.getSpec().getTargetName(), is(MY_PLUGIN));
+        assertThat(ref.getSpec().getTargetNamespace().get(), is(MY_NAMESPACE));
         assertThat(actual.getMetadata().getName(), is(MY_COMPOSITE_APP));
     }
 
@@ -117,7 +132,13 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                         new EntandoAppBuilder().withNewMetadata().withName(MY_APP).endMetadata().build(),
                         new EntandoPluginBuilder().withNewMetadata().withName(MY_PLUGIN).endMetadata().build(),
                         new EntandoAppPluginLinkBuilder().withNewMetadata().withName(MY_APP_PLUGIN_LINK).endMetadata().build(),
-                        new EntandoDatabaseServiceBuilder().withNewMetadata().withName(MY_DATABASE_SERVICE).endMetadata().build()
+                        new EntandoDatabaseServiceBuilder().withNewMetadata().withName(MY_DATABASE_SERVICE).endMetadata().build(),
+                        new EntandoCustomResourceReferenceBuilder().withNewMetadata().withName(MY_PLUGIN_REF).endMetadata().editSpec()
+                                .withTargetKind("EntandoPlugin")
+                                .withTargetName(MY_PLUGIN)
+                                .withTargetNamespace(MY_NAMESPACE)
+                                .endSpec()
+                                .build()
                 )
                 .endSpec()
                 .withStatus(new WebServerStatus("my-keycloak"))
@@ -131,6 +152,11 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
         assertThat(actual.getSpec().getComponents().get(3).getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getSpec().getComponents().get(4).getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
         assertThat(actual.getSpec().getComponents().get(5).getMetadata().getName(), is(MY_DATABASE_SERVICE));
+        assertThat(actual.getSpec().getComponents().get(6).getMetadata().getName(), is(MY_PLUGIN_REF));
+        EntandoCustomResourceReference ref = (EntandoCustomResourceReference) actual.getSpec().getComponents().get(6);
+        assertThat(ref.getSpec().getTargetKind(), is("EntandoPlugin"));
+        assertThat(ref.getSpec().getTargetName(), is(MY_PLUGIN));
+        assertThat(ref.getSpec().getTargetNamespace().get(), is(MY_NAMESPACE));
         assertThat(actual.getStatus(), is(notNullValue()));
     }
 

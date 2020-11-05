@@ -24,7 +24,7 @@ import java.util.Locale;
 
 @RegisterForReflection
 public enum EntandoDeploymentPhase {
-    REQUESTED, STARTED, SUCCESSFUL, FAILED;
+    REQUESTED, STARTED, SUCCESSFUL, FAILED, IGNORED;
 
     @JsonCreator
     public static EntandoDeploymentPhase forValue(String value) {
