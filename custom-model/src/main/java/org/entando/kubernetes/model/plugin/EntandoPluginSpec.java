@@ -32,7 +32,6 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.ClusterInfrastructureAwareSpec;
 import org.entando.kubernetes.model.DbmsVendor;
@@ -80,14 +79,13 @@ public class EntandoPluginSpec extends ClusterInfrastructureAwareSpec {
             @JsonProperty("roles") List<ExpectedRole> roles,
             @JsonProperty("permissions") List<Permission> permissions,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
             @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
             @JsonProperty("companionContainers") List<String> companionContainers,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements
     ) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements,
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
                 keycloakToUse, clusterInfrastructureToUse);
         this.image = image;
         this.ingressPath = ingressPath;

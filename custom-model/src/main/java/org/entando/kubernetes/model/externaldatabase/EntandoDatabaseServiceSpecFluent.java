@@ -18,6 +18,7 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import static org.entando.kubernetes.model.Coalescence.coalesce;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;
@@ -30,11 +31,11 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     private String host;
     private Integer port;
     private String secretName;
-    private Map<String, String> jdbcParameters = new ConcurrentHashMap<>();
+    private Map<String, String> jdbcParameters;
     private String tablespace;
     private Boolean createDeployment;
 
-    public EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
+    protected EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
         super(spec);
         this.databaseName = spec.getDatabaseName().orElse(null);
         this.dbms = spec.getDbms();
@@ -46,12 +47,24 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
         this.jdbcParameters = coalesce(spec.getJdbcParameters(), this.jdbcParameters);
     }
 
-    public EntandoDatabaseServiceSpecFluent() {
+    protected EntandoDatabaseServiceSpecFluent() {
 
     }
 
     public EntandoDatabaseServiceSpec build() {
-        return new EntandoDatabaseServiceSpec(dbms, host, port, databaseName, tablespace, secretName, createDeployment, jdbcParameters);
+        return new EntandoDatabaseServiceSpec(
+                dbms,
+                host,
+                port,
+                databaseName,
+                tablespace,
+                secretName,
+                createDeployment,
+                jdbcParameters,
+                replicas,
+                serviceAccountToUse,
+                environmentVariables,
+                resourceRequirements);
     }
 
     public N withDatabaseName(String databaseName) {
@@ -90,6 +103,9 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     }
 
     public N addToJdbcParameters(String name, String value) {
+        if (jdbcParameters == null) {
+            jdbcParameters = new ConcurrentHashMap<>();
+        }
         this.jdbcParameters.put(name, value);
         return thisAsN();
     }
@@ -97,11 +113,6 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     public N withTablespace(String tablespace) {
         this.tablespace = tablespace;
         return thisAsN();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected N thisAsN() {
-        return (N) this;
     }
 
 }

@@ -83,7 +83,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Cluste
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.tlsSecretName, this.keycloakToUse,
                 this.clusterInfrastructureToUse,
-                this.backupGitSpec.build(), this.serviceAccountToUse, new HashMap<>(), this.environmentVariables, this.resourceRequirements,
+                this.backupGitSpec.build(), this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
                 this.ecrGitSshSecretName);
     }
 

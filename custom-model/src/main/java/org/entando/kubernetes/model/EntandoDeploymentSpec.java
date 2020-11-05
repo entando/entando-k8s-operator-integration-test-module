@@ -26,10 +26,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @JsonInclude(Include.NON_NULL)
@@ -41,31 +39,21 @@ import java.util.Optional;
 public abstract class EntandoDeploymentSpec implements Serializable {
 
     private Integer replicas = 1;
-    protected DbmsVendor dbms;
     private String serviceAccountToUse;
-    private Map<String, String> parameters = new HashMap<>();
-    private List<EnvVar> environmentVariables = new ArrayList<>();
+    private List<EnvVar> environmentVariables;
     private EntandoResourceRequirements resourceRequirements;
 
     protected EntandoDeploymentSpec() {
     }
 
     protected EntandoDeploymentSpec(Integer replicas,
-            DbmsVendor dbms,
             String serviceAccountToUse,
-            Map<String, String> parameters,
             List<EnvVar> environmentVariables,
             EntandoResourceRequirements resourceRequirements) {
         this.replicas = replicas;
-        this.dbms = dbms;
         this.serviceAccountToUse = serviceAccountToUse;
-        this.parameters = parameters;
         this.environmentVariables = environmentVariables;
         this.resourceRequirements = resourceRequirements;
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
     }
 
     public Optional<Integer> getReplicas() {
@@ -73,7 +61,7 @@ public abstract class EntandoDeploymentSpec implements Serializable {
     }
 
     public List<EnvVar> getEnvironmentVariables() {
-        return environmentVariables;
+        return environmentVariables == null ? Collections.emptyList() : environmentVariables;
     }
 
     public Optional<String> getServiceAccountToUse() {

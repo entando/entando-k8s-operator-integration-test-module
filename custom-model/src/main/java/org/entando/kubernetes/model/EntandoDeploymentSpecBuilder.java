@@ -50,12 +50,14 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
     }
 
     public N withEnvironmentVariables(List<EnvVar> environmentVariables) {
-        this.environmentVariables.clear();
-        this.environmentVariables.addAll(environmentVariables);
+        this.environmentVariables = new ArrayList<>(environmentVariables);
         return thisAsN();
     }
 
-    public N addNewParameter(String name, String value) {
+    public N addToEnvironmentVariables(String name, String value) {
+        if (this.environmentVariables == null) {
+            this.environmentVariables = new ArrayList<>();
+        }
         this.environmentVariables.add(new EnvVar(name, value, null));
         return thisAsN();
     }

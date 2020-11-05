@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoIngressingDeploymentSpec;
@@ -59,10 +58,9 @@ public class EntandoKeycloakServerSpec extends EntandoIngressingDeploymentSpec {
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("isDefault") Boolean isDefault,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements);
         this.imageName = imageName;
         this.isDefault = Boolean.TRUE.equals(isDefault);
     }

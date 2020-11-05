@@ -119,7 +119,7 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     public EntandoPluginSpec build() {
         return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakToUse,
                 healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions,
-                serviceAccountToUse, new HashMap<>(), environmentVariables, connectionConfigNames,
+                serviceAccountToUse, environmentVariables, connectionConfigNames,
                 clusterInfrastructureToUse, companionContainers, resourceRequirements);
     }
 

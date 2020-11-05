@@ -74,11 +74,10 @@ public class EntandoAppSpec extends ClusterInfrastructureAwareSpec {
             @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements,
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
                 keycloakToUse, clusterInfrastructureToUse);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 
@@ -48,6 +49,6 @@ public class EntandoCompositeAppSpec implements Serializable {
     }
 
     public List<EntandoBaseCustomResource> getComponents() {
-        return components;
+        return this.components == null ? Collections.emptyList() : this.components;
     }
 }

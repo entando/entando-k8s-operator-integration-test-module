@@ -20,7 +20,6 @@ import static java.util.Optional.ofNullable;
 
 import io.fabric8.kubernetes.api.model.EnvVar;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public abstract class KeycloakAwareSpec extends EntandoIngressingDeploymentSpec {
@@ -37,11 +36,10 @@ public abstract class KeycloakAwareSpec extends EntandoIngressingDeploymentSpec 
             Integer replicas,
             DbmsVendor dbms,
             String serviceAccountToUse,
-            Map<String, String> parameters,
             List<EnvVar> environmentVariables,
             EntandoResourceRequirements resourceRequirements,
             KeycloakToUse keycloakToUse) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements);
         this.keycloakToUse = keycloakToUse;
     }
 

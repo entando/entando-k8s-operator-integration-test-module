@@ -175,7 +175,7 @@ public class DummyBean {
                 .withTlsSecretName(MY_TLS_SECRET)
                 .addNewPermission(ENTANDO_APP, SUPERUSER)
                 .addNewRole(ADMIN, ADMINISTRATOR)
-                .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
+                .addToEnvironmentVariables(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
                 .withNewKeycloakToUse()
                 .withNamespace(MY_KEYCLOAK_NAME_SPACE)

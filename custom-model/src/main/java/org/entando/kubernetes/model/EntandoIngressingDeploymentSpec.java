@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @JsonInclude(Include.NON_NULL)
@@ -38,6 +37,7 @@ public abstract class EntandoIngressingDeploymentSpec extends EntandoDeploymentS
 
     private String ingressHostName;
     private String tlsSecretName;
+    protected DbmsVendor dbms;
 
     protected EntandoIngressingDeploymentSpec() {
     }
@@ -48,12 +48,12 @@ public abstract class EntandoIngressingDeploymentSpec extends EntandoDeploymentS
             Integer replicas,
             DbmsVendor dbms,
             String serviceAccountToUse,
-            Map<String, String> parameters,
             List<EnvVar> environmentVariables,
             EntandoResourceRequirements resourceRequirements) {
-        super(replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
+        super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements);
         this.ingressHostName = ingressHostName;
         this.tlsSecretName = tlsSecretName;
+        this.dbms = dbms;
     }
 
     public Optional<DbmsVendor> getDbms() {

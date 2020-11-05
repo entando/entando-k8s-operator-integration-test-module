@@ -16,7 +16,6 @@
 
 package org.entando.kubernetes.model.keycloakserver;
 
-import java.util.HashMap;
 import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecBuilder;
 
 public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent> extends EntandoIngressingDeploymentSpecBuilder<N> {
@@ -48,6 +47,6 @@ public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpec
 
     public EntandoKeycloakServerSpec build() {
         return new EntandoKeycloakServerSpec(imageName, dbms, ingressHostName, tlsSecretName, replicas, isDefault,
-                serviceAccountToUse, new HashMap<>(), environmentVariables, resourceRequirements);
+                serviceAccountToUse, environmentVariables, resourceRequirements);
     }
 }
