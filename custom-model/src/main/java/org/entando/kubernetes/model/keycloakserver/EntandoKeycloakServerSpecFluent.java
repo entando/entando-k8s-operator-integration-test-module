@@ -17,9 +17,9 @@
 package org.entando.kubernetes.model.keycloakserver;
 
 import java.util.HashMap;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecBuilder;
 
-public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
+public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent> extends EntandoIngressingDeploymentSpecBuilder<N> {
 
     protected String imageName;
     protected boolean isDefault;

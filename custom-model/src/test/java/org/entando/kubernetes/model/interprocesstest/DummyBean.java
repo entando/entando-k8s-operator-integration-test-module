@@ -17,8 +17,6 @@
 package org.entando.kubernetes.model.interprocesstest;
 
 import static org.entando.kubernetes.model.plugin.PluginSecurityLevel.STRICT;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
@@ -110,6 +108,7 @@ public class DummyBean {
 
     private static final String SNAPSHOT = "6.1.0-SNAPSHOT";
     private static final String ENTANDO_SOMEKEYCLOAK = "entando/somekeycloak";
+    private static final String MY_PUBLIC_CLIENT = "my-public-client";
 
     private KubernetesClient kubernetesClient;
 
@@ -178,8 +177,13 @@ public class DummyBean {
                 .addNewRole(ADMIN, ADMINISTRATOR)
                 .addNewParameter(PARAMETER_NAME, PARAMETER_VALUE)
                 .withSecurityLevel(STRICT)
-                .withKeycloakToUse(MY_KEYCLOAK_NAME_SPACE, MY_KEYCLOAK_NAME, MY_KEYCLOAK_REALM)
-                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withNewKeycloakToUse()
+                .withNamespace(MY_KEYCLOAK_NAME_SPACE)
+                .withName(MY_KEYCLOAK_NAME)
+                .withRealm(MY_KEYCLOAK_REALM)
+                .withPublicClientId(MY_PUBLIC_CLIENT)
+                .endKeycloakToUse()
+                .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
@@ -191,7 +195,7 @@ public class DummyBean {
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
         assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
         assertThat(actual.getSpec().getKeycloakToUse().get().getRealm(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
@@ -206,7 +210,7 @@ public class DummyBean {
         assertThat(actual.getSpec().getIngressPath(), is(INGRESS_PATH));
         assertThat(actual.getSpec().getHealthCheckPath(), is(ACTUATOR_HEALTH));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getStatus() != null, is(true));
     }
@@ -224,8 +228,13 @@ public class DummyBean {
                 .withReplicas(5)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
-                .withKeycloakToUse(MY_KEYCLOAK_NAME_SPACE, MY_KEYCLOAK_NAME, MY_KEYCLOAK_REALM)
-                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withNewKeycloakToUse()
+                .withNamespace(MY_KEYCLOAK_NAME_SPACE)
+                .withName(MY_KEYCLOAK_NAME)
+                .withRealm(MY_KEYCLOAK_REALM)
+                .withPublicClientId(MY_PUBLIC_CLIENT)
+                .endKeycloakToUse()
+                .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
         getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
@@ -237,7 +246,7 @@ public class DummyBean {
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
         assertThat(actual.getSpec().getKeycloakToUse().get().getRealm(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
@@ -245,7 +254,7 @@ public class DummyBean {
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
-        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
 
         //Test statuses
@@ -300,7 +309,12 @@ public class DummyBean {
                 .withReplicas(5)
                 .withIngressHostName(MYHOST_COM)
                 .withTlsSecretName(MY_TLS_SECRET)
-                .withKeycloakToUse(MY_KEYCLOAK_NAME_SPACE, MY_KEYCLOAK_NAME, MY_KEYCLOAK_REALM)
+                .withNewKeycloakToUse()
+                .withNamespace(MY_KEYCLOAK_NAME_SPACE)
+                .withName(MY_KEYCLOAK_NAME)
+                .withRealm(MY_KEYCLOAK_REALM)
+                .withPublicClientId(MY_PUBLIC_CLIENT)
+                .endKeycloakToUse()
                 .withDefault(true)
                 .endSpec()
                 .build();
@@ -312,7 +326,7 @@ public class DummyBean {
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
         assertThat(actual.getSpec().getKeycloakToUse().get().getRealm(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));

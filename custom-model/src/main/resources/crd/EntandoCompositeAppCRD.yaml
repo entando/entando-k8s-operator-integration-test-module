@@ -32,6 +32,6 @@ spec:
               items:
                 type: object
                 properties:
-                  spec: {}
-                  metadata: {}
-        entandoStatus: {}
+                  spec: { }
+                  metadata: { }
+        entandoStatus: { }

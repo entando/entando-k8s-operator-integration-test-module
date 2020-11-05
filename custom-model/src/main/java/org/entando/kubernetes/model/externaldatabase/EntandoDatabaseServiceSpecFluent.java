@@ -21,8 +21,9 @@ import static org.entando.kubernetes.model.Coalescence.coalesce;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;
+import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
 
-public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabaseServiceSpecFluent> {
+public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabaseServiceSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
 
     private String databaseName;
     private DbmsVendor dbms;
@@ -34,6 +35,7 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
     private Boolean createDeployment;
 
     public EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
+        super(spec);
         this.databaseName = spec.getDatabaseName().orElse(null);
         this.dbms = spec.getDbms();
         this.host = spec.getHost().orElse(null);

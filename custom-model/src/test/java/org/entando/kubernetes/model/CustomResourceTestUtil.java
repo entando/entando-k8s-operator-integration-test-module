@@ -49,7 +49,7 @@ public interface CustomResourceTestUtil {
         }
     }
 
-    default Optional<EnvVar> findParameter(EntandoDeploymentSpec spec, String name) {
+    default Optional<EnvVar> findParameter(EntandoIngressingDeploymentSpec spec, String name) {
         return spec.getEnvironmentVariables().stream().filter(envVar -> envVar.getName().equals(name)).findAny();
     }
 

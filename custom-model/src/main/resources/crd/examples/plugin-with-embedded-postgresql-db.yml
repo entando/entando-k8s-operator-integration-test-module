@@ -9,9 +9,9 @@ spec:
   image: "entando/entando-avatar-plugin"
   replicas: 1
   dbms: "postgresql"
-  roles: []
-  permissions: []
-  environmentVariables: {}
+  roles: [ ]
+  permissions: [ ]
+  environmentVariables: { }
   ingressPath: "/avatarPlugin"
   keycloakServerNamespace: "keycloak-namespace"
   keycloakServerName: "test-keycloak"

@@ -17,17 +17,15 @@
 package org.entando.kubernetes.model.app;
 
 import java.util.HashMap;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
 import org.entando.kubernetes.model.JeeServer;
-import org.entando.kubernetes.model.KeycloakToUse;
 import org.entando.kubernetes.model.gitspec.GitSpec;
 import org.entando.kubernetes.model.gitspec.GitSpecBuilder;
 import org.entando.kubernetes.model.gitspec.GitSpecFluent;
 
-public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends KeycloakAwareSpecBuilder<N> {
+public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends ClusterInfrastructureAwareSpecBuilder<N> {
 
     protected JeeServer standardServerImage;
-    protected String clusterInfrastructureSecretToUse;
     protected String customServerImage;
     protected String ingressPath;
     private GitSpecBuilder backupGitSpec;
@@ -37,7 +35,6 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Keyclo
         super(spec);
         this.standardServerImage = spec.getStandardServerImage().orElse(null);
         this.customServerImage = spec.getCustomServerImage().orElse(null);
-        this.clusterInfrastructureSecretToUse = spec.getClusterInfrastructureSecretToUse().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
         this.backupGitSpec = spec.getBackupGitSpec().map(GitSpecBuilder::new).orElse(new GitSpecBuilder());
         this.ecrGitSshSecretName = spec.getEcrGitSshSecretName().orElse(null);
@@ -69,11 +66,6 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Keyclo
         return thisAsN();
     }
 
-    public N withClusterInfrastructureSecretToUse(String name) {
-        this.clusterInfrastructureSecretToUse = name;
-        return thisAsN();
-    }
-
     public GitSpecBuilderNested<N> editBackupGitSpec() {
         return new GitSpecBuilderNested<>(thisAsN(), this.backupGitSpec.build());
     }
@@ -90,7 +82,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Keyclo
     public EntandoAppSpec build() {
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.tlsSecretName, this.keycloakToUse,
-                this.clusterInfrastructureSecretToUse,
+                this.clusterInfrastructureToUse,
                 this.backupGitSpec.build(), this.serviceAccountToUse, new HashMap<>(), this.environmentVariables, this.resourceRequirements,
                 this.ecrGitSshSecretName);
     }

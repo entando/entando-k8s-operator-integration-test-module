@@ -19,10 +19,9 @@ package org.entando.kubernetes.model.plugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
-import org.entando.kubernetes.model.app.KeycloakAwareSpecBuilder;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
 
-public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends KeycloakAwareSpecBuilder<N> {
+public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends ClusterInfrastructureAwareSpecBuilder<N> {
 
     protected final List<String> connectionConfigNames;
     protected final List<ExpectedRole> roles;
@@ -30,13 +29,11 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     private final List<String> companionContainers;
     protected String image;
     protected String ingressPath;
-    protected String clusterInfrastructureSecretToUse;
     protected String healthCheckPath;
     protected PluginSecurityLevel securityLevel;
 
     public EntandoPluginSpecFluent(EntandoPluginSpec spec) {
         super(spec);
-        this.clusterInfrastructureSecretToUse = spec.getClusterInfrastructureSecretToUse().orElse(null);
         this.ingressPath = spec.getIngressPath();
         this.healthCheckPath = spec.getHealthCheckPath();
         this.securityLevel = spec.getSecurityLevel().orElse(null);
@@ -53,11 +50,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         roles = new ArrayList<>();
         permissions = new ArrayList<>();
         this.companionContainers = new ArrayList<>();
-    }
-
-    public N withClusterInfrastructureSecretToUse(String name) {
-        this.clusterInfrastructureSecretToUse = name;
-        return thisAsN();
     }
 
     public N withIngressPath(String ingressPath) {
@@ -128,6 +120,7 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakToUse,
                 healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions,
                 serviceAccountToUse, new HashMap<>(), environmentVariables, connectionConfigNames,
-                clusterInfrastructureSecretToUse, companionContainers, resourceRequirements);
+                clusterInfrastructureToUse, companionContainers, resourceRequirements);
     }
+
 }

@@ -34,11 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpec;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
 import org.entando.kubernetes.model.KeycloakToUse;
-import org.entando.kubernetes.model.RequiresClusterInfrastructure;
-import org.entando.kubernetes.model.app.KeycloakAwareSpec;
+import org.entando.kubernetes.model.ResourceReference;
 
 @JsonSerialize
 @JsonDeserialize
@@ -47,7 +47,7 @@ import org.entando.kubernetes.model.app.KeycloakAwareSpec;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoPluginSpec extends KeycloakAwareSpec implements  RequiresClusterInfrastructure {
+public class EntandoPluginSpec extends ClusterInfrastructureAwareSpec {
 
     private String image;
     private PluginSecurityLevel securityLevel;
@@ -56,7 +56,6 @@ public class EntandoPluginSpec extends KeycloakAwareSpec implements  RequiresClu
     private List<Permission> permissions = new ArrayList<>();
     private String ingressPath;
     private String healthCheckPath;
-    private String clusterInfrastructureSecretToUse;
     private List<String> companionContainers = new ArrayList<>();
 
     public EntandoPluginSpec() {
@@ -84,12 +83,12 @@ public class EntandoPluginSpec extends KeycloakAwareSpec implements  RequiresClu
             @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
-            @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
+            @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
             @JsonProperty("companionContainers") List<String> companionContainers,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements
     ) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements,
-                keycloakToUse);
+                keycloakToUse, clusterInfrastructureToUse);
         this.image = image;
         this.ingressPath = ingressPath;
         this.keycloakToUse = keycloakToUse;
@@ -98,7 +97,6 @@ public class EntandoPluginSpec extends KeycloakAwareSpec implements  RequiresClu
         this.permissions = coalesce(permissions, this.permissions);
         this.connectionConfigNames = coalesce(connectionConfigNames, this.connectionConfigNames);
         this.securityLevel = securityLevel;
-        this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.companionContainers = coalesce(companionContainers, this.companionContainers);
     }
 
@@ -129,10 +127,6 @@ public class EntandoPluginSpec extends KeycloakAwareSpec implements  RequiresClu
     @Override
     public Optional<KeycloakToUse> getKeycloakToUse() {
         return ofNullable(keycloakToUse);
-    }
-
-    public Optional<String> getClusterInfrastructureSecretToUse() {
-        return ofNullable(clusterInfrastructureSecretToUse);
     }
 
     public List<String> getConnectionConfigNames() {

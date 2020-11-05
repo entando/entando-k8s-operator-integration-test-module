@@ -25,9 +25,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,50 +34,40 @@ import java.util.Optional;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
+public abstract class EntandoIngressingDeploymentSpec extends EntandoDeploymentSpec implements HasIngress {
 
-public abstract class EntandoDeploymentSpec implements Serializable {
+    private String ingressHostName;
+    private String tlsSecretName;
 
-    private Integer replicas = 1;
-    protected DbmsVendor dbms;
-    private String serviceAccountToUse;
-    private Map<String, String> parameters = new HashMap<>();
-    private List<EnvVar> environmentVariables = new ArrayList<>();
-    private EntandoResourceRequirements resourceRequirements;
-
-    protected EntandoDeploymentSpec() {
+    protected EntandoIngressingDeploymentSpec() {
     }
 
-    protected EntandoDeploymentSpec(Integer replicas,
+    @SuppressWarnings("unchecked")
+    protected EntandoIngressingDeploymentSpec(String ingressHostName,
+            String tlsSecretName,
+            Integer replicas,
             DbmsVendor dbms,
             String serviceAccountToUse,
             Map<String, String> parameters,
             List<EnvVar> environmentVariables,
             EntandoResourceRequirements resourceRequirements) {
-        this.replicas = replicas;
-        this.dbms = dbms;
-        this.serviceAccountToUse = serviceAccountToUse;
-        this.parameters = parameters;
-        this.environmentVariables = environmentVariables;
-        this.resourceRequirements = resourceRequirements;
+        super(replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
+        this.ingressHostName = ingressHostName;
+        this.tlsSecretName = tlsSecretName;
     }
 
-    public Map<String, String> getParameters() {
-        return parameters;
+    public Optional<DbmsVendor> getDbms() {
+        return ofNullable(dbms);
     }
 
-    public Optional<Integer> getReplicas() {
-        return ofNullable(replicas);
+    @Override
+    public Optional<String> getIngressHostName() {
+        return Optional.ofNullable(ingressHostName);
     }
 
-    public List<EnvVar> getEnvironmentVariables() {
-        return environmentVariables;
+    @Override
+    public Optional<String> getTlsSecretName() {
+        return Optional.ofNullable(tlsSecretName);
     }
 
-    public Optional<String> getServiceAccountToUse() {
-        return ofNullable(serviceAccountToUse);
-    }
-
-    public Optional<EntandoResourceRequirements> getResourceRequirements() {
-        return Optional.ofNullable(resourceRequirements);
-    }
 }

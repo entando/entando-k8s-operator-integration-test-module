@@ -50,4 +50,4 @@ spec:
                     type: string
                   tarball:
                     type: string
-        entandoStatus: {}
+        entandoStatus: { }

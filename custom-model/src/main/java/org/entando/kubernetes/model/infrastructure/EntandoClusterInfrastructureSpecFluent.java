@@ -17,9 +17,7 @@
 package org.entando.kubernetes.model.infrastructure;
 
 import java.util.HashMap;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
-import org.entando.kubernetes.model.KeycloakToUse;
-import org.entando.kubernetes.model.app.KeycloakAwareSpecBuilder;
+import org.entando.kubernetes.model.KeycloakAwareSpecBuilder;
 
 public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfrastructureSpecFluent> extends
         KeycloakAwareSpecBuilder<N> {
@@ -34,6 +32,7 @@ public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfr
     public EntandoClusterInfrastructureSpecFluent() {
 
     }
+
     @SuppressWarnings("unchecked")
     public N withDefault(boolean isDefault) {
         this.isDefault = isDefault;

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentSpec;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
 
 @JsonInclude(Include.NON_NULL)
@@ -41,7 +41,7 @@ import org.entando.kubernetes.model.EntandoResourceRequirements;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoKeycloakServerSpec extends EntandoDeploymentSpec {
+public class EntandoKeycloakServerSpec extends EntandoIngressingDeploymentSpec {
 
     private String imageName;
     private boolean isDefault;

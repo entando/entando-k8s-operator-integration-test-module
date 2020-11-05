@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.app;
+package org.entando.kubernetes.model;
 
 import static java.util.Optional.ofNullable;
 
@@ -22,12 +22,8 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
-import org.entando.kubernetes.model.EntandoResourceRequirements;
-import org.entando.kubernetes.model.KeycloakToUse;
 
-public abstract class KeycloakAwareSpec extends EntandoDeploymentSpec {
+public abstract class KeycloakAwareSpec extends EntandoIngressingDeploymentSpec {
 
     protected KeycloakToUse keycloakToUse;
 

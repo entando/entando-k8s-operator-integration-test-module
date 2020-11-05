@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
+import org.entando.kubernetes.model.KeycloakAwareSpec;
 import org.entando.kubernetes.model.KeycloakToUse;
-import org.entando.kubernetes.model.app.KeycloakAwareSpec;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize

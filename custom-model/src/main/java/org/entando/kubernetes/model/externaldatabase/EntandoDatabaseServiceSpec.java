@@ -28,11 +28,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;
+import org.entando.kubernetes.model.EntandoDeploymentSpec;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
@@ -41,7 +41,7 @@ import org.entando.kubernetes.model.DbmsVendor;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoDatabaseServiceSpec implements Serializable {
+public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
 
     private DbmsVendor dbms;
     private String host;
@@ -66,6 +66,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
             @JsonProperty("secretName") String secretName,
             @JsonProperty("createDeployment") Boolean createDeployment,
             @JsonProperty("jdbcParameters") Map<String, String> jdbcParameters) {
+        super();
         this.dbms = dbms;
         this.host = host;
         this.tablespace = tablespace;

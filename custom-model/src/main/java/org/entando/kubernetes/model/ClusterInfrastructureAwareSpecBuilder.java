@@ -16,10 +16,20 @@
 
 package org.entando.kubernetes.model;
 
-import java.util.Optional;
+public class ClusterInfrastructureAwareSpecBuilder<N extends ClusterInfrastructureAwareSpecBuilder> extends KeycloakAwareSpecBuilder<N> {
 
-public interface RequiresClusterInfrastructure {
+    protected ResourceReference clusterInfrastructureToUse;
 
-    Optional<String> getClusterInfrastructureSecretToUse();
+    public ClusterInfrastructureAwareSpecBuilder(ClusterInfrastructureAwareSpec spec) {
+        super(spec);
+        this.clusterInfrastructureToUse = spec.getClusterInfrastructureToUse().orElse(null);
+    }
 
+    public ClusterInfrastructureAwareSpecBuilder() {
+    }
+
+    public N withClusterInfrastructureToUse(String namespace, String name) {
+        this.clusterInfrastructureToUse = new ResourceReference(namespace, name);
+        return thisAsN();
+    }
 }

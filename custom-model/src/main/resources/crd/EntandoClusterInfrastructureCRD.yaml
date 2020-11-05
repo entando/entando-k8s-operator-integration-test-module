@@ -50,7 +50,7 @@ spec:
             serviceAccountToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
-            parameters: {}
+            parameters: { }
             environmentVariables:
               type: array
               items:
@@ -63,10 +63,10 @@ spec:
                   valueFrom:
                     type: object
                     properties:
-                      configMapKeyRef: {}
-                      fieldRef: {}
-                      resourceFieldRef: {}
-                      secretKeyRef: {}
+                      configMapKeyRef: { }
+                      fieldRef: { }
+                      resourceFieldRef: { }
+                      secretKeyRef: { }
             resourceRequirements:
               type: object
               properties:
@@ -87,5 +87,5 @@ spec:
             keycloakToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
-        entandoStatus: {}
+        entandoStatus: { }
 

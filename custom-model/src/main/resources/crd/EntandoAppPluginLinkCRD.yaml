@@ -43,4 +43,4 @@ spec:
               type: string
             entandoPluginNamespace:
               type: string
-        entandoStatus: {}
+        entandoStatus: { }
