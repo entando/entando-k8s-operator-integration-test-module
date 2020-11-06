@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
+import java.util.Optional;
 
 @JsonSerialize
 @JsonDeserialize
@@ -62,16 +63,16 @@ public class EntandoAppPluginLinkSpec implements Serializable {
         return entandoAppName;
     }
 
-    public String getEntandoAppNamespace() {
-        return entandoAppNamespace;
+    public Optional<String> getEntandoAppNamespace() {
+        return Optional.ofNullable(entandoAppNamespace);
     }
 
     public String getEntandoPluginName() {
         return entandoPluginName;
     }
 
-    public String getEntandoPluginNamespace() {
-        return entandoPluginNamespace;
+    public Optional<String> getEntandoPluginNamespace() {
+        return Optional.ofNullable(entandoPluginNamespace);
     }
 
 }
