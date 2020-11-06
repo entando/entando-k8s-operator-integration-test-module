@@ -19,9 +19,9 @@ package org.entando.kubernetes.model.plugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
 
-public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
+public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends ClusterInfrastructureAwareSpecBuilder<N> {
 
     protected final List<String> connectionConfigNames;
     protected final List<ExpectedRole> roles;
@@ -29,14 +29,11 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     private final List<String> companionContainers;
     protected String image;
     protected String ingressPath;
-    protected String keycloakSecretToUse;
-    protected String clusterInfrastructureSecretToUse;
     protected String healthCheckPath;
     protected PluginSecurityLevel securityLevel;
 
     public EntandoPluginSpecFluent(EntandoPluginSpec spec) {
         super(spec);
-        this.clusterInfrastructureSecretToUse = spec.getClusterInfrastructureSecretToUse().orElse(null);
         this.ingressPath = spec.getIngressPath();
         this.healthCheckPath = spec.getHealthCheckPath();
         this.securityLevel = spec.getSecurityLevel().orElse(null);
@@ -44,7 +41,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         this.permissions = new ArrayList<>(spec.getPermissions());
         this.connectionConfigNames = new ArrayList<>(spec.getConnectionConfigNames());
         this.roles = new ArrayList<>(spec.getRoles());
-        this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.companionContainers = new ArrayList<>(spec.getCompanionContainers());
     }
 
@@ -54,11 +50,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
         roles = new ArrayList<>();
         permissions = new ArrayList<>();
         this.companionContainers = new ArrayList<>();
-    }
-
-    public N withClusterInfrastructureSecretToUse(String name) {
-        this.clusterInfrastructureSecretToUse = name;
-        return thisAsN();
     }
 
     public N withIngressPath(String ingressPath) {
@@ -78,11 +69,6 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
 
     public N withSecurityLevel(PluginSecurityLevel level) {
         this.securityLevel = level;
-        return thisAsN();
-    }
-
-    public N withKeycloakSecretToUse(String name) {
-        this.keycloakSecretToUse = name;
         return thisAsN();
     }
 
@@ -131,9 +117,10 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
     }
 
     public EntandoPluginSpec build() {
-        return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakSecretToUse,
+        return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakToUse,
                 healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions,
-                serviceAccountToUse, new HashMap<>(), environmentVariables, connectionConfigNames,
-                clusterInfrastructureSecretToUse, companionContainers, resourceRequirements);
+                serviceAccountToUse, environmentVariables, connectionConfigNames,
+                clusterInfrastructureToUse, companionContainers, resourceRequirements);
     }
+
 }

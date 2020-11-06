@@ -34,6 +34,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
     public static final String MY_CUSTOM_SERVER_IMAGE = "somenamespace/someimage:3.2.2";
     public static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
+    public static final String MY_CLUSTER_INFRASTRUCTURE_NAMESPACE = "my-cluster-infrastructure-namespace";
+    private static final String MY_KEYCLOAK_NAME = "my-keycloak-name";
+    private static final String MY_KEYCLOAK_REALM = "my-keycloak-realm";
+    private static final String MY_KEYCLOAK_NAME_SPACE = "my-keycloak-namespace";
     public static final String PARAM_VALUE = "my-value";
     public static final String PARAM_NAME = "MY_PARAM";
     public static final String MY_GIT_SECRET = "my-git-secret";
@@ -43,7 +47,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
     private static final String MYINGRESS_COM = "myingress.com";
     private static final String MY_INGRESS_PATH = "/my-ingress-path";
-    private static final String MY_KEYCLOAK_SECRET = "my-keycloak-secret";
     private static final String MY_VALUE = "my-value";
     private static final String MY_LABEL = "my-label";
     private static final String MY_TLS_SECRET = "my-tls-secret";
@@ -57,6 +60,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     public static final String STORAGE_LIMIT = "2Gi";
     public static final String STORAGE_REQUEST = "0.2Gi";
     private static final String MY_GIT_SECRET_NAME = "my-git-secret-name";
+    public static final String MY_PUBLIC_CLIENT = "my-public-client";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -79,9 +83,8 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withReplicas(MY_REPLICAS)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
-                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
                 .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
-                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE, MY_CLUSTER_INFRASTRUCTURE)
                 .withIngressPath(MY_INGRESS_PATH)
                 .withNewBackupGitSpec()
                 .withRepository(MY_BACKUP_GIT_REPO)
@@ -99,7 +102,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withStorageRequest(STORAGE_REQUEST)
                 .endResourceRequirements()
                 .withIngressPath(MY_INGRESS_PATH)
-                .addNewParameter(PARAM_NAME, PARAM_VALUE)
+                .addToEnvironmentVariables(PARAM_NAME, PARAM_VALUE)
+                .withNewKeycloakToUse()
+                .withNamespace(MY_KEYCLOAK_NAME_SPACE)
+                .withName(MY_KEYCLOAK_NAME)
+                .withRealm(MY_KEYCLOAK_REALM)
+                .withPublicClientId(MY_PUBLIC_CLIENT)
+                .endKeycloakToUse()
                 .endSpec()
                 .build();
 
@@ -109,16 +118,18 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
-        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getIngressPath().get(), is(MY_INGRESS_PATH));
-        assertThat(actual.getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
         assertThat(actual.getSpec().getStandardServerImage().get(), is(JeeServer.WILDFLY));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
-        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getNamespace().get(), is(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE));
         assertThat(actual.getSpec().getBackupGitSpec().get().getRepository(), is(MY_BACKUP_GIT_REPO));
         assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
         assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
@@ -150,9 +161,14 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withReplicas(4)
                 .withTlsSecretName("another-tls-secret")
                 .withIngressHostName("anotheringress.com")
-                .withKeycloakSecretToUse("another-keycloak-secret")
-                .addNewParameter("anotherparam", "123123")
-                .withClusterInfrastructureSecretToUse("some-cluster-infrastructure")
+                .withNewKeycloakToUse()
+                .withNamespace("somenamespace")
+                .withName("another-keycloak")
+                .withRealm("somerealm")
+                .withPublicClientId("some-public-client")
+                .endKeycloakToUse()
+                .addToEnvironmentVariables("anotherparam", "123123")
+                .withClusterInfrastructureToUse("thingy-namespace", "some-cluster-infrastructure")
                 .withNewBackupGitSpec()
                 .withRepository("somerip.git")
                 .withSecretName("some-secert")
@@ -184,8 +200,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withReplicas(5)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
-                .withKeycloakSecretToUse(MY_KEYCLOAK_SECRET)
-                .withClusterInfrastructureSecretToUse(MY_CLUSTER_INFRASTRUCTURE)
+                .editKeycloakToUse()
+                .withNamespace(MY_KEYCLOAK_NAME_SPACE)
+                .withName(MY_KEYCLOAK_NAME)
+                .withRealm(MY_KEYCLOAK_REALM)
+                .withPublicClientId(MY_PUBLIC_CLIENT)
+                .endKeycloakToUse()
+                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE, MY_CLUSTER_INFRASTRUCTURE)
                 .editBackupGitSpec()
                 .withRepository(MY_BACKUP_GIT_REPO)
                 .withSecretName(MY_GIT_SECRET)
@@ -212,10 +233,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
-        assertThat(actual.getSpec().getKeycloakSecretToUse().get(), is(MY_KEYCLOAK_SECRET));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getSpec().getStandardServerImage().isPresent(), is(false));//overridden by customServerImage
         assertThat(actual.getSpec().getCustomServerImage().get(), is(MY_CUSTOM_SERVER_IMAGE));
-        assertThat(actual.getSpec().getClusterInfrastructureSecretToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
+        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getNamespace().get(), is(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getServiceAccountToUse().get(), is(MY_SERVICE_ACCOUNT));

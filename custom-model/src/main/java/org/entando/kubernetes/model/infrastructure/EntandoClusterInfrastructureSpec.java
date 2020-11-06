@@ -29,11 +29,10 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
-import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.KeycloakAwareSpec;
+import org.entando.kubernetes.model.KeycloakToUse;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
@@ -42,9 +41,8 @@ import org.entando.kubernetes.model.RequiresKeycloak;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec implements RequiresKeycloak {
+public class EntandoClusterInfrastructureSpec extends KeycloakAwareSpec {
 
-    private String keycloakSecretToUse;
     private boolean isDefault;
 
     public EntandoClusterInfrastructureSpec() {
@@ -57,14 +55,13 @@ public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec impl
             @JsonProperty("ingressHostName") String ingressHostName,
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("replicas") Integer replicas,
-            @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
+            @JsonProperty("keycloakToUse") KeycloakToUse keycloakToUse,
             @JsonProperty("isDefault") Boolean isDefault,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
-        this.keycloakSecretToUse = keycloakSecretToUse;
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
+                keycloakToUse);
         this.isDefault = Boolean.TRUE.equals(isDefault);
     }
 
@@ -72,8 +69,4 @@ public class EntandoClusterInfrastructureSpec extends EntandoDeploymentSpec impl
         return isDefault;
     }
 
-    @Override
-    public Optional<String> getKeycloakSecretToUse() {
-        return Optional.ofNullable(keycloakSecretToUse);
-    }
 }

@@ -16,8 +16,6 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-import static org.entando.kubernetes.model.Coalescence.coalesce;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -27,12 +25,15 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;
+import org.entando.kubernetes.model.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.EntandoResourceRequirements;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
@@ -41,7 +42,7 @@ import org.entando.kubernetes.model.DbmsVendor;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoDatabaseServiceSpec implements Serializable {
+public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
 
     private DbmsVendor dbms;
     private String host;
@@ -50,7 +51,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
     private String tablespace;
     private String secretName;
     private Boolean createDeployment;
-    private Map<String, String> jdbcParameters = new ConcurrentHashMap<>();
+    private Map<String, String> jdbcParameters;
 
     public EntandoDatabaseServiceSpec() {
 
@@ -65,7 +66,12 @@ public class EntandoDatabaseServiceSpec implements Serializable {
             @JsonProperty("tablespace") String tablespace,
             @JsonProperty("secretName") String secretName,
             @JsonProperty("createDeployment") Boolean createDeployment,
-            @JsonProperty("jdbcParameters") Map<String, String> jdbcParameters) {
+            @JsonProperty("jdbcParameters") Map<String, String> jdbcParameters,
+            @JsonProperty("replicas") Integer replicas,
+            @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
+            @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
+        super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements);
         this.dbms = dbms;
         this.host = host;
         this.tablespace = tablespace;
@@ -73,7 +79,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
         this.port = port;
         this.databaseName = databaseName;
         this.createDeployment = createDeployment;
-        this.jdbcParameters = coalesce(jdbcParameters, this.jdbcParameters);
+        this.jdbcParameters = jdbcParameters;
     }
 
     public DbmsVendor getDbms() {
@@ -97,7 +103,7 @@ public class EntandoDatabaseServiceSpec implements Serializable {
     }
 
     public Map<String, String> getJdbcParameters() {
-        return jdbcParameters;
+        return this.jdbcParameters == null ? Collections.emptyMap() : this.jdbcParameters;
     }
 
     public Optional<String> getTablespace() {

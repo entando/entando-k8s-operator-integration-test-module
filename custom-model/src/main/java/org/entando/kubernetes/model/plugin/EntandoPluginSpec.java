@@ -32,13 +32,12 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpec;
 import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
-import org.entando.kubernetes.model.RequiresClusterInfrastructure;
-import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.KeycloakToUse;
+import org.entando.kubernetes.model.ResourceReference;
 
 @JsonSerialize
 @JsonDeserialize
@@ -47,7 +46,7 @@ import org.entando.kubernetes.model.RequiresKeycloak;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoPluginSpec extends EntandoDeploymentSpec implements RequiresKeycloak, RequiresClusterInfrastructure {
+public class EntandoPluginSpec extends ClusterInfrastructureAwareSpec {
 
     private String image;
     private PluginSecurityLevel securityLevel;
@@ -55,9 +54,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
     private List<ExpectedRole> roles = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
     private String ingressPath;
-    private String keycloakSecretToUse;
     private String healthCheckPath;
-    private String clusterInfrastructureSecretToUse;
     private List<String> companionContainers = new ArrayList<>();
 
     public EntandoPluginSpec() {
@@ -74,7 +71,7 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("dbms") DbmsVendor dbms,
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("ingressPath") String ingressPath,
-            @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
+            @JsonProperty("keycloakToUse") KeycloakToUse keycloakToUse,
             @JsonProperty("healthCheckPath") String healthCheckPath,
             @JsonProperty("securityLevel") PluginSecurityLevel securityLevel,
             @JsonProperty("tlsSecretName") String tlsSecretName,
@@ -82,23 +79,22 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
             @JsonProperty("roles") List<ExpectedRole> roles,
             @JsonProperty("permissions") List<Permission> permissions,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
-            @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
+            @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
             @JsonProperty("companionContainers") List<String> companionContainers,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements
     ) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
+                keycloakToUse, clusterInfrastructureToUse);
         this.image = image;
         this.ingressPath = ingressPath;
-        this.keycloakSecretToUse = keycloakSecretToUse;
+        this.keycloakToUse = keycloakToUse;
         this.healthCheckPath = healthCheckPath;
         this.roles = coalesce(roles, this.roles);
         this.permissions = coalesce(permissions, this.permissions);
         this.connectionConfigNames = coalesce(connectionConfigNames, this.connectionConfigNames);
         this.securityLevel = securityLevel;
-        this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.companionContainers = coalesce(companionContainers, this.companionContainers);
     }
 
@@ -127,12 +123,8 @@ public class EntandoPluginSpec extends EntandoDeploymentSpec implements Requires
     }
 
     @Override
-    public Optional<String> getKeycloakSecretToUse() {
-        return ofNullable(keycloakSecretToUse);
-    }
-
-    public Optional<String> getClusterInfrastructureSecretToUse() {
-        return ofNullable(clusterInfrastructureSecretToUse);
+    public Optional<KeycloakToUse> getKeycloakToUse() {
+        return ofNullable(keycloakToUse);
     }
 
     public List<String> getConnectionConfigNames() {

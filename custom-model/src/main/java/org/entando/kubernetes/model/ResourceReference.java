@@ -14,51 +14,44 @@
  *
  */
 
-package org.entando.kubernetes.model.app;
+package org.entando.kubernetes.model;
+
+import static java.util.Optional.ofNullable;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.entando.kubernetes.model.EntandoBaseCustomResource;
-import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.SpecHasIngress;
+import java.util.Optional;
 
-@JsonSerialize
-@JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoApp extends EntandoBaseCustomResource<EntandoAppSpec> implements SpecHasIngress {
+public class ResourceReference {
 
-    public static final String CRD_NAME = "entandoapps.entando.org";
+    protected String namespace;
+    protected String name;
 
-    public EntandoApp() {
-        this(null);
+    public ResourceReference(
+            @JsonProperty("namespace") String namespace,
+            @JsonProperty("name") String name) {
+        this.namespace = namespace;
+        this.name = name;
     }
 
-    public EntandoApp(EntandoAppSpec spec) {
-        this(new ObjectMeta(), spec);
+    public ResourceReference() {
     }
 
-    public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec) {
-        this(metadata, spec, null);
+    public String getName() {
+        return name;
     }
 
-    public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec, EntandoCustomResourceStatus status) {
-        super(metadata, spec, status);
+    public Optional<String> getNamespace() {
+        return ofNullable(namespace);
     }
-
-    @Override
-    public String getDefinitionName() {
-        return CRD_NAME;
-    }
-
 }

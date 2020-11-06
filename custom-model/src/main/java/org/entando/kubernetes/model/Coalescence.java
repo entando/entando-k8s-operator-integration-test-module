@@ -22,6 +22,7 @@ public class Coalescence {
     }
 
     @SuppressWarnings("unchecked")
+    @SafeVarargs
     public static <T> T coalesce(T... t) {
         for (T item : t) {
             if (item != null) {

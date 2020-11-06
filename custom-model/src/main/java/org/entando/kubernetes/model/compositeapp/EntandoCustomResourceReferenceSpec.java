@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.link;
+package org.entando.kubernetes.model.compositeapp;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -36,43 +36,30 @@ import java.util.Optional;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoAppPluginLinkSpec implements Serializable {
+public class EntandoCustomResourceReferenceSpec implements Serializable {
 
-    private String entandoAppNamespace;
-    private String entandoAppName;
-    private String entandoPluginNamespace;
-    private String entandoPluginName;
-
-    public EntandoAppPluginLinkSpec() {
-        //Required for JSON deserialization
-    }
+    private String targetKind;
+    private String targetNamespace;
+    private String targetName;
 
     @JsonCreator
-    public EntandoAppPluginLinkSpec(
-            @JsonProperty("entandoAppNamespace") String entandoAppNamespace,
-            @JsonProperty("entandoAppName") String entandoAppName,
-            @JsonProperty("entandoPluginNamespace") String entandoPluginNamespace,
-            @JsonProperty("entandoPluginName") String entandoPluginName) {
-        this.entandoAppNamespace = entandoAppNamespace;
-        this.entandoAppName = entandoAppName;
-        this.entandoPluginNamespace = entandoPluginNamespace;
-        this.entandoPluginName = entandoPluginName;
+    public EntandoCustomResourceReferenceSpec(@JsonProperty("targetKind") String targetKind,
+            @JsonProperty("targetNamespace") String targetNamespace,
+            @JsonProperty("targetName") String targetName) {
+        this.targetKind = targetKind;
+        this.targetNamespace = targetNamespace;
+        this.targetName = targetName;
     }
 
-    public String getEntandoAppName() {
-        return entandoAppName;
+    public String getTargetKind() {
+        return targetKind;
     }
 
-    public Optional<String> getEntandoAppNamespace() {
-        return Optional.ofNullable(entandoAppNamespace);
+    public String getTargetName() {
+        return targetName;
     }
 
-    public String getEntandoPluginName() {
-        return entandoPluginName;
+    public Optional<String> getTargetNamespace() {
+        return Optional.ofNullable(targetNamespace);
     }
-
-    public Optional<String> getEntandoPluginNamespace() {
-        return Optional.ofNullable(entandoPluginNamespace);
-    }
-
 }

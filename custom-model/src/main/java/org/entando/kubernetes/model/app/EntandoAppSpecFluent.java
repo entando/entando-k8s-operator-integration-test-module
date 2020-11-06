@@ -17,17 +17,15 @@
 package org.entando.kubernetes.model.app;
 
 import java.util.HashMap;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.gitspec.GitSpec;
 import org.entando.kubernetes.model.gitspec.GitSpecBuilder;
 import org.entando.kubernetes.model.gitspec.GitSpecFluent;
 
-public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
+public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends ClusterInfrastructureAwareSpecBuilder<N> {
 
     protected JeeServer standardServerImage;
-    protected String keycloakSecretToUse;
-    protected String clusterInfrastructureSecretToUse;
     protected String customServerImage;
     protected String ingressPath;
     private GitSpecBuilder backupGitSpec;
@@ -37,8 +35,6 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         super(spec);
         this.standardServerImage = spec.getStandardServerImage().orElse(null);
         this.customServerImage = spec.getCustomServerImage().orElse(null);
-        this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
-        this.clusterInfrastructureSecretToUse = spec.getClusterInfrastructureSecretToUse().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
         this.backupGitSpec = spec.getBackupGitSpec().map(GitSpecBuilder::new).orElse(new GitSpecBuilder());
         this.ecrGitSshSecretName = spec.getEcrGitSshSecretName().orElse(null);
@@ -65,18 +61,8 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
         return thisAsN();
     }
 
-    public N withKeycloakSecretToUse(String name) {
-        this.keycloakSecretToUse = name;
-        return thisAsN();
-    }
-
     public N withEcrGitSshSecretname(String ecrGitSshSecretName) {
         this.ecrGitSshSecretName = ecrGitSshSecretName;
-        return thisAsN();
-    }
-
-    public N withClusterInfrastructureSecretToUse(String name) {
-        this.clusterInfrastructureSecretToUse = name;
         return thisAsN();
     }
 
@@ -95,9 +81,9 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Entand
 
     public EntandoAppSpec build() {
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
-                this.replicas, this.tlsSecretName, this.keycloakSecretToUse,
-                this.clusterInfrastructureSecretToUse,
-                this.backupGitSpec.build(), this.serviceAccountToUse, new HashMap<>(), this.environmentVariables, this.resourceRequirements,
+                this.replicas, this.tlsSecretName, this.keycloakToUse,
+                this.clusterInfrastructureToUse,
+                this.backupGitSpec.build(), this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
                 this.ecrGitSshSecretName);
     }
 

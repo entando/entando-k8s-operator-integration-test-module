@@ -32,12 +32,12 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpec;
 import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
 import org.entando.kubernetes.model.JeeServer;
-import org.entando.kubernetes.model.RequiresClusterInfrastructure;
-import org.entando.kubernetes.model.RequiresKeycloak;
+import org.entando.kubernetes.model.KeycloakToUse;
+import org.entando.kubernetes.model.ResourceReference;
 import org.entando.kubernetes.model.gitspec.GitSpec;
 
 @JsonSerialize
@@ -47,13 +47,11 @@ import org.entando.kubernetes.model.gitspec.GitSpec;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKeycloak, RequiresClusterInfrastructure {
+public class EntandoAppSpec extends ClusterInfrastructureAwareSpec {
 
     private JeeServer standardServerImage;
     private String customServerImage;
     private String ingressPath;
-    private String keycloakSecretToUse;
-    private String clusterInfrastructureSecretToUse;
     private GitSpec backupGitSpec;
     private String ecrGitSshSecretName;
 
@@ -72,20 +70,18 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
             @JsonProperty("ingressPath") String ingressPath,
             @JsonProperty("replicas") int replicas,
             @JsonProperty("tlsSecretName") String tlsSecretName,
-            @JsonProperty("keycloakSecretToUse") String keycloakSecretToUse,
-            @JsonProperty("clusterInfrastructureSecretToUse") String clusterInfrastructureSecretToUse,
+            @JsonProperty("keycloakToUse") KeycloakToUse keycloakToUse,
+            @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
             @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
-            @JsonProperty("parameters") Map<String, String> parameters,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, parameters, environmentVariables, resourceRequirements);
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
+                keycloakToUse, clusterInfrastructureToUse);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
-        this.keycloakSecretToUse = keycloakSecretToUse;
-        this.clusterInfrastructureSecretToUse = clusterInfrastructureSecretToUse;
         this.backupGitSpec = backupGitSpec;
         this.ecrGitSshSecretName = ecrGitSshSecretName;
     }
@@ -94,17 +90,8 @@ public class EntandoAppSpec extends EntandoDeploymentSpec implements RequiresKey
         return ofNullable(ecrGitSshSecretName);
     }
 
-    @Override
-    public Optional<String> getKeycloakSecretToUse() {
-        return ofNullable(keycloakSecretToUse);
-    }
-
     public Optional<String> getIngressPath() {
         return ofNullable(ingressPath);
-    }
-
-    public Optional<String> getClusterInfrastructureSecretToUse() {
-        return ofNullable(clusterInfrastructureSecretToUse);
     }
 
     public Optional<JeeServer> getStandardServerImage() {

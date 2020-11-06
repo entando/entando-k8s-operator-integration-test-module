@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.model.app;
+package org.entando.kubernetes.model.compositeapp;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -27,7 +27,6 @@ import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.SpecHasIngress;
 
 @JsonSerialize
 @JsonDeserialize
@@ -36,29 +35,23 @@ import org.entando.kubernetes.model.SpecHasIngress;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoApp extends EntandoBaseCustomResource<EntandoAppSpec> implements SpecHasIngress {
+public class EntandoCustomResourceReference extends EntandoBaseCustomResource<EntandoCustomResourceReferenceSpec> {
 
-    public static final String CRD_NAME = "entandoapps.entando.org";
-
-    public EntandoApp() {
-        this(null);
+    public EntandoCustomResourceReference() {
+        this(new ObjectMeta(),null);
     }
 
-    public EntandoApp(EntandoAppSpec spec) {
-        this(new ObjectMeta(), spec);
+    public EntandoCustomResourceReference(ObjectMeta objectMeta, EntandoCustomResourceReferenceSpec spec,
+            EntandoCustomResourceStatus entandoStatus) {
+        super(objectMeta, spec, entandoStatus);
     }
 
-    public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec) {
-        this(metadata, spec, null);
-    }
-
-    public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec, EntandoCustomResourceStatus status) {
-        super(metadata, spec, status);
+    public EntandoCustomResourceReference(ObjectMeta meta, EntandoCustomResourceReferenceSpec spec) {
+        this(meta, spec, null);
     }
 
     @Override
     public String getDefinitionName() {
-        return CRD_NAME;
+        return "N/A";
     }
-
 }

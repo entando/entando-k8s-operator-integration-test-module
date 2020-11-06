@@ -16,29 +16,20 @@
 
 package org.entando.kubernetes.model.infrastructure;
 
-import java.util.HashMap;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
+import org.entando.kubernetes.model.KeycloakAwareSpecBuilder;
 
 public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfrastructureSpecFluent> extends
-        EntandoDeploymentSpecBuilder<N> {
+        KeycloakAwareSpecBuilder<N> {
 
-    private String keycloakSecretToUse;
     private boolean isDefault;
 
     public EntandoClusterInfrastructureSpecFluent(EntandoClusterInfrastructureSpec spec) {
         super(spec);
-        this.keycloakSecretToUse = spec.getKeycloakSecretToUse().orElse(null);
         this.isDefault = spec.isDefault();
     }
 
     public EntandoClusterInfrastructureSpecFluent() {
 
-    }
-
-    @SuppressWarnings("unchecked")
-    public N withKeycloakSecretToUse(String keycloakSecretToUse) {
-        this.keycloakSecretToUse = keycloakSecretToUse;
-        return (N) this;
     }
 
     @SuppressWarnings("unchecked")
@@ -49,6 +40,6 @@ public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfr
 
     public EntandoClusterInfrastructureSpec build() {
         return new EntandoClusterInfrastructureSpec(dbms, ingressHostName, tlsSecretName, replicas,
-                keycloakSecretToUse, isDefault, this.serviceAccountToUse, new HashMap<>(), environmentVariables, resourceRequirements);
+                keycloakToUse, isDefault, this.serviceAccountToUse, environmentVariables, resourceRequirements);
     }
 }

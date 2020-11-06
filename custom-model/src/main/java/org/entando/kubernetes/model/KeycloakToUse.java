@@ -14,51 +14,46 @@
  *
  */
 
-package org.entando.kubernetes.model.app;
+package org.entando.kubernetes.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.entando.kubernetes.model.EntandoBaseCustomResource;
-import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.SpecHasIngress;
+import java.util.Optional;
 
-@JsonSerialize
-@JsonDeserialize
 @JsonInclude(Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoApp extends EntandoBaseCustomResource<EntandoAppSpec> implements SpecHasIngress {
+public class KeycloakToUse extends ResourceReference {
 
-    public static final String CRD_NAME = "entandoapps.entando.org";
+    private String realm;
+    private String publicClientId;
 
-    public EntandoApp() {
-        this(null);
+    public KeycloakToUse(
+            @JsonProperty("namespace") String namespace,
+            @JsonProperty("name") String name,
+            @JsonProperty("realm") String realm,
+            @JsonProperty("publicClientId") String publicClientId) {
+        super(namespace, name);
+        this.realm = realm;
+        this.publicClientId = publicClientId;
     }
 
-    public EntandoApp(EntandoAppSpec spec) {
-        this(new ObjectMeta(), spec);
+    public KeycloakToUse() {
     }
 
-    public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec) {
-        this(metadata, spec, null);
+    public Optional<String> getRealm() {
+        return Optional.ofNullable(realm);
     }
 
-    public EntandoApp(ObjectMeta metadata, EntandoAppSpec spec, EntandoCustomResourceStatus status) {
-        super(metadata, spec, status);
-    }
-
-    @Override
-    public String getDefinitionName() {
-        return CRD_NAME;
+    public Optional<String> getPublicClientId() {
+        return Optional.ofNullable(publicClientId);
     }
 
 }

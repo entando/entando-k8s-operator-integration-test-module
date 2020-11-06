@@ -62,9 +62,9 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
         EntandoAppPluginLink actual = entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).withName(MY_APP_PLUGIN_LINK).get();
         //Then
         assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));
-        assertThat(actual.getSpec().getEntandoAppNamespace(), is(MY_APP_NAMESPACE));
+        assertThat(actual.getSpec().getEntandoAppNamespace().get(), is(MY_APP_NAMESPACE));
         assertThat(actual.getSpec().getEntandoPluginName(), is(MY_PLUGIN));
-        assertThat(actual.getSpec().getEntandoPluginNamespace(), is(MY_PLUGIN_NAMESPACE));
+        assertThat(actual.getSpec().getEntandoPluginNamespace().get(), is(MY_PLUGIN_NAMESPACE));
         assertThat(actual.getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
     }
 
@@ -97,9 +97,9 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .done();
         //Then
         assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));
-        assertThat(actual.getSpec().getEntandoAppNamespace(), is(MY_APP_NAMESPACE));
+        assertThat(actual.getSpec().getEntandoAppNamespace().get(), is(MY_APP_NAMESPACE));
         assertThat(actual.getSpec().getEntandoPluginName(), is(MY_PLUGIN));
-        assertThat(actual.getSpec().getEntandoPluginNamespace(), is(MY_PLUGIN_NAMESPACE));
+        assertThat(actual.getSpec().getEntandoPluginNamespace().get(), is(MY_PLUGIN_NAMESPACE));
         assertThat(actual.getMetadata().getName(), is(MY_APP_PLUGIN_LINK));
         assertThat(actual.getStatus(), is(notNullValue()));
     }

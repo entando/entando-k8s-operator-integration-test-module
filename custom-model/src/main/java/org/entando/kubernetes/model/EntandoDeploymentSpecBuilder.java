@@ -22,37 +22,21 @@ import java.util.List;
 
 public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSpecBuilder> {
 
-    protected DbmsVendor dbms;
-    protected String ingressHostName;
-    protected String tlsSecretName;
     protected Integer replicas = 1;
     protected String serviceAccountToUse;
-
     protected List<EnvVar> environmentVariables;
     protected EntandoResourceRequirements resourceRequirements;
 
+    protected EntandoDeploymentSpecBuilder() {
+
+    }
+
     protected EntandoDeploymentSpecBuilder(EntandoDeploymentSpec spec) {
-        this.dbms = spec.getDbms().orElse(null);
-        this.ingressHostName = spec.getIngressHostName().orElse(null);
         this.replicas = spec.getReplicas().orElse(null);
-        this.tlsSecretName = spec.getTlsSecretName().orElse(null);
         this.serviceAccountToUse = spec.getServiceAccountToUse().orElse(null);
         this.environmentVariables = new ArrayList<>(spec.getEnvironmentVariables());
         this.resourceRequirements = spec.getResourceRequirements().orElse(null);
-    }
 
-    protected EntandoDeploymentSpecBuilder() {
-        this.environmentVariables = new ArrayList<>();
-    }
-
-    public final N withDbms(DbmsVendor dbms) {
-        this.dbms = dbms;
-        return thisAsN();
-    }
-
-    public final N withTlsSecretName(String tlsSecretName) {
-        this.tlsSecretName = tlsSecretName;
-        return thisAsN();
     }
 
     public final N withServiceAccountToUse(String serviceAccountToUse) {
@@ -65,18 +49,15 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         return thisAsN();
     }
 
-    public final N withIngressHostName(String ingressHostName) {
-        this.ingressHostName = ingressHostName;
-        return thisAsN();
-    }
-
     public N withEnvironmentVariables(List<EnvVar> environmentVariables) {
-        this.environmentVariables.clear();
-        this.environmentVariables.addAll(environmentVariables);
+        this.environmentVariables = new ArrayList<>(environmentVariables);
         return thisAsN();
     }
 
-    public N addNewParameter(String name, String value) {
+    public N addToEnvironmentVariables(String name, String value) {
+        if (this.environmentVariables == null) {
+            this.environmentVariables = new ArrayList<>();
+        }
         this.environmentVariables.add(new EnvVar(name, value, null));
         return thisAsN();
     }
@@ -99,7 +80,8 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
         return (N) this;
     }
 
-    public class EntandoResourceRequirementsNested extends EntandoResourceRequirementsFluent<EntandoResourceRequirementsNested> {
+    public class EntandoResourceRequirementsNested extends
+            EntandoResourceRequirementsFluent<EntandoResourceRequirementsNested> {
 
         private N parent;
 
@@ -121,5 +103,4 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
             return done();
         }
     }
-
 }

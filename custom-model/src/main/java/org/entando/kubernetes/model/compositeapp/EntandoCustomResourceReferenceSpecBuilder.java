@@ -14,12 +14,18 @@
  *
  */
 
-package org.entando.kubernetes.model;
+package org.entando.kubernetes.model.compositeapp;
 
-import java.util.Optional;
+public class EntandoCustomResourceReferenceSpecBuilder extends
+        EntandoCustomResourceReferenceSpecFluent<EntandoCustomResourceReferenceSpecBuilder> {
 
-public interface RequiresKeycloak {
+    public EntandoCustomResourceReferenceSpecBuilder() {
+        super();
+    }
 
-    Optional<String> getKeycloakSecretToUse();
+    public EntandoCustomResourceReferenceSpecBuilder(EntandoCustomResourceReferenceSpec spec) {
+        super(spec);
+    }
+
 
 }
