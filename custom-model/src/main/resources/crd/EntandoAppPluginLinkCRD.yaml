@@ -2,8 +2,6 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: entandoapppluginlinks.entando.org
-  finalizers:
-    - entando-do-not-delete
 spec:
   group: entando.org
   version: v1
@@ -43,4 +41,4 @@ spec:
               type: string
             entandoPluginNamespace:
               type: string
-        entandoStatus: { }
+        entandoStatus: {}

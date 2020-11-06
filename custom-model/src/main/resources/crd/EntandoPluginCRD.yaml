@@ -2,8 +2,6 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   name: entandoplugins.entando.org
-  finalizers:
-    - entando-do-not-delete
 spec:
   group: entando.org
   version: v1
@@ -58,7 +56,7 @@ spec:
             serviceAccountToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
-            parameters: { }
+            parameters: {}
             environmentVariables:
               type: array
               items:
@@ -71,10 +69,10 @@ spec:
                   valueFrom:
                     type: object
                     properties:
-                      configMapKeyRef: { }
-                      fieldRef: { }
-                      resourceFieldRef: { }
-                      secretKeyRef: { }
+                      configMapKeyRef: {}
+                      fieldRef: {}
+                      resourceFieldRef: {}
+                      secretKeyRef: {}
             resourceRequirements:
               type: object
               properties:
@@ -98,7 +96,7 @@ spec:
               type: string
             healthCheckPath:
               type: string
-            keycloakToUse:
+            keycloakSecretToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
             clusterInfrastructureSecretToUse:
@@ -132,4 +130,4 @@ spec:
                     type: string
                   role:
                     type: string
-        entandoStatus: { }
+        entandoStatus: {}
