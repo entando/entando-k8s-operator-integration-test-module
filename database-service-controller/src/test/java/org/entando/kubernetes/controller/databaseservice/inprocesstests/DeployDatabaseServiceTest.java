@@ -33,7 +33,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 
 @Tags({@Tag("post-deployment"), @Tag("pre-deployment"), @Tag("in-process"), @Tag("unit")})
-public class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
+class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     public static final String MY_DATABASE_SERVICE = "my-database-service";
     @Spy
@@ -43,15 +43,14 @@ public class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTrave
     private EntandoDatabaseServiceController databaseServiceController;
 
     @BeforeEach
-    void createReusedSecrets() {
-        client.secrets().overwriteControllerSecret(buildInfrastructureSecret());
-        emulateKeycloakDeployment(client);
+    void createController() {
         databaseServiceController = new EntandoDatabaseServiceController(client, keycloakClient);
     }
 
     @Test
-    public void testServiceOnly() {
+    void testServiceOnly() {
         EntandoDatabaseService database = createDatabaseService(false);
+        emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
         lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
                 .then(respondWithServiceStatus(serviceStatus));
@@ -79,8 +78,9 @@ public class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTrave
     }
 
     @Test
-    public void testServiceAndDeployment() {
+    void testServiceAndDeployment() {
         EntandoDatabaseService database = createDatabaseService(true);
+        emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
         lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
                 .then(respondWithServiceStatus(serviceStatus));
