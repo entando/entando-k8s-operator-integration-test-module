@@ -49,7 +49,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     @Test
     void testServiceOnly() {
-        EntandoDatabaseService database = createDatabaseService(false);
+        EntandoDatabaseService database = createDatabaseService(false, true);
         emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
         lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
@@ -68,8 +68,8 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     }
 
-    private EntandoDatabaseService createDatabaseService(boolean createDeployment) {
-        EntandoDatabaseService database = newTestEntandoDatabaseService(createDeployment);
+    private EntandoDatabaseService createDatabaseService(boolean createDeployment, boolean withExistingSecret) {
+        EntandoDatabaseService database = newTestEntandoDatabaseService(createDeployment, withExistingSecret);
         client.entandoResources().createOrPatchEntandoResource(database);
         System.setProperty(KubeUtils.ENTANDO_RESOURCE_ACTION, Action.ADDED.name());
         System.setProperty(KubeUtils.ENTANDO_RESOURCE_NAMESPACE, database.getMetadata().getNamespace());
@@ -78,8 +78,37 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
     }
 
     @Test
-    void testServiceAndDeployment() {
-        EntandoDatabaseService database = createDatabaseService(true);
+    void testServiceAndDeploymentWithGeneratedSecret() {
+        EntandoDatabaseService database = createDatabaseService(true, false);
+        emulateKeycloakDeployment(client);
+        ServiceStatus serviceStatus = new ServiceStatus();
+        lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
+                .then(respondWithServiceStatus(serviceStatus));
+
+        //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
+        databaseServiceController.onStartup(new StartupEvent());
+        //Then a K8S Deployment was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
+        NamedArgumentCaptor<Deployment> deploymentCaptor = forResourceNamed(Deployment.class, MY_DATABASE_SERVICE + "-db-deployment");
+        verify(client.deployments()).createOrPatchDeployment(eq(database), deploymentCaptor.capture());
+        Deployment resultingDeployment = deploymentCaptor.getValue();
+        //And the TCP port 3306 named 'db-port'
+        assertThat(thePortNamed("db-port").on(thePrimaryContainerOn(resultingDeployment)).getContainerPort(), is(5432));
+        verifyThatAllVolumesAreMapped(database, client, resultingDeployment);
+        assertThat(theVariableReferenceNamed("POSTGRESQL_ADMIN_PASSWORD").on(thePrimaryContainerOn(resultingDeployment)).getSecretKeyRef()
+                .getName(), is("my-database-service-db-admin-secret"));
+        //Then a K8S Service was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
+        NamedArgumentCaptor<Service> serviceCaptor = forResourceNamed(Service.class, MY_DATABASE_SERVICE + "-db-service");
+        verify(client.services()).createOrReplaceService(eq(database), serviceCaptor.capture());
+        Service resultingService = serviceCaptor.getValue();
+        //And the TCP port 3306 named 'db-port'
+        ServicePort port = resultingService.getSpec().getPorts().get(0);
+        assertThat(port.getPort(), is(5432));
+
+    }
+
+    @Test
+    void testServiceAndDeploymentWithExistingSecret() {
+        EntandoDatabaseService database = createDatabaseService(true, true);
         emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
         lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
@@ -94,6 +123,9 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         Deployment resultingDeployment = deploymentCaptor.getValue();
         //And the TCP port 3306 named 'db-port'
         assertThat(thePortNamed("db-port").on(thePrimaryContainerOn(resultingDeployment)).getContainerPort(), is(5432));
+        verifyThatAllVolumesAreMapped(database, client, resultingDeployment);
+        assertThat(theVariableReferenceNamed("POSTGRESQL_ADMIN_PASSWORD").on(thePrimaryContainerOn(resultingDeployment)).getSecretKeyRef()
+                .getName(), is("pg-secret"));
         //Then a K8S Service was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Service> serviceCaptor = forResourceNamed(Service.class, MY_DATABASE_SERVICE + "-db-service");
         verify(client.services()).createOrReplaceService(eq(database), serviceCaptor.capture());
@@ -104,14 +136,14 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     }
 
-    private EntandoDatabaseService newTestEntandoDatabaseService(boolean createDeployment) {
+    private EntandoDatabaseService newTestEntandoDatabaseService(boolean createDeployment, boolean withExistingSecret) {
         return new EntandoDatabaseServiceBuilder()
                 .withNewMetadata().withName(MY_DATABASE_SERVICE).withNamespace("my-namespace").endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.POSTGRESQL)
                 .withHost("somedatabase.com")
                 .withCreateDeployment(createDeployment)
-                .withSecretName("oracle-secret")
+                .withSecretName(withExistingSecret ? "pg-secret" : null)
                 .endSpec()
                 .build();
     }
