@@ -16,8 +16,11 @@
 
 package org.entando.kubernetes.controller.databaseservice;
 
+import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.quarkus.runtime.StartupEvent;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -31,6 +34,7 @@ import org.entando.kubernetes.controller.database.DbmsDockerVendorStrategy;
 import org.entando.kubernetes.controller.database.ExternalDatabaseDeployment;
 import org.entando.kubernetes.controller.k8sclient.SimpleK8SClient;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceSpec;
 
 public class EntandoDatabaseServiceController extends AbstractDbAwareController<EntandoDatabaseService> {
 
@@ -54,12 +58,23 @@ public class EntandoDatabaseServiceController extends AbstractDbAwareController<
     @Override
     protected void synchronizeDeploymentState(EntandoDatabaseService newEntandoDatabaseService) {
         if (newEntandoDatabaseService.getSpec().getCreateDeployment().orElse(false)) {
-            DatabaseDeployable<EntandoDatabaseService> deployable = new DatabaseDeployable<EntandoDatabaseService>(
+            DatabaseDeployable<EntandoDatabaseServiceSpec> deployable = new DatabaseDeployable<EntandoDatabaseServiceSpec>(
                     DbmsDockerVendorStrategy.forVendor(newEntandoDatabaseService.getSpec().getDbms()), newEntandoDatabaseService,
                     ExternalDatabaseDeployment.NAME_QUALIFIER, newEntandoDatabaseService.getSpec().getPort().orElse(null)) {
                 @Override
                 protected String getDatabaseAdminSecretName() {
                     return getCustomResource().getSpec().getSecretName().orElse(super.getDatabaseAdminSecretName());
+                }
+
+                @Override
+                public List<Secret> buildSecrets() {
+                    if (getCustomResource().getSpec().getSecretName().isPresent()) {
+                        //because it already exists
+                        return Collections.emptyList();
+                    } else {
+                        return super.buildSecrets();
+                    }
+
                 }
 
                 @Override
