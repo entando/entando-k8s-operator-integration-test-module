@@ -60,7 +60,7 @@
         </owaspSuppressionFileLocation>
         <!--dependencies -->
         <resteasy.version>3.9.3.Final</resteasy.version>
-        <keycloak.version>11.0.2</keycloak.version>
+        <keycloak.version>11.0.3</keycloak.version>
         <quarkus.version>1.2.0.Final</quarkus.version>
         <jackson.version>2.10.1</jackson.version>
         <okhttp.version>3.12.1</okhttp.version>
@@ -372,8 +372,8 @@ cd $(git rev-parse --show-toplevel)
 
 MODEL_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-custom-model" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
 COMMON_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-operator-common" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
-sed -i "s:\(.*<entando-k8s-custom-model.version>\)\(.*\)\(</entando-k8s-custom-model.version>.*\):\1${MODEL_VERSION}\3:g" pom.xml
-sed -i "s:\(.*<entando-k8s-operator-common.version>\)\(.*\)\(</entando-k8s-operator-common.version>.*\):\1${COMMON_VERSION}\3:g" pom.xml
+sed -i "s:\(.*<entando-k8s-custom-model.version>6.2.7</entando-k8s-custom-model.version>.*\):\1${MODEL_VERSION}\3:g" pom.xml
+sed -i "s:\(.*<entando-k8s-operator-common.version>6.2.27</entando-k8s-operator-common.version>.*\):\1${COMMON_VERSION}\3:g" pom.xml
 git add pom.xml
 mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verification
                                 ]]>
