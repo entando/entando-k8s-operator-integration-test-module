@@ -35,10 +35,11 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
-        Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
+        Not much we can do about this one except for wait for Keycloak 11.0.4. We can only update the client if the
         server is updated.
       ]]></notes>
         <gav regex="true">org\.keycloak:keycloak-.*:11\.0\.3</gav>
+        <cve>CVE-2020-10776</cve>
         <cve>CVE-2020-1728</cve>
         <cve>CVE-2020-14366</cve>
     </suppress>
