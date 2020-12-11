@@ -42,14 +42,14 @@
         <cve>CVE-2020-10776</cve>
         <cve>CVE-2020-1728</cve>
         <cve>CVE-2020-14366</cve>
+        <cve>CVE-2020-14389</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
         Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
         server is updated.
       ]]></notes>
-        <gav regex="true">org\.jboss\.resteasy:resteasy-.*:3\.9\.3\.Final</gav>
-        <cve>CVE-2020-1695</cve>
+        <gav regex="true">org\.jboss\.resteasy:resteasy-.*:3\.14\.0\.Final</gav>
         <cve>CVE-2020-25633</cve>
     </suppress>
 </suppressions>
