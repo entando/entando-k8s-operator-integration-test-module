@@ -43,6 +43,8 @@
         <cve>CVE-2020-1728</cve>
         <cve>CVE-2020-14366</cve>
         <cve>CVE-2020-14389</cve>
+        <cve>CVE-2020-14302</cve>
+        <cve>CVE-2020-10770</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
