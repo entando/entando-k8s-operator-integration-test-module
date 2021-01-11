@@ -276,7 +276,7 @@ public class DummyBean {
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withImageName(ENTANDO_SOMEKEYCLOAK)
+                .withCustomImage(ENTANDO_SOMEKEYCLOAK)
                 .withReplicas(5)
                 .withDefault(true)
                 .withIngressHostName(MYHOST_COM)
@@ -290,7 +290,7 @@ public class DummyBean {
         EntandoKeycloakServer actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
+        assertThat(actual.getSpec().getCustomImage().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));

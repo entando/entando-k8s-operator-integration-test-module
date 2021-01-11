@@ -45,6 +45,7 @@ import org.entando.kubernetes.model.SampleWriter;
 import org.entando.kubernetes.model.WebServerStatus;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerSpec;
+import org.entando.kubernetes.model.keycloakserver.StandardKeycloakImage;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -87,7 +88,8 @@ public class EntandoCustomResourceStatusTest {
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServer();
         keycloakServer.getMetadata().setGeneration(3L);
         keycloakServer
-                .setSpec(new EntandoKeycloakServerSpec(null, DbmsVendor.ORACLE, null, null, 1, true, "my-service-account",
+                .setSpec(new EntandoKeycloakServerSpec(null, StandardKeycloakImage.KEYCLOAK, null, DbmsVendor.ORACLE, null, null, 1, true,
+                        "my-service-account",
                         Collections.emptyList(), new EntandoResourceRequirements()));
         keycloakServer.getMetadata().setName("test-keycloak");
         keycloakServer.setStatus(new EntandoCustomResourceStatus());

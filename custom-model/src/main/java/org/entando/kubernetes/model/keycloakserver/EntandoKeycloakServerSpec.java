@@ -42,8 +42,10 @@ import org.entando.kubernetes.model.EntandoResourceRequirements;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntandoKeycloakServerSpec extends EntandoIngressingDeploymentSpec {
 
-    private String imageName;
+    private String customImage;
+    private StandardKeycloakImage standardImage;
     private boolean isDefault;
+    private String frontEndUrl;
 
     public EntandoKeycloakServerSpec() {
         super();
@@ -51,7 +53,9 @@ public class EntandoKeycloakServerSpec extends EntandoIngressingDeploymentSpec {
 
     @JsonCreator
     public EntandoKeycloakServerSpec(
-            @JsonProperty("imageName") String imageName,
+            @JsonProperty("customName") String customImage,
+            @JsonProperty("standardImage") StandardKeycloakImage standardImage,
+            @JsonProperty("frontEndUrl") String frontEndUrl,
             @JsonProperty("dbms") DbmsVendor dbms,
             @JsonProperty("ingressHostName") String ingressHostName,
             @JsonProperty("tlsSecretName") String tlsSecretName,
@@ -61,12 +65,22 @@ public class EntandoKeycloakServerSpec extends EntandoIngressingDeploymentSpec {
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements);
-        this.imageName = imageName;
+        this.customImage = customImage;
+        this.standardImage = standardImage;
+        this.frontEndUrl = frontEndUrl;
         this.isDefault = Boolean.TRUE.equals(isDefault);
     }
 
-    public Optional<String> getImageName() {
-        return Optional.ofNullable(imageName);
+    public Optional<String> getCustomImage() {
+        return Optional.ofNullable(customImage);
+    }
+
+    public Optional<String> getFrontEndUrl() {
+        return Optional.ofNullable(frontEndUrl);
+    }
+
+    public Optional<StandardKeycloakImage> getStandardImage() {
+        return Optional.ofNullable(standardImage);
     }
 
     public boolean isDefault() {

@@ -9,7 +9,7 @@ spec:
   additionalPrinterColumns:
     - name: Phase
       type: string
-      JSONPath: .entandoStatus.entandoDeploymentPhase
+      JSONPath: .status.entandoDeploymentPhase
     - name: Age
       type: date
       JSONPath: .metadata.creationTimestamp
@@ -31,6 +31,8 @@ spec:
     shortNames:
       - ekcs
   scope: Namespaced
+  subresources:
+    status: {}
   validation:
     openAPIV3Schema:
       type: object
@@ -54,7 +56,6 @@ spec:
             serviceAccountToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
-            parameters: {}
             environmentVariables:
               type: array
               items:
@@ -88,7 +89,21 @@ spec:
                   type: string
                 fileUploadLimit:
                   type: string
-            imageName:
+            customImage:
               type: string
-        entandoStatus: {}
+            standardImage:
+              type: string
+              pattern: '^(keycloak|redhat-sso)$'
+        status:
+          type: object
+          properties:
+            replicas:
+              type: integer
+            entandoDeploymentPhase:
+              type: string
+            serverStatuses:
+              type: object
+              properties:
+                asdf-asdf:
+
 
