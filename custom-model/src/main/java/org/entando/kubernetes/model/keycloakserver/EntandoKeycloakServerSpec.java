@@ -35,7 +35,7 @@ import org.entando.kubernetes.model.EntandoResourceRequirements;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
-@JsonDeserialize
+@JsonDeserialize()
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 @RegisterForReflection

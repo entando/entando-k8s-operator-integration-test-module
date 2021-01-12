@@ -19,8 +19,12 @@ package org.entando.kubernetes.model;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.entando.kubernetes.model.keycloakserver.DoneableEntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
@@ -62,6 +66,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
                 .build();
+        SampleWriter.writeSample(Paths.get("."),keycloakServer);
         keycloakServers().inNamespace(MY_NAMESPACE).createNew().withMetadata(keycloakServer.getMetadata())
                 .withSpec(keycloakServer.getSpec()).done();
         //When
