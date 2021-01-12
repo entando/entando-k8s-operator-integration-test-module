@@ -10,6 +10,27 @@ spec:
     - name: v1
       served: true
       storage: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Phase
+          type: string
+          jsonPath: .status.entandoDeploymentPhase
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+        - name: Host
+          type: string
+          jsonPath: .spec.ingressHostName
+        - name: Image
+          type: string
+          jsonPath: .spec.standardImage
+        - name: DBMS
+          type: string
+          jsonPath: .spec.dbms
+        - name: Replicas
+          type: integer
+          jsonPath: .spec.replicas
       schema:
         openAPIV3Schema:
           type: object
@@ -195,32 +216,9 @@ spec:
                 serverStatuses:
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
-
-
-  additionalPrinterColumns:
-    - name: Phase
-      type: string
-      JSONPath: .status.entandoDeploymentPhase
-    - name: Age
-      type: date
-      JSONPath: .metadata.creationTimestamp
-    - name: Host
-      type: string
-      JSONPath: .spec.ingressHostName
-    - name: Image
-      type: string
-      JSONPath: .spec.imageName
-    - name: DBMS
-      type: string
-      JSONPath: .spec.dbms
-    - name: Replicas
-      type: integer
-      JSONPath: .spec.replicas
   names:
     kind: EntandoKeycloakServer
     plural: entandokeycloakservers
     shortNames:
       - ekcs
   scope: Namespaced
-  subresources:
-    status: {}

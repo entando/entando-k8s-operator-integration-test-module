@@ -19,11 +19,8 @@ package org.entando.kubernetes.model;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.entando.kubernetes.model.keycloakserver.DoneableEntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
@@ -66,7 +63,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
                 .build();
-        SampleWriter.writeSample(Paths.get("."),keycloakServer);
+        SampleWriter.writeSample(Paths.get("."), keycloakServer);
         keycloakServers().inNamespace(MY_NAMESPACE).createNew().withMetadata(keycloakServer.getMetadata())
                 .withSpec(keycloakServer.getSpec()).done();
         //When
@@ -119,12 +116,14 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withDefault(true)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new WebServerStatus("some-other-qualifier"))
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
+                .withPhase(EntandoDeploymentPhase.REQUESTED)
                 .done();
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+        actual.getStatus().setEntandoDeploymentPhase(EntandoDeploymentPhase.STARTED);
+        keycloakServers().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getFrontEndUrl().get(), is(HTTP_MY_FRONTEND_URL));
