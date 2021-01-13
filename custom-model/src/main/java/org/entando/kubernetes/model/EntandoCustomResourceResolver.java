@@ -112,7 +112,6 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
             if (crd == null) {
                 crd = client.customResourceDefinitions().load(loadYamlFile()).get();
                 // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                crd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
                 client.customResourceDefinitions().create(crd);
             }
             return crd;
