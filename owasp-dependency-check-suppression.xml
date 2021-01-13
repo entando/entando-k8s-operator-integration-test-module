@@ -35,6 +35,21 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
+        A whole lot of false positives based on K8S's internals that have nothing to do with our CRDs
+      ]]></notes>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+        <cve>CVE-2020-8555</cve>
+        <cve>CVE-2019-11254</cve>
+        <cve>CVE-2019-1002100</cve>
+        <cve>CVE-2020-8552</cve>
+        <cve>CVE-2020-8563</cve>
+        <cve>CVE-2019-11248</cve>
+        <cve>CVE-2019-9946</cve>
+        <cve>CVE-2019-11250</cve>
+        <cve>CVE-2020-8557</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
         Not much we can do about this one except for wait for Keycloak 11.0.4. We can only update the client if the
         server is updated.
       ]]></notes>
