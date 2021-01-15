@@ -50,16 +50,20 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
-        Not much we can do about this one except for wait for Keycloak 11.0.4. We can only update the client if the
-        server is updated.
+        These are generally serverside vulnerabilities. The entando-k8s containers that use Keycloak run as
+        background processes that do not expose services.
       ]]></notes>
-        <gav regex="true">org\.keycloak:keycloak-.*:11\.0\.3</gav>
+        <gav regex="true">org\.keycloak:keycloak-.*:9\.0\.2</gav>
         <cve>CVE-2020-10776</cve>
         <cve>CVE-2020-1728</cve>
         <cve>CVE-2020-14366</cve>
         <cve>CVE-2020-14389</cve>
         <cve>CVE-2020-14302</cve>
         <cve>CVE-2020-10770</cve>
+        <cve>CVE-2020-1714</cve>
+        <cve>CVE-2020-1758</cve>
+        <cve>CVE-2020-10758</cve>
+        <cve>CVE-2020-1694</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
