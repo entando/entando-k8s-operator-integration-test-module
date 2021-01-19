@@ -116,7 +116,6 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withDefault(true)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
-                .withPhase(EntandoDeploymentPhase.REQUESTED)
                 .done();
         actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
         actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));

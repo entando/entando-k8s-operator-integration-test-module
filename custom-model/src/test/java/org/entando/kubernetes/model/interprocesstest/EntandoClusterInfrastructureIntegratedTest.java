@@ -39,18 +39,4 @@ public class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoC
         return client;
     }
 
-    @Test
-    public void multipleStatuses() {
-        super.testCreateEntandoClusterInfrastructure();
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit()
-                .withPhase(EntandoDeploymentPhase.STARTED).done();
-        DbServerStatus dbStatus = new DbServerStatus("db-qualifier");
-        dbStatus.setPodStatus(new PodStatus());
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit().withStatus(dbStatus).done();
-        WebServerStatus status1 = new WebServerStatus("server");
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit().withStatus(status1).done();
-        status1.setServiceStatus(new ServiceStatus(new LoadBalancerStatus()));
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE).edit().withStatus(status1).done();
-    }
-
 }

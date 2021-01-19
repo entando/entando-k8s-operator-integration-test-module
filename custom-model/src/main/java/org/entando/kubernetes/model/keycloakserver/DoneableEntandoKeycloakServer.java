@@ -18,10 +18,8 @@ package org.entando.kubernetes.model.keycloakserver;
 
 import io.fabric8.kubernetes.api.builder.Function;
 import java.util.Optional;
-import org.entando.kubernetes.model.AbstractServerStatus;
 import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.EntandoDeploymentPhase;
 
 public class DoneableEntandoKeycloakServer extends EntandoKeycloakServerFluent<DoneableEntandoKeycloakServer> implements
         DoneableEntandoCustomResource<DoneableEntandoKeycloakServer, EntandoKeycloakServer> {
@@ -38,18 +36,6 @@ public class DoneableEntandoKeycloakServer extends EntandoKeycloakServerFluent<D
         super(resource.getSpec(), resource.getMetadata());
         this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
         this.function = function;
-    }
-
-    @Override
-    public DoneableEntandoKeycloakServer withStatus(AbstractServerStatus status) {
-        this.status.putServerStatus(status);
-        return this;
-    }
-
-    @Override
-    public DoneableEntandoKeycloakServer withPhase(EntandoDeploymentPhase phase) {
-        status.updateDeploymentPhase(phase, metadata.getGeneration());
-        return this;
     }
 
     @Override

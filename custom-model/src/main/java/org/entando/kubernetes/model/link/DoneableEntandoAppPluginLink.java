@@ -41,18 +41,6 @@ public class DoneableEntandoAppPluginLink extends EntandoAppPluginLinkFluent<Don
     }
 
     @Override
-    public DoneableEntandoAppPluginLink withStatus(AbstractServerStatus status) {
-        this.status.putServerStatus(status);
-        return this;
-    }
-
-    @Override
-    public DoneableEntandoAppPluginLink withPhase(EntandoDeploymentPhase phase) {
-        status.updateDeploymentPhase(phase, metadata.getGeneration());
-        return this;
-    }
-
-    @Override
     public EntandoAppPluginLink done() {
         return function.apply(new EntandoAppPluginLink(metadata.build(), spec.build(), status));
     }

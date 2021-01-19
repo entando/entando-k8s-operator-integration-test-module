@@ -91,9 +91,6 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .withEntandoApp(MY_APP_NAMESPACE, MY_APP)
                 .withEntandoPlugin(MY_PLUGIN_NAMESPACE, MY_PLUGIN)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
         assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));

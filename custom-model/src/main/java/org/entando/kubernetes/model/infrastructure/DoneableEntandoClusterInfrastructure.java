@@ -43,18 +43,6 @@ public class DoneableEntandoClusterInfrastructure extends
     }
 
     @Override
-    public DoneableEntandoClusterInfrastructure withStatus(AbstractServerStatus status) {
-        this.status.putServerStatus(status);
-        return this;
-    }
-
-    @Override
-    public DoneableEntandoClusterInfrastructure withPhase(EntandoDeploymentPhase phase) {
-        status.updateDeploymentPhase(phase, metadata.getGeneration());
-        return this;
-    }
-
-    @Override
     public EntandoClusterInfrastructure done() {
         EntandoClusterInfrastructure entandoClusterInfrastructure = new EntandoClusterInfrastructure(metadata.build(), spec.build(),
                 status);

@@ -226,9 +226,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withServiceAccountToUse(MY_SERVICE_ACCOUNT)
                 .withEnvironmentVariables(Collections.singletonList(new EnvVar(PARAM_NAME, PARAM_VALUE, null)))
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));

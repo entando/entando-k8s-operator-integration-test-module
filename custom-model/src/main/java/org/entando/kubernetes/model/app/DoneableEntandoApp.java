@@ -41,18 +41,6 @@ public class DoneableEntandoApp extends EntandoAppFluent<DoneableEntandoApp> imp
     }
 
     @Override
-    public DoneableEntandoApp withStatus(AbstractServerStatus serverStatus) {
-        this.status.putServerStatus(serverStatus);
-        return this;
-    }
-
-    @Override
-    public DoneableEntandoApp withPhase(EntandoDeploymentPhase phase) {
-        status.updateDeploymentPhase(phase, metadata.getGeneration());
-        return this;
-    }
-
-    @Override
     public EntandoApp done() {
         return function.apply(new EntandoApp(metadata.build(), spec.build(), status));
     }

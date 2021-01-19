@@ -179,9 +179,6 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .endKeycloakToUse()
                 .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));

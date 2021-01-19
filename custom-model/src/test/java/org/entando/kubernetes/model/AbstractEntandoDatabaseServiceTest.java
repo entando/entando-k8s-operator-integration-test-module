@@ -118,10 +118,13 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withCreateDeployment(true)
                 .withDbms(DbmsVendor.ORACLE)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, actual.getMetadata().getGeneration());
+
         //Then
         assertThat(actual.getSpec().getDatabaseName().get(), is(MY_DB));
         assertThat(actual.getSpec().getHost().get(), is(MYHOST_COM));

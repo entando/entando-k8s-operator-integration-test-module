@@ -140,7 +140,6 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
                         .withVersion(MY_VERSION)
                         .build()))
                 .endSpec()
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
         assertThat(actual.getSpec().getDetails().getName(), is(MY_BUNDLE));

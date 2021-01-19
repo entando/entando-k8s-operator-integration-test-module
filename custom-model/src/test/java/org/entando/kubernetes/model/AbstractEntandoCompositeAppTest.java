@@ -141,8 +141,6 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                                 .build()
                 )
                 .endSpec()
-                .withStatus(new WebServerStatus("my-keycloak"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
         assertThat(actual.getMetadata().getName(), is(MY_COMPOSITE_APP));

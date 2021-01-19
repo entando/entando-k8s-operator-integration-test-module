@@ -260,7 +260,7 @@ public class DummyBean {
         //Test statuses
         DbServerStatus db = new DbServerStatus("db");
         db.setEntandoControllerFailure(new EntandoControllerFailure("app", MY_APP, "Failed", "Failedmiserably"));
-        entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit().withStatus(db).withPhase(EntandoDeploymentPhase.STARTED).done();
+        entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit().done();
         actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).fromServer().get();
         DbServerStatus db1 = actual.getStatus().forDbQualifiedBy("db").get();
         assertThat(db1.getEntandoControllerFailure().getMessage(), "Failed");
