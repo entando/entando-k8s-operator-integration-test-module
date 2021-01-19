@@ -48,7 +48,7 @@ public class DoneableEntandoApp extends EntandoAppFluent<DoneableEntandoApp> imp
 
     @Override
     public DoneableEntandoApp withPhase(EntandoDeploymentPhase phase) {
-        status.setEntandoDeploymentPhase(phase);
+        status.updateDeploymentPhase(phase, metadata.getGeneration());
         return this;
     }
 

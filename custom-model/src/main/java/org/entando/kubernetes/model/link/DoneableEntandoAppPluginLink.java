@@ -48,7 +48,7 @@ public class DoneableEntandoAppPluginLink extends EntandoAppPluginLinkFluent<Don
 
     @Override
     public DoneableEntandoAppPluginLink withPhase(EntandoDeploymentPhase phase) {
-        status.setEntandoDeploymentPhase(phase);
+        status.updateDeploymentPhase(phase, metadata.getGeneration());
         return this;
     }
 

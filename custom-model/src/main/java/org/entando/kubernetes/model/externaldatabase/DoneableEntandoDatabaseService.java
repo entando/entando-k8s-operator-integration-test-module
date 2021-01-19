@@ -56,7 +56,7 @@ public class DoneableEntandoDatabaseService extends EntandoDatabaseServiceFluent
 
     @Override
     public DoneableEntandoDatabaseService withPhase(EntandoDeploymentPhase phase) {
-        status.setEntandoDeploymentPhase(phase);
+        status.updateDeploymentPhase(phase, metadata.getGeneration());
         return this;
     }
 

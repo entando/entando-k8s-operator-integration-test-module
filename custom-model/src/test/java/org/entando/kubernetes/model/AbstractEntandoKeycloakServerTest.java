@@ -122,7 +122,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
         actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
         actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
         actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
-        actual.getStatus().setEntandoDeploymentPhase(EntandoDeploymentPhase.STARTED);
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, actual.getMetadata().getGeneration());
         keycloakServers().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));

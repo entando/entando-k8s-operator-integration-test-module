@@ -40,6 +40,8 @@ public class EntandoCustomResourceStatus implements Serializable {
 
     private Map<String, AbstractServerStatus> serverStatuses = new ConcurrentHashMap<>();
 
+    private Long observedGeneration;
+
     private EntandoDeploymentPhase entandoDeploymentPhase;
 
     public EntandoCustomResourceStatus() {
@@ -50,8 +52,9 @@ public class EntandoCustomResourceStatus implements Serializable {
         return entandoDeploymentPhase;
     }
 
-    public void setEntandoDeploymentPhase(EntandoDeploymentPhase entandoDeploymentPhase) {
+    public void updateDeploymentPhase(EntandoDeploymentPhase entandoDeploymentPhase, Long observedGeneration) {
         this.entandoDeploymentPhase = entandoDeploymentPhase;
+        this.observedGeneration = observedGeneration;
     }
 
     public boolean hasFailed() {
@@ -82,6 +85,10 @@ public class EntandoCustomResourceStatus implements Serializable {
 
     public EntandoDeploymentPhase calculateFinalPhase() {
         return hasFailed() ? EntandoDeploymentPhase.FAILED : EntandoDeploymentPhase.SUCCESSFUL;
+    }
+
+    public Long getObservedGeneration() {
+        return observedGeneration;
     }
 
 }

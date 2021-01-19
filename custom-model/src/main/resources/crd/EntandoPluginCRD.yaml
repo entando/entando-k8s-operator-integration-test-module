@@ -35,7 +35,6 @@ spec:
   scope: Namespaced
   validation:
     openAPIV3Schema:
-      type: object
       properties:
         spec:
           type: object
@@ -130,4 +129,6 @@ spec:
                     type: string
                   role:
                     type: string
-        entandoStatus: {}
+        status: {}
+  subresources:
+    status: {}

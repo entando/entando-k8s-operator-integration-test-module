@@ -56,4 +56,6 @@ spec:
             jdbcParameters: {}
             createDeployment:
               type: boolean
-        entandoStatus: {}
+        status: {}
+  subresources:
+    status: {}

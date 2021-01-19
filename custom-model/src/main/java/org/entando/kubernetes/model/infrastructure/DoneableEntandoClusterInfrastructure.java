@@ -50,7 +50,7 @@ public class DoneableEntandoClusterInfrastructure extends
 
     @Override
     public DoneableEntandoClusterInfrastructure withPhase(EntandoDeploymentPhase phase) {
-        status.setEntandoDeploymentPhase(phase);
+        status.updateDeploymentPhase(phase, metadata.getGeneration());
         return this;
     }
 

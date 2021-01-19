@@ -27,7 +27,6 @@ spec:
   scope: Namespaced
   validation:
     openAPIV3Schema:
-      type: object
       properties:
         spec:
           type: object
@@ -85,5 +84,8 @@ spec:
             keycloakSecretToUse:
               type: string
               pattern: '^([a-z])+([a-z0-9-\.])*[a-z0-9]$'
-        entandoStatus: {}
+        status: {}
+  subresources:
+    status: {}
+
 

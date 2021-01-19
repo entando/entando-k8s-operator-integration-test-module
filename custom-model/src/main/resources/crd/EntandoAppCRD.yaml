@@ -28,10 +28,8 @@ spec:
     shortNames:
       - eapps
   scope: Namespaced
-  preserveUnknownFields: true
   validation:
     openAPIV3Schema:
-      type: object
       properties:
         spec:
           type: object
@@ -112,5 +110,7 @@ spec:
                 backupResponsibility:
                   type: string
                   pattern: '^(backup|restore)$'
-        entandoStatus: {}
+        status: {}
+  subresources:
+    status: {}
 

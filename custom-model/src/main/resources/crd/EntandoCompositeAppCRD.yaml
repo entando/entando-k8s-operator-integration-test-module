@@ -32,4 +32,7 @@ spec:
                 properties:
                   spec: {}
                   metadata: {}
-        entandoStatus: {}
+        status: {}
+  subresources:
+    status: {}
+

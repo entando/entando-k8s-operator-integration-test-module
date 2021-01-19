@@ -41,4 +41,6 @@ spec:
               type: string
             entandoPluginNamespace:
               type: string
-        entandoStatus: {}
+        status: {}
+  subresources:
+    status: {}

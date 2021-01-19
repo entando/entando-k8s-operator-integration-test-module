@@ -48,7 +48,7 @@ public class DoneableEntandoKeycloakServer extends EntandoKeycloakServerFluent<D
 
     @Override
     public DoneableEntandoKeycloakServer withPhase(EntandoDeploymentPhase phase) {
-        status.setEntandoDeploymentPhase(phase);
+        status.updateDeploymentPhase(phase, metadata.getGeneration());
         return this;
     }
 
