@@ -63,10 +63,10 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         this.components = new ArrayList<>();
     }
 
-    private static ConcurrentHashMap<Class<? extends EntandoBaseCustomResource<? extends Serializable>>, Class<?
-            extends EntandoBaseFluentImpl<?>>> createBuilderMap() {
-        ConcurrentHashMap<Class<? extends EntandoBaseCustomResource<? extends Serializable>>, Class<? extends EntandoBaseFluentImpl<?>>> result =
-                new ConcurrentHashMap<>();
+    private static Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
+            Class<? extends EntandoBaseFluentImpl<?>>> createBuilderMap() {
+        Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
+                Class<? extends EntandoBaseFluentImpl<?>>> result = new ConcurrentHashMap<>();
         result.put(EntandoKeycloakServer.class, EntandoKeycloakServerBuilder.class);
         result.put(EntandoClusterInfrastructure.class, EntandoClusterInfrastructureBuilder.class);
         result.put(EntandoApp.class, EntandoAppBuilder.class);
