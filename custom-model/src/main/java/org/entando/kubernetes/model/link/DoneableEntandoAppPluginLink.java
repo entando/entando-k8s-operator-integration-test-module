@@ -18,13 +18,11 @@ package org.entando.kubernetes.model.link;
 
 import io.fabric8.kubernetes.api.builder.Function;
 import java.util.Optional;
-import org.entando.kubernetes.model.AbstractServerStatus;
 import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.EntandoDeploymentPhase;
 
 public class DoneableEntandoAppPluginLink extends EntandoAppPluginLinkFluent<DoneableEntandoAppPluginLink> implements
-        DoneableEntandoCustomResource<DoneableEntandoAppPluginLink, EntandoAppPluginLink> {
+        DoneableEntandoCustomResource<EntandoAppPluginLink, DoneableEntandoAppPluginLink> {
 
     private final EntandoCustomResourceStatus status;
     private final Function<EntandoAppPluginLink, EntandoAppPluginLink> function;

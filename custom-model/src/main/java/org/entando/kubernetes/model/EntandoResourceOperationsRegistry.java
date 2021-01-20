@@ -66,7 +66,7 @@ public class EntandoResourceOperationsRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends EntandoCustomResource, D extends DoneableEntandoCustomResource<D, T>> CustomResourceOperationsImpl<T,
+    public <T extends EntandoCustomResource, D extends DoneableEntandoCustomResource<T, D>> CustomResourceOperationsImpl<T,
             CustomResourceList<T>, D> getOperations(Class<T> c) {
         return this.customResourceOperations.computeIfAbsent(c, aClass -> OPERATION_SUPPLIERS.get(aClass).get(client));
     }

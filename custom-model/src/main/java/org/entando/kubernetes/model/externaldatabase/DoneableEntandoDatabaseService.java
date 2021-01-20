@@ -24,7 +24,7 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 
 public class DoneableEntandoDatabaseService extends EntandoDatabaseServiceFluent<DoneableEntandoDatabaseService> implements
         Doneable<EntandoDatabaseService>,
-        DoneableEntandoCustomResource<DoneableEntandoDatabaseService, EntandoDatabaseService> {
+        DoneableEntandoCustomResource<EntandoDatabaseService, DoneableEntandoDatabaseService> {
 
     private final Function<EntandoDatabaseService, EntandoDatabaseService> function;
     private final EntandoCustomResourceStatus status;

@@ -16,7 +16,6 @@
 
 package org.entando.kubernetes.model.app;
 
-import java.util.HashMap;
 import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.gitspec.GitSpec;

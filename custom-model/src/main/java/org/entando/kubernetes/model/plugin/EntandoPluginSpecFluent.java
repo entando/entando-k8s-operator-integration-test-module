@@ -17,7 +17,6 @@
 package org.entando.kubernetes.model.plugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
 

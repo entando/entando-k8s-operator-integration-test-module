@@ -18,6 +18,7 @@ package org.entando.kubernetes.model.compositeapp;
 
 import io.fabric8.kubernetes.api.builder.Builder;
 import io.fabric8.kubernetes.api.builder.Nested;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
-import org.entando.kubernetes.model.EntandoBaseFluent;
+import org.entando.kubernetes.model.EntandoBaseFluentImpl;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.app.EntandoAppFluent;
@@ -48,10 +49,11 @@ import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
 import org.entando.kubernetes.model.plugin.EntandoPluginFluent;
 
-public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAppSpecFluent> {
+public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAppSpecFluent<A>> {
 
-    private static final Map<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> BUILDERS = createBuilderMap();
-    protected List<EntandoBaseFluent<?>> components;
+    private static final Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
+            Class<? extends EntandoBaseFluentImpl<?>>> BUILDERS = createBuilderMap();
+    protected List<EntandoBaseFluentImpl<?>> components;
 
     protected EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
         this.components = createComponentBuilders(spec.getComponents());
@@ -61,8 +63,9 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         this.components = new ArrayList<>();
     }
 
-    private static ConcurrentHashMap<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> createBuilderMap() {
-        ConcurrentHashMap<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> result =
+    private static ConcurrentHashMap<Class<? extends EntandoBaseCustomResource<? extends Serializable>>, Class<?
+            extends EntandoBaseFluentImpl<?>>> createBuilderMap() {
+        ConcurrentHashMap<Class<? extends EntandoBaseCustomResource<? extends Serializable>>, Class<? extends EntandoBaseFluentImpl<?>>> result =
                 new ConcurrentHashMap<>();
         result.put(EntandoKeycloakServer.class, EntandoKeycloakServerBuilder.class);
         result.put(EntandoClusterInfrastructure.class, EntandoClusterInfrastructureBuilder.class);
@@ -75,22 +78,22 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         return result;
     }
 
-    public A withComponents(List<EntandoBaseCustomResource> components) {
+    public A withComponents(List<EntandoBaseCustomResource<? extends Serializable>> components) {
         this.components = createComponentBuilders(components);
         return thisAsA();
     }
 
-    public A withComponents(EntandoBaseCustomResource... components) {
+    @SafeVarargs
+    public final A withComponents(EntandoBaseCustomResource<? extends Serializable>... components) {
         return withComponents(Arrays.asList(components));
     }
 
-    private List<EntandoBaseFluent<?>> createComponentBuilders(List<EntandoBaseCustomResource> components) {
-        return new ArrayList<>(components.stream()
-                .map(this::newBuilderFrom)
-                .collect(Collectors.toList()));
+    private List<EntandoBaseFluentImpl<?>> createComponentBuilders(List<EntandoBaseCustomResource<? extends Serializable>> components) {
+        return components.stream()
+                .map(this::newBuilderFrom).collect(Collectors.toList());
     }
 
-    private EntandoBaseFluent<?> newBuilderFrom(EntandoBaseCustomResource r) {
+    private EntandoBaseFluentImpl<?> newBuilderFrom(EntandoBaseCustomResource<? extends Serializable> r) {
         try {
             return BUILDERS.get(r.getClass()).getConstructor(r.getClass()).newInstance(r);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -107,7 +110,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         return new EntandoCompositeAppSpec(this.components.stream()
                 .map(Builder.class::cast)
                 .map(Builder::build)
-                .map(EntandoBaseCustomResource.class::cast)
+                .map(o -> (EntandoBaseCustomResource<? extends Serializable>) o)
                 .collect(Collectors.toList()));
     }
 

@@ -19,9 +19,10 @@ package org.entando.kubernetes.model.compositeapp;
 import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluent;
+import org.entando.kubernetes.model.EntandoBaseFluentImpl;
 
-public abstract class EntandoCustomResourceReferenceFluent<N extends EntandoCustomResourceReferenceFluent<N>> extends EntandoBaseFluent<N> {
+public abstract class EntandoCustomResourceReferenceFluent<N extends EntandoCustomResourceReferenceFluent<N>> extends
+        EntandoBaseFluentImpl<N> {
 
     protected EntandoCustomResourceReferenceSpecBuilder spec;
 

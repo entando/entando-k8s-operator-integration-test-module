@@ -78,7 +78,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-kubernetes-client</artifactId>
         </dependency>
-
         <!-- Test-scoped dependencies. -->
         <dependency>
             <groupId>org.hamcrest</groupId>

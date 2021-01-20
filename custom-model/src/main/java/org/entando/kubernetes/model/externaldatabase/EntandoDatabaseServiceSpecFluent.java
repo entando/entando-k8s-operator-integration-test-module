@@ -18,7 +18,6 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import static org.entando.kubernetes.model.Coalescence.coalesce;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;

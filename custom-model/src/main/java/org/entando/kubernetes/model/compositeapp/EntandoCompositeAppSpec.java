@@ -38,17 +38,17 @@ import org.entando.kubernetes.model.EntandoBaseCustomResource;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntandoCompositeAppSpec implements Serializable {
 
-    private List<EntandoBaseCustomResource> components;
+    private List<EntandoBaseCustomResource<? extends Serializable>> components;
 
     public EntandoCompositeAppSpec() {
         super();
     }
 
-    public EntandoCompositeAppSpec(List<EntandoBaseCustomResource> components) {
+    public EntandoCompositeAppSpec(List<EntandoBaseCustomResource<? extends Serializable>> components) {
         this.components = components;
     }
 
-    public List<EntandoBaseCustomResource> getComponents() {
+    public List<EntandoBaseCustomResource<? extends Serializable>> getComponents() {
         return this.components == null ? Collections.emptyList() : this.components;
     }
 }

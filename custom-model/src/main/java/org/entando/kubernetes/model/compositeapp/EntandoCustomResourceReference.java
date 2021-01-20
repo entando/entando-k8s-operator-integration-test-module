@@ -38,7 +38,7 @@ import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 public class EntandoCustomResourceReference extends EntandoBaseCustomResource<EntandoCustomResourceReferenceSpec> {
 
     public EntandoCustomResourceReference() {
-        this(new ObjectMeta(),null);
+        this(new ObjectMeta(), null);
     }
 
     public EntandoCustomResourceReference(ObjectMeta objectMeta, EntandoCustomResourceReferenceSpec spec,

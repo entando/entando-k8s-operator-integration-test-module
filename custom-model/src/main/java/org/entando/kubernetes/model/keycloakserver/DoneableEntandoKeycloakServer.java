@@ -22,7 +22,7 @@ import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 
 public class DoneableEntandoKeycloakServer extends EntandoKeycloakServerFluent<DoneableEntandoKeycloakServer> implements
-        DoneableEntandoCustomResource<DoneableEntandoKeycloakServer, EntandoKeycloakServer> {
+        DoneableEntandoCustomResource<EntandoKeycloakServer, DoneableEntandoKeycloakServer> {
 
     private final Function<EntandoKeycloakServer, EntandoKeycloakServer> function;
     private final EntandoCustomResourceStatus status;

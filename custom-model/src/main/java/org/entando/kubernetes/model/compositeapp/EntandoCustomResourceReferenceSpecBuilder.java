@@ -27,5 +27,4 @@ public class EntandoCustomResourceReferenceSpecBuilder extends
         super(spec);
     }
 
-
 }

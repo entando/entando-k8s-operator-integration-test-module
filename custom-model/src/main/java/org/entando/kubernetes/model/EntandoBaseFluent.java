@@ -16,34 +16,14 @@
 
 package org.entando.kubernetes.model;
 
-import io.fabric8.kubernetes.api.builder.BaseFluent;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 
-public abstract class EntandoBaseFluent<F extends EntandoBaseFluent<F>> extends BaseFluent<F> {
+public interface EntandoBaseFluent<F extends EntandoBaseFluent<F>> {
 
-    protected ObjectMetaBuilder metadata;
+    MetadataNestedImpl<F> editMetadata();
 
-    protected EntandoBaseFluent(ObjectMetaBuilder metadata) {
-        this.metadata = metadata;
-    }
+    MetadataNestedImpl<F> withNewMetadata();
 
-    public final MetadataNestedImpl<F> editMetadata() {
-        return new MetadataNestedImpl<>(thisAsF(), this.metadata.build());
-    }
-
-    public final MetadataNestedImpl<F> withNewMetadata() {
-        return new MetadataNestedImpl<>(thisAsF());
-    }
-
-    public final F withMetadata(ObjectMeta metadata) {
-        this.metadata = new ObjectMetaBuilder(metadata);
-        return thisAsF();
-    }
-
-    @SuppressWarnings("unchecked")
-    private F thisAsF() {
-        return (F) this;
-    }
+    F withMetadata(ObjectMeta metadata);
 
 }

@@ -144,7 +144,7 @@ public class DummyBean {
 
     private <R extends EntandoCustomResource,
             L extends CustomResourceList<R>,
-            D extends DoneableEntandoCustomResource<D, R>> void deleteAll(
+            D extends DoneableEntandoCustomResource<R, D>> void deleteAll(
             CustomResourceOperationsImpl<R, L, D> op) {
         try {
             op.inNamespace(MY_NAMESPACE).delete();

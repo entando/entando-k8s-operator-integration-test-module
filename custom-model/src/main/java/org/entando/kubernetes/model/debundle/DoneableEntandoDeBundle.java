@@ -22,7 +22,7 @@ import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
 
 public class DoneableEntandoDeBundle extends EntandoDeBundleFluent<DoneableEntandoDeBundle> implements
-        DoneableEntandoCustomResource<DoneableEntandoDeBundle, EntandoDeBundle> {
+        DoneableEntandoCustomResource<EntandoDeBundle, DoneableEntandoDeBundle> {
 
     private final EntandoCustomResourceStatus status;
     private final Function<EntandoDeBundle, EntandoDeBundle> function;
