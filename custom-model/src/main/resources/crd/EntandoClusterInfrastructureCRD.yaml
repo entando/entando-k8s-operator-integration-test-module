@@ -15,22 +15,22 @@ spec:
       additionalPrinterColumns:
         - name: Phase
           type: string
-          jsonPath: .status.entandoDeploymentPhase
+          JSONPath: .status.entandoDeploymentPhase
         - name: Observed Generation
-          type: long
-          jsonPath: .status.observedGeneration
+          type: number
+          JSONPath: .status.observedGeneration
         - name: Age
           type: date
-          jsonPath: .metadata.creationTimestamp
+          JSONPath: .metadata.creationTimestamp
         - name: Host
           type: string
-          jsonPath: .spec.ingressHostName
+          JSONPath: .spec.ingressHostName
         - name: Replicas
           type: integer
-          jsonPath: .spec.replicas
+          JSONPath: .spec.replicas
         - name: Keycloak
           type: string
-          jsonPath: .spec.keycloakToUse.name
+          JSONPath: .spec.keycloakToUse.name
       schema:
         openAPIV3Schema:
           type: object
@@ -174,7 +174,7 @@ spec:
                     Set this property to 'true' if this Keycloak instance is to be used by the deployments of other
                     Entando custom resource when they do not specify it themselves.
                   type: boolean
-                keycloakTouse:
+                keycloakToUse:
                   type: object
                   description: >
                     The properties of this object configure which Keycloak server this Entando K8S Service will be using,
@@ -207,7 +207,7 @@ spec:
               type: object
               properties:
                 observedGeneration:
-                  type: long
+                  type: number
                 entandoDeploymentPhase:
                   type: string
                 serverStatuses:

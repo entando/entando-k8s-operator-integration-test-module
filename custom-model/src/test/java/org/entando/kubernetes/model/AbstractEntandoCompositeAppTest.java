@@ -118,6 +118,7 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 .endEntandoDatabaseService()
                 .endSpec()
                 .build();
+
         //When
         //We are not using the mock server here because of a known bug
         entandoCompositeApps().inNamespace(MY_NAMESPACE).create(entandoCompositeApp);
@@ -142,6 +143,12 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 )
                 .endSpec()
                 .done();
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
+        actual = entandoCompositeApps().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
         assertThat(actual.getMetadata().getName(), is(MY_COMPOSITE_APP));
         assertThat(actual.getSpec().getComponents().get(0).getMetadata().getName(), is(MY_KEYCLOAK));
@@ -156,6 +163,12 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
         assertThat(ref.getSpec().getTargetName(), is(MY_PLUGIN));
         assertThat(ref.getSpec().getTargetNamespace().get(), is(MY_NAMESPACE));
         assertThat(actual.getStatus(), is(notNullValue()));
+        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat(actual.getStatus().getObservedGeneration(), is(5L));
+        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
+
     }
 
     protected CustomResourceOperationsImpl<EntandoCompositeApp, CustomResourceList<EntandoCompositeApp>,

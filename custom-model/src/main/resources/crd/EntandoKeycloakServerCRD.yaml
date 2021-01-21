@@ -15,25 +15,25 @@ spec:
       additionalPrinterColumns:
         - name: Phase
           type: string
-          jsonPath: .status.entandoDeploymentPhase
+          JSONPath: .status.entandoDeploymentPhase
         - name: Observed Generation
-          type: long
-          jsonPath: .status.observedGeneration
+          type: number
+          JSONPath: .status.observedGeneration
         - name: Age
           type: date
-          jsonPath: .metadata.creationTimestamp
+          JSONPath: .metadata.creationTimestamp
         - name: Host
           type: string
-          jsonPath: .spec.ingressHostName
+          JSONPath: .spec.ingressHostName
         - name: Image
           type: string
-          jsonPath: .spec.standardImage
+          JSONPath: .spec.standardImage
         - name: DBMS
           type: string
-          jsonPath: .spec.dbms
+          JSONPath: .spec.dbms
         - name: Replicas
           type: integer
-          jsonPath: .spec.replicas
+          JSONPath: .spec.replicas
       schema:
         openAPIV3Schema:
           type: object
@@ -212,7 +212,7 @@ spec:
               type: object
               properties:
                 observedGeneration:
-                  type: long
+                  type: number
                 entandoDeploymentPhase:
                   type: string
                 serverStatuses:

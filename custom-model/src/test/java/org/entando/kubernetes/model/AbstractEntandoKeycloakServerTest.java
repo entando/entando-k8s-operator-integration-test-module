@@ -63,7 +63,6 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
                 .build();
-        SampleWriter.writeSample(Paths.get("."), keycloakServer);
         keycloakServers().inNamespace(MY_NAMESPACE).createNew().withMetadata(keycloakServer.getMetadata())
                 .withSpec(keycloakServer.getSpec()).done();
         //When
@@ -121,8 +120,8 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
         actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
         actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
         actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
-        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, actual.getMetadata().getGeneration());
-        keycloakServers().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
+        actual = keycloakServers().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getFrontEndUrl().get(), is(HTTP_MY_FRONTEND_URL));
@@ -138,6 +137,8 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
+        assertThat(actual.getStatus().getObservedGeneration(), is(5L));
     }
 
     protected final DoneableEntandoKeycloakServer editEntandoKeycloakServer(EntandoKeycloakServer keycloakServer) {

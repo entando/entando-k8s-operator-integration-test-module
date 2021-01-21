@@ -180,6 +180,13 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .done();
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
+        actual = entandoPlugins().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
+
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
@@ -202,6 +209,11 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
+        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat(actual.getStatus().getObservedGeneration(), is(5L));
+        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
     }
 
     protected CustomResourceOperationsImpl<EntandoPlugin, CustomResourceList<EntandoPlugin>, DoneableEntandoPlugin> entandoPlugins() {

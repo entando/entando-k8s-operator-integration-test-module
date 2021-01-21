@@ -131,7 +131,8 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
         actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
         actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
-        entandoInfrastructure().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
+        actual = entandoInfrastructure().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
         assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
         assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
@@ -147,6 +148,8 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat(actual.getStatus().getObservedGeneration(), is(5L));
+        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
     }
 
     protected CustomResourceOperationsImpl<EntandoClusterInfrastructure, CustomResourceList<EntandoClusterInfrastructure>,

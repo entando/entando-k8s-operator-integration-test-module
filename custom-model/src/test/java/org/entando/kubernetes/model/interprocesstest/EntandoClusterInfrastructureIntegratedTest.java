@@ -82,7 +82,7 @@ public class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoC
         EntandoClusterInfrastructure eci5 = entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
                 .edit()
                 .editSpec()
-                .withServiceAccountToUse("12341234")
+                .withServiceAccountToUse("asdf-asdf")
                 .endSpec()
                 .done();
         assertThat(eci5.getMetadata().getGeneration(), is(3L));
