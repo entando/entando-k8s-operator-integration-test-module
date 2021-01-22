@@ -26,17 +26,17 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import org.entando.kubernetes.controller.AbstractDbAwareController;
 import org.entando.kubernetes.controller.DeployCommand;
+import org.entando.kubernetes.controller.EntandoOperatorConfig;
 import org.entando.kubernetes.controller.SimpleKeycloakClient;
 import org.entando.kubernetes.controller.common.CreateExternalServiceCommand;
 import org.entando.kubernetes.controller.database.DatabaseDeployable;
 import org.entando.kubernetes.controller.database.DatabaseDeploymentResult;
 import org.entando.kubernetes.controller.database.DbmsDockerVendorStrategy;
-import org.entando.kubernetes.controller.database.ExternalDatabaseDeployment;
 import org.entando.kubernetes.controller.k8sclient.SimpleK8SClient;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceSpec;
 
-public class EntandoDatabaseServiceController extends AbstractDbAwareController<EntandoDatabaseService> {
+public class EntandoDatabaseServiceController extends AbstractDbAwareController<EntandoDatabaseServiceSpec, EntandoDatabaseService> {
 
     @Inject
     public EntandoDatabaseServiceController(KubernetesClient kubernetesClient) {
@@ -59,8 +59,9 @@ public class EntandoDatabaseServiceController extends AbstractDbAwareController<
     protected void synchronizeDeploymentState(EntandoDatabaseService newEntandoDatabaseService) {
         if (newEntandoDatabaseService.getSpec().getCreateDeployment().orElse(false)) {
             DatabaseDeployable<EntandoDatabaseServiceSpec> deployable = new DatabaseDeployable<EntandoDatabaseServiceSpec>(
-                    DbmsDockerVendorStrategy.forVendor(newEntandoDatabaseService.getSpec().getDbms()), newEntandoDatabaseService,
-                    ExternalDatabaseDeployment.NAME_QUALIFIER, newEntandoDatabaseService.getSpec().getPort().orElse(null)) {
+                    DbmsDockerVendorStrategy
+                            .forVendor(newEntandoDatabaseService.getSpec().getDbms(), EntandoOperatorConfig.getComplianceMode()),
+                    newEntandoDatabaseService, newEntandoDatabaseService.getSpec().getPort().orElse(null)) {
                 @Override
                 protected String getDatabaseAdminSecretName() {
                     return getCustomResource().getSpec().getSecretName().orElse(super.getDatabaseAdminSecretName());
@@ -74,7 +75,6 @@ public class EntandoDatabaseServiceController extends AbstractDbAwareController<
                     } else {
                         return super.buildSecrets();
                     }
-
                 }
 
                 @Override
