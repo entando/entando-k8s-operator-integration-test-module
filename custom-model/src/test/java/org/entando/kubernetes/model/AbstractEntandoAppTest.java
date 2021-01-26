@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.is;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import java.sql.Timestamp;
 import java.util.Collections;
 import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
