@@ -45,7 +45,7 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
     public static final String MY_PLUGIN = "my-plugin";
     public static final String MY_APP_PLUGIN_LINK = "my-app-plugin-link";
     public static final String MY_DATABASE_SERVICE = "my-database-service";
-    private static final String MY_NAMESPACE = "my-namespace";
+    private static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     public static final String MY_PLUGIN_REF = "my-plugin-ref";
     private EntandoResourceOperationsRegistry registry;
 
