@@ -266,7 +266,7 @@ spec:
                         EntandoApp and use it.
                       type: string
                 standardServerImage:
-                  descripton: >
+                  description: >
                     Specifies the standard server base image that this EntandoApp has been packaged in. Valid values
                     are wildfly (https://github.com/entando/entando-docker-base-images/tree/master/entando-wildfly17-base)
                     or eap (https://github.com/entando/entando-docker-base-images/tree/master/entando-eap72-clustered-base).
