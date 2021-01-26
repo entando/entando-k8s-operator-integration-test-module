@@ -55,5 +55,15 @@ spec:
                         type: string
                       tarball:
                         type: string
+            status:
+              type: object
+              properties:
+                observedGeneration:
+                  type: number
+                entandoDeploymentPhase:
+                  type: string
+                serverStatuses:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
   subresources:
     status: {}
