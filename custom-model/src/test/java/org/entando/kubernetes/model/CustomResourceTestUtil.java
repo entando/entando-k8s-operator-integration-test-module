@@ -34,17 +34,8 @@ public interface CustomResourceTestUtil {
                     .done();
         } else {
             await().atMost(Duration.ofMinutes(2)).until(() -> {
-                if (((CustomResourceList) oper.inNamespace(namespace).list()).getItems().size() > 0) {
-                    try {
-                        oper.inNamespace(namespace)
-                                .delete(((CustomResourceList) oper.inNamespace(namespace).list()).getItems().get(0));
-                        return false;
-                    } catch (IndexOutOfBoundsException e) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
+                oper.inNamespace(namespace).delete();
+                return ((CustomResourceList) oper.inNamespace(namespace).list()).getItems().isEmpty();
             });
         }
     }

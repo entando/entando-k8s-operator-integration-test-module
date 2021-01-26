@@ -5,6 +5,7 @@ metadata:
 spec:
   group: entando.org
   version: v1
+  scope: Namespaced
   names:
     kind: EntandoDeBundle
     plural: entandodebundles
