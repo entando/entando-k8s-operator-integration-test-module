@@ -67,7 +67,7 @@ public class EntandoAppSpec extends ClusterInfrastructureAwareSpec {
             @JsonProperty("dbms") DbmsVendor dbms,
             @JsonProperty("ingressHostName") String ingressHostName,
             @JsonProperty("ingressPath") String ingressPath,
-            @JsonProperty("replicas") int replicas,
+            @JsonProperty("replicas") Integer replicas,
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakToUse") KeycloakToUse keycloakToUse,
             @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,

@@ -44,7 +44,7 @@ public abstract class EntandoDeploymentSpecFluent<F extends EntandoDeploymentSpe
         return thisAsF();
     }
 
-    public final F withReplicas(int replicas) {
+    public final F withReplicas(Integer replicas) {
         this.replicas = replicas;
         return thisAsF();
     }
