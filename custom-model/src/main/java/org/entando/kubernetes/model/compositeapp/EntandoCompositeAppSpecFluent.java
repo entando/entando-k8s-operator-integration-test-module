@@ -56,13 +56,13 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             Class<? extends EntandoFluent<?>>> BUILDERS = createBuilderMap();
     protected List<EntandoFluent<?>> components;
     private String ingressHostNameOverride;
-    private DbmsVendor dbmsOVerride;
+    private DbmsVendor dbmsOverride;
     private String tlsSecretNameOverride;
 
     protected EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
         this.components = createComponentBuilders(spec.getComponents());
         this.ingressHostNameOverride = spec.getIngressHostNameOverride().orElse(null);
-        this.dbmsOVerride = spec.getDbmsOverride().orElse(null);
+        this.dbmsOverride = spec.getDbmsOverride().orElse(null);
         this.tlsSecretNameOverride = spec.getTlsSecretNameOverride().orElse(null);
     }
 
@@ -94,7 +94,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     public final A withDbmsOverride(DbmsVendor dbmsOverride) {
-        this.dbmsOVerride = dbmsOverride;
+        this.dbmsOverride = dbmsOverride;
         return thisAsA();
     }
 
@@ -133,7 +133,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
                 .map(Builder.class::cast)
                 .map(Builder::build)
                 .map(o -> (EntandoBaseCustomResource<? extends Serializable>) o)
-                .collect(Collectors.toList()), ingressHostNameOverride, dbmsOVerride, tlsSecretNameOverride);
+                .collect(Collectors.toList()), ingressHostNameOverride, dbmsOverride, tlsSecretNameOverride);
     }
 
     public EntandoKeycloakServerNested<A> addNewEntandoKeycloakServer() {

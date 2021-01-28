@@ -43,15 +43,4 @@ public class NestedEntandoDatabaseServiceFluent<F extends EntandoDatabaseService
         return this.and();
     }
 
-    @Override
-    public NestedEntandoDatabaseServiceFluent<F> withTlsSecretName(String tlsSecretName) {
-        //no-op for uniformity
-        return thisAsF();
-    }
-
-    @Override
-    public NestedEntandoDatabaseServiceFluent<F> withIngressHostName(String ingressHostName) {
-        //no-op for uniformity
-        return thisAsF();
-    }
 }

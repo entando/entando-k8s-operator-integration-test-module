@@ -44,7 +44,7 @@ public class EntandoCompositeAppSpec implements Serializable {
 
     private List<EntandoBaseCustomResource<? extends Serializable>> components;
     private String ingressHostNameOverride;
-    private DbmsVendor dbmsOVerride;
+    private DbmsVendor dbmsOverride;
     private String tlsSecretNameOverride;
 
     public EntandoCompositeAppSpec() {
@@ -55,11 +55,11 @@ public class EntandoCompositeAppSpec implements Serializable {
     public EntandoCompositeAppSpec(
             @JsonProperty("components") List<EntandoBaseCustomResource<? extends Serializable>> components,
             @JsonProperty("ingressHostNameOverride") String ingressHostNameOverride,
-            @JsonProperty("dbmsOVerride") DbmsVendor dbmsOVerride,
+            @JsonProperty("dbmsOverride") DbmsVendor dbmsOverride,
             @JsonProperty("tlsSecretNameOverride") String tlsSecretNameOverride) {
         this.components = components;
         this.ingressHostNameOverride = ingressHostNameOverride;
-        this.dbmsOVerride = dbmsOVerride;
+        this.dbmsOverride = dbmsOverride;
         this.tlsSecretNameOverride = tlsSecretNameOverride;
     }
 
@@ -68,7 +68,7 @@ public class EntandoCompositeAppSpec implements Serializable {
     }
 
     public Optional<DbmsVendor> getDbmsOverride() {
-        return Optional.ofNullable(dbmsOVerride);
+        return Optional.ofNullable(dbmsOverride);
     }
 
     public Optional<String> getIngressHostNameOverride() {

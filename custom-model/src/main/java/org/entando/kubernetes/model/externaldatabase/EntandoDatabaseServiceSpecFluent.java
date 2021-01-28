@@ -22,9 +22,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoDeploymentSpecFluent;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecBaseFluent;
 
 public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabaseServiceSpecFluent<F>>
-        extends EntandoDeploymentSpecFluent<F> {
+        extends EntandoDeploymentSpecFluent<F>
+        implements EntandoIngressingDeploymentSpecBaseFluent<F> {
 
     private String databaseName;
     private DbmsVendor dbms;
@@ -112,6 +114,16 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
 
     public F withTablespace(String tablespace) {
         this.tablespace = tablespace;
+        return thisAsF();
+    }
+
+    @Override
+    public F withTlsSecretName(String tlsSecretName) {
+        return thisAsF();
+    }
+
+    @Override
+    public F withIngressHostName(String ingressHostName) {
         return thisAsF();
     }
 
