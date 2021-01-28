@@ -47,6 +47,7 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
     public static final String MY_DATABASE_SERVICE = "my-database-service";
     private static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
     public static final String MY_PLUGIN_REF = "my-plugin-ref";
+    private static final String MY_HOSTNAME = "my.hostname.com";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -63,6 +64,8 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
+                .withIngressHostNameOverride(MY_HOSTNAME)
+                .withDbmsOverride(DbmsVendor.MYSQL)
                 .addNewEntandoKeycloakServer().withNewMetadata().withName(MY_KEYCLOAK).endMetadata().endEntandoKeycloakServer()
                 .addNewEntandoClusterInfrastructure().withNewMetadata().withName(MY_CLUSTER_INFRASTRUCTURE).endMetadata()
                 .endEntandoClusterInfrastructure()
@@ -85,6 +88,8 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
         //When
         EntandoCompositeApp actual = entandoCompositeApps().inNamespace(MY_NAMESPACE).withName(MY_COMPOSITE_APP).get();
         //Then
+        assertThat(actual.getSpec().getDbmsOVerride().get(), is(DbmsVendor.MYSQL));
+        assertThat(actual.getSpec().getIngressHostNameOverride().get(), is(MY_HOSTNAME));
         assertThat(actual.getSpec().getComponents().get(0).getMetadata().getName(), is(MY_KEYCLOAK));
         assertThat(actual.getSpec().getComponents().get(1).getMetadata().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getSpec().getComponents().get(2).getMetadata().getName(), is(MY_APP));
@@ -108,6 +113,8 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 .withNamespace(MY_NAMESPACE)
                 .endMetadata()
                 .withNewSpec()
+                .withDbmsOverride(DbmsVendor.POSTGRESQL)
+                .withIngressHostNameOverride("some.other.hostname.com")
                 .addNewEntandoKeycloakServer().withNewMetadata().withName("some-keycloak").endMetadata().endEntandoKeycloakServer()
                 .addNewEntandoClusterInfrastructure().withNewMetadata().withName("some-cluster-infrastructure").endMetadata()
                 .endEntandoClusterInfrastructure()
@@ -126,6 +133,8 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
+                .withIngressHostNameOverride(MY_HOSTNAME)
+                .withDbmsOverride(DbmsVendor.MYSQL)
                 .withComponents(
                         new EntandoKeycloakServerBuilder().withNewMetadata().withName(MY_KEYCLOAK).endMetadata().build(),
                         new EntandoClusterInfrastructureBuilder().withNewMetadata().withName(MY_CLUSTER_INFRASTRUCTURE).endMetadata()
@@ -151,6 +160,8 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
         actual = entandoCompositeApps().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
         assertThat(actual.getMetadata().getName(), is(MY_COMPOSITE_APP));
+        assertThat(actual.getSpec().getDbmsOVerride().get(), is(DbmsVendor.MYSQL));
+        assertThat(actual.getSpec().getIngressHostNameOverride().get(), is(MY_HOSTNAME));
         assertThat(actual.getSpec().getComponents().get(0).getMetadata().getName(), is(MY_KEYCLOAK));
         assertThat(actual.getSpec().getComponents().get(1).getMetadata().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getSpec().getComponents().get(2).getMetadata().getName(), is(MY_APP));

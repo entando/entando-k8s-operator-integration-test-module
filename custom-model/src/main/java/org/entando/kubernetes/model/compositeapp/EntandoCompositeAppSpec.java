@@ -18,15 +18,19 @@ package org.entando.kubernetes.model.compositeapp;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 
 @JsonSerialize
@@ -39,16 +43,31 @@ import org.entando.kubernetes.model.EntandoBaseCustomResource;
 public class EntandoCompositeAppSpec implements Serializable {
 
     private List<EntandoBaseCustomResource<? extends Serializable>> components;
+    private String ingressHostNameOverride;
+    private DbmsVendor dbmsOVerride;
 
     public EntandoCompositeAppSpec() {
         super();
     }
 
-    public EntandoCompositeAppSpec(List<EntandoBaseCustomResource<? extends Serializable>> components) {
+    @JsonCreator
+    public EntandoCompositeAppSpec(@JsonProperty("components") List<EntandoBaseCustomResource<? extends Serializable>> components,
+            @JsonProperty("ingressHostNameOverride") String ingressHostNameOverride,
+            @JsonProperty("dbmsOVerride") DbmsVendor dbmsOVerride) {
         this.components = components;
+        this.ingressHostNameOverride = ingressHostNameOverride;
+        this.dbmsOVerride = dbmsOVerride;
     }
 
     public List<EntandoBaseCustomResource<? extends Serializable>> getComponents() {
         return this.components == null ? Collections.emptyList() : this.components;
+    }
+
+    public Optional<DbmsVendor> getDbmsOVerride() {
+        return Optional.ofNullable(dbmsOVerride);
+    }
+
+    public Optional<String> getIngressHostNameOverride() {
+        return Optional.ofNullable(ingressHostNameOverride);
     }
 }

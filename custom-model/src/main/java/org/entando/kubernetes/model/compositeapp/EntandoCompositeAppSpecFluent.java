@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 import org.entando.kubernetes.model.EntandoBaseFluentImpl;
 import org.entando.kubernetes.model.app.EntandoApp;
@@ -54,9 +55,13 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     private static final Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
             Class<? extends EntandoBaseFluentImpl<?>>> BUILDERS = createBuilderMap();
     protected List<EntandoBaseFluentImpl<?>> components;
+    private String ingressHostNameOverride;
+    private DbmsVendor dbmsOVerride;
 
     protected EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
         this.components = createComponentBuilders(spec.getComponents());
+        this.ingressHostNameOverride = spec.getIngressHostNameOverride().orElse(null);
+        this.dbmsOVerride = spec.getDbmsOVerride().orElse(null);
     }
 
     protected EntandoCompositeAppSpecFluent() {
@@ -76,6 +81,16 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         result.put(EntandoDeBundle.class, EntandoDeBundleBuilder.class);
         result.put(EntandoCustomResourceReference.class, EntandoCustomResourceReferenceBuilder.class);
         return result;
+    }
+
+    public final A withDbmsOverride(DbmsVendor dbmsOverride) {
+        this.dbmsOVerride = dbmsOverride;
+        return thisAsA();
+    }
+
+    public final A withIngressHostNameOverride(String ingressHostNameOverride) {
+        this.ingressHostNameOverride = ingressHostNameOverride;
+        return thisAsA();
     }
 
     public A withComponents(List<EntandoBaseCustomResource<? extends Serializable>> components) {
@@ -111,7 +126,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
                 .map(Builder.class::cast)
                 .map(Builder::build)
                 .map(o -> (EntandoBaseCustomResource<? extends Serializable>) o)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()), ingressHostNameOverride, dbmsOVerride);
     }
 
     public EntandoKeycloakServerNested<A> addNewEntandoKeycloakServer() {
