@@ -17,12 +17,14 @@
 package org.entando.kubernetes.model.keycloakserver;
 
 import io.fabric8.kubernetes.api.builder.Fluent;
-import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluentImpl;
+import org.entando.kubernetes.model.EntandoFluent;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentBaseFluent;
 
-public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A>> extends EntandoBaseFluentImpl<A> implements Fluent<A> {
+public class EntandoKeycloakServerFluent<F extends EntandoKeycloakServerFluent<F>>
+        extends EntandoFluent<F>
+        implements Fluent<F>, EntandoIngressingDeploymentBaseFluent<F, NestedEntandoKeycloakServerSpecFluent<F>> {
 
     protected EntandoKeycloakServerSpecBuilder spec;
 
@@ -39,47 +41,18 @@ public class EntandoKeycloakServerFluent<A extends EntandoKeycloakServerFluent<A
         this.spec = spec;
     }
 
-    @SuppressWarnings("unchecked")
-    public NestedEntandoKeycloakServerFluent<A> editSpec() {
-        return new NestedEntandoKeycloakServerFluent<>((A) this, this.spec.build());
-    }
-
-    @SuppressWarnings("unchecked")
-    public NestedEntandoKeycloakServerFluent<A> withNewSpec() {
-        return new NestedEntandoKeycloakServerFluent<>((A) this);
-    }
-
-    @SuppressWarnings("unchecked")
-    public A withSpec(EntandoKeycloakServerSpec spec) {
+    public F withSpec(EntandoKeycloakServerSpec spec) {
         this.spec = new EntandoKeycloakServerSpecBuilder(spec);
-        return (A) this;
+        return thisAsF();
     }
 
-    public static class NestedEntandoKeycloakServerFluent<N extends EntandoKeycloakServerFluent> extends
-            EntandoKeycloakServerSpecFluent<NestedEntandoKeycloakServerFluent<N>> implements
-            Nested<N> {
+    public NestedEntandoKeycloakServerSpecFluent<F> withNewSpec() {
+        return new NestedEntandoKeycloakServerSpecFluent<>(thisAsF());
+    }
 
-        private final N parentBuilder;
-
-        NestedEntandoKeycloakServerFluent(N parentBuilder, EntandoKeycloakServerSpec item) {
-            super(item);
-            this.parentBuilder = parentBuilder;
-        }
-
-        NestedEntandoKeycloakServerFluent(N parentBuilder) {
-            super();
-            this.parentBuilder = parentBuilder;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public N and() {
-            return (N) parentBuilder.withSpec(this.build());
-        }
-
-        public N endSpec() {
-            return this.and();
-        }
+    @Override
+    public NestedEntandoKeycloakServerSpecFluent<F> editSpec() {
+        return new NestedEntandoKeycloakServerSpecFluent<>(thisAsF(), this.spec.build());
     }
 
 }

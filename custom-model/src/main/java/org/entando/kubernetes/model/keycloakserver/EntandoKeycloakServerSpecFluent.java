@@ -16,9 +16,10 @@
 
 package org.entando.kubernetes.model.keycloakserver;
 
-import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecBuilder;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecFluent;
 
-public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent> extends EntandoIngressingDeploymentSpecBuilder<N> {
+public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent<N>>
+        extends EntandoIngressingDeploymentSpecFluent<N> {
 
     protected String customImage;
     protected boolean isDefault;
@@ -39,22 +40,22 @@ public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpec
 
     public N withDefault(boolean isDefault) {
         this.isDefault = isDefault;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withCustomImage(String customImage) {
         this.customImage = customImage;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withFrontEndUrl(String frontEndUrl) {
         this.frontEndUrl = frontEndUrl;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withStandardImage(StandardKeycloakImage standardImage) {
         this.standardImage = standardImage;
-        return thisAsN();
+        return thisAsF();
     }
 
     public EntandoKeycloakServerSpec build() {

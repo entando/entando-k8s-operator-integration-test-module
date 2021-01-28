@@ -45,29 +45,37 @@ public class EntandoCompositeAppSpec implements Serializable {
     private List<EntandoBaseCustomResource<? extends Serializable>> components;
     private String ingressHostNameOverride;
     private DbmsVendor dbmsOVerride;
+    private String tlsSecretNameOverride;
 
     public EntandoCompositeAppSpec() {
         super();
     }
 
     @JsonCreator
-    public EntandoCompositeAppSpec(@JsonProperty("components") List<EntandoBaseCustomResource<? extends Serializable>> components,
+    public EntandoCompositeAppSpec(
+            @JsonProperty("components") List<EntandoBaseCustomResource<? extends Serializable>> components,
             @JsonProperty("ingressHostNameOverride") String ingressHostNameOverride,
-            @JsonProperty("dbmsOVerride") DbmsVendor dbmsOVerride) {
+            @JsonProperty("dbmsOVerride") DbmsVendor dbmsOVerride,
+            @JsonProperty("tlsSecretNameOverride") String tlsSecretNameOverride) {
         this.components = components;
         this.ingressHostNameOverride = ingressHostNameOverride;
         this.dbmsOVerride = dbmsOVerride;
+        this.tlsSecretNameOverride = tlsSecretNameOverride;
     }
 
     public List<EntandoBaseCustomResource<? extends Serializable>> getComponents() {
         return this.components == null ? Collections.emptyList() : this.components;
     }
 
-    public Optional<DbmsVendor> getDbmsOVerride() {
+    public Optional<DbmsVendor> getDbmsOverride() {
         return Optional.ofNullable(dbmsOVerride);
     }
 
     public Optional<String> getIngressHostNameOverride() {
         return Optional.ofNullable(ingressHostNameOverride);
+    }
+
+    public Optional<String> getTlsSecretNameOverride() {
+        return Optional.ofNullable(tlsSecretNameOverride);
     }
 }

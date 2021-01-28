@@ -16,12 +16,14 @@
 
 package org.entando.kubernetes.model.app;
 
-import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluentImpl;
+import org.entando.kubernetes.model.EntandoFluent;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentBaseFluent;
 
-public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends EntandoBaseFluentImpl<A> {
+public class EntandoAppFluent<F extends EntandoAppFluent<F>>
+        extends EntandoFluent<F>
+        implements EntandoIngressingDeploymentBaseFluent<F, NestedEntandoAppSpecFluent<F>> {
 
     protected EntandoAppSpecBuilder spec;
 
@@ -38,48 +40,22 @@ public class EntandoAppFluent<A extends EntandoAppFluent<A>> extends EntandoBase
         this.spec = spec;
     }
 
-    public NestedEntandoAppSpecFluent<A> editSpec() {
+    public NestedEntandoAppSpecFluent<F> editSpec() {
         return new NestedEntandoAppSpecFluent<>(thisAsA(), this.spec.build());
     }
 
-    public NestedEntandoAppSpecFluent<A> withNewSpec() {
+    public NestedEntandoAppSpecFluent<F> withNewSpec() {
         return new NestedEntandoAppSpecFluent<>(thisAsA());
     }
 
-    public A withSpec(EntandoAppSpec spec) {
+    public F withSpec(EntandoAppSpec spec) {
         this.spec = new EntandoAppSpecBuilder(spec);
         return thisAsA();
     }
 
     @SuppressWarnings("unchecked")
-    protected A thisAsA() {
-        return (A) this;
-    }
-
-    public static class NestedEntandoAppSpecFluent<N extends EntandoAppFluent> extends
-            EntandoAppSpecFluent<NestedEntandoAppSpecFluent<N>> implements Nested<N> {
-
-        private final N parentBuilder;
-
-        NestedEntandoAppSpecFluent(N parentBuilder, EntandoAppSpec item) {
-            super(item);
-            this.parentBuilder = parentBuilder;
-        }
-
-        public NestedEntandoAppSpecFluent(N parentBuilder) {
-            super();
-            this.parentBuilder = parentBuilder;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public N and() {
-            return (N) parentBuilder.withSpec(this.build());
-        }
-
-        public N endSpec() {
-            return this.and();
-        }
+    protected F thisAsA() {
+        return (F) this;
     }
 
 }

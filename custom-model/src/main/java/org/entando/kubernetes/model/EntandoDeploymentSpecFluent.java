@@ -20,18 +20,18 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSpecBuilder> {
+public abstract class EntandoDeploymentSpecFluent<F extends EntandoDeploymentSpecFluent<F>> {
 
     protected Integer replicas = 1;
     protected String serviceAccountToUse;
     protected List<EnvVar> environmentVariables;
     protected EntandoResourceRequirements resourceRequirements;
 
-    protected EntandoDeploymentSpecBuilder() {
+    protected EntandoDeploymentSpecFluent() {
 
     }
 
-    protected EntandoDeploymentSpecBuilder(EntandoDeploymentSpec spec) {
+    protected EntandoDeploymentSpecFluent(EntandoDeploymentSpec spec) {
         this.replicas = spec.getReplicas().orElse(null);
         this.serviceAccountToUse = spec.getServiceAccountToUse().orElse(null);
         this.environmentVariables = new ArrayList<>(spec.getEnvironmentVariables());
@@ -39,67 +39,67 @@ public abstract class EntandoDeploymentSpecBuilder<N extends EntandoDeploymentSp
 
     }
 
-    public final N withServiceAccountToUse(String serviceAccountToUse) {
+    public final F withServiceAccountToUse(String serviceAccountToUse) {
         this.serviceAccountToUse = serviceAccountToUse;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public final N withReplicas(int replicas) {
+    public final F withReplicas(int replicas) {
         this.replicas = replicas;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withEnvironmentVariables(List<EnvVar> environmentVariables) {
+    public F withEnvironmentVariables(List<EnvVar> environmentVariables) {
         this.environmentVariables = new ArrayList<>(environmentVariables);
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N addToEnvironmentVariables(String name, String value) {
+    public F addToEnvironmentVariables(String name, String value) {
         if (this.environmentVariables == null) {
             this.environmentVariables = new ArrayList<>();
         }
         this.environmentVariables.add(new EnvVar(name, value, null));
-        return thisAsN();
+        return thisAsF();
     }
 
     public EntandoResourceRequirementsNested editResourceRequirements() {
-        return new EntandoResourceRequirementsNested(thisAsN(), resourceRequirements);
+        return new EntandoResourceRequirementsNested(thisAsF(), resourceRequirements);
     }
 
     public EntandoResourceRequirementsNested withNewResourceRequirements() {
-        return new EntandoResourceRequirementsNested(thisAsN());
+        return new EntandoResourceRequirementsNested(thisAsF());
     }
 
-    public N withResourceRequirements(EntandoResourceRequirements resourceRequirements) {
+    public F withResourceRequirements(EntandoResourceRequirements resourceRequirements) {
         this.resourceRequirements = resourceRequirements;
-        return thisAsN();
+        return thisAsF();
     }
 
     @SuppressWarnings("unchecked")
-    protected N thisAsN() {
-        return (N) this;
+    protected F thisAsF() {
+        return (F) this;
     }
 
     public class EntandoResourceRequirementsNested extends
             EntandoResourceRequirementsFluent<EntandoResourceRequirementsNested> {
 
-        private N parent;
+        private F parent;
 
-        public EntandoResourceRequirementsNested(N parent, EntandoResourceRequirements resourceRequirements) {
+        public EntandoResourceRequirementsNested(F parent, EntandoResourceRequirements resourceRequirements) {
             super(resourceRequirements);
             this.parent = parent;
         }
 
-        public EntandoResourceRequirementsNested(N parent) {
+        public EntandoResourceRequirementsNested(F parent) {
             this.parent = parent;
         }
 
-        public N done() {
+        public F done() {
             this.parent.withResourceRequirements(build());
             return this.parent;
         }
 
-        public N endResourceRequirements() {
+        public F endResourceRequirements() {
             return done();
         }
     }

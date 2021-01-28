@@ -18,36 +18,36 @@ package org.entando.kubernetes.model;
 
 import java.util.ArrayList;
 
-public abstract class EntandoIngressingDeploymentSpecBuilder<N extends EntandoIngressingDeploymentSpecBuilder> extends
-        EntandoDeploymentSpecBuilder<N> {
+public abstract class EntandoIngressingDeploymentSpecFluent<F extends EntandoIngressingDeploymentSpecFluent<F>> extends
+        EntandoDeploymentSpecFluent<F> implements EntandoIngressingDeploymentSpecBaseFluent<F> {
 
     protected String ingressHostName;
     protected String tlsSecretName;
     protected DbmsVendor dbms;
 
-    protected EntandoIngressingDeploymentSpecBuilder(EntandoIngressingDeploymentSpec spec) {
+    protected EntandoIngressingDeploymentSpecFluent(EntandoIngressingDeploymentSpec spec) {
         super(spec);
         this.ingressHostName = spec.getIngressHostName().orElse(null);
         this.tlsSecretName = spec.getTlsSecretName().orElse(null);
         this.dbms = spec.getDbms().orElse(null);
     }
 
-    protected EntandoIngressingDeploymentSpecBuilder() {
+    protected EntandoIngressingDeploymentSpecFluent() {
         this.environmentVariables = new ArrayList<>();
     }
 
-    public final N withTlsSecretName(String tlsSecretName) {
+    public final F withTlsSecretName(String tlsSecretName) {
         this.tlsSecretName = tlsSecretName;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public final N withIngressHostName(String ingressHostName) {
+    public final F withIngressHostName(String ingressHostName) {
         this.ingressHostName = ingressHostName;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public final N withDbms(DbmsVendor dbms) {
+    public final F withDbms(DbmsVendor dbms) {
         this.dbms = dbms;
-        return thisAsN();
+        return thisAsF();
     }
 }

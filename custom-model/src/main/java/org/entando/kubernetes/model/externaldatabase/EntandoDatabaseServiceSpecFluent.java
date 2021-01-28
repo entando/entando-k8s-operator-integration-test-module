@@ -21,9 +21,10 @@ import static org.entando.kubernetes.model.Coalescence.coalesce;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpecBuilder;
+import org.entando.kubernetes.model.EntandoDeploymentSpecFluent;
 
-public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabaseServiceSpecFluent> extends EntandoDeploymentSpecBuilder<N> {
+public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabaseServiceSpecFluent<F>>
+        extends EntandoDeploymentSpecFluent<F> {
 
     private String databaseName;
     private DbmsVendor dbms;
@@ -66,52 +67,52 @@ public abstract class EntandoDatabaseServiceSpecFluent<N extends EntandoDatabase
                 resourceRequirements);
     }
 
-    public N withDatabaseName(String databaseName) {
+    public F withDatabaseName(String databaseName) {
         this.databaseName = databaseName;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withCreateDeployment(Boolean createDeployment) {
+    public F withCreateDeployment(Boolean createDeployment) {
         this.createDeployment = createDeployment;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withDbms(DbmsVendor dbms) {
+    public F withDbms(DbmsVendor dbms) {
         this.dbms = dbms;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withHost(String host) {
+    public F withHost(String host) {
         this.host = host;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withPort(Integer port) {
+    public F withPort(Integer port) {
         this.port = port;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withSecretName(String secretName) {
+    public F withSecretName(String secretName) {
         this.secretName = secretName;
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withJdbcParameters(Map<String, String> jdbcParameters) {
+    public F withJdbcParameters(Map<String, String> jdbcParameters) {
         this.jdbcParameters = new ConcurrentHashMap<>(jdbcParameters);
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N addToJdbcParameters(String name, String value) {
+    public F addToJdbcParameters(String name, String value) {
         if (jdbcParameters == null) {
             jdbcParameters = new ConcurrentHashMap<>();
         }
         this.jdbcParameters.put(name, value);
-        return thisAsN();
+        return thisAsF();
     }
 
-    public N withTablespace(String tablespace) {
+    public F withTablespace(String tablespace) {
         this.tablespace = tablespace;
-        return thisAsN();
+        return thisAsF();
     }
 
 }

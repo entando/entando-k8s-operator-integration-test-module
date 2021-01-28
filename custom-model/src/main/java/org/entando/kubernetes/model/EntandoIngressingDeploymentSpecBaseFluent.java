@@ -17,14 +17,12 @@
 package org.entando.kubernetes.model;
 
 import io.fabric8.kubernetes.api.builder.Fluent;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
 
-public interface EntandoBaseFluent<F extends EntandoBaseFluent<F>> extends Fluent<F> {
+public interface EntandoIngressingDeploymentSpecBaseFluent<F extends EntandoIngressingDeploymentSpecBaseFluent<F>> {
 
-    MetadataNestedImpl<F> editMetadata();
+    F withTlsSecretName(String tlsSecretName);
 
-    MetadataNestedImpl<F> withNewMetadata();
+    F withIngressHostName(String ingressHostName);
 
-    F withMetadata(ObjectMeta metadata);
-
+    F withDbms(DbmsVendor dbms);
 }

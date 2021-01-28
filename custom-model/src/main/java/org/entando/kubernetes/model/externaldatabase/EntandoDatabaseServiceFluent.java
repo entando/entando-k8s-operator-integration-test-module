@@ -16,13 +16,14 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-import io.fabric8.kubernetes.api.builder.Fluent;
-import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluentImpl;
+import org.entando.kubernetes.model.EntandoFluent;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentBaseFluent;
 
-public class EntandoDatabaseServiceFluent<A extends EntandoDatabaseServiceFluent<A>> extends EntandoBaseFluentImpl<A> implements Fluent<A> {
+public class EntandoDatabaseServiceFluent<F extends EntandoDatabaseServiceFluent<F>>
+        extends EntandoFluent<F>
+        implements EntandoIngressingDeploymentBaseFluent<F, NestedEntandoDatabaseServiceFluent<F>> {
 
     protected EntandoDatabaseServiceSpecBuilder spec;
 
@@ -39,47 +40,17 @@ public class EntandoDatabaseServiceFluent<A extends EntandoDatabaseServiceFluent
         this.spec = spec;
     }
 
-    @SuppressWarnings("unchecked")
-    public SpecNestedImpl<A> editSpec() {
-        return new SpecNestedImpl<>((A) this, this.spec.build());
+    public NestedEntandoDatabaseServiceFluent<F> editSpec() {
+        return new NestedEntandoDatabaseServiceFluent<>(thisAsF(), this.spec.build());
     }
 
-    @SuppressWarnings("unchecked")
-    public SpecNestedImpl<A> withNewSpec() {
-        return new SpecNestedImpl<>((A) this);
+    public NestedEntandoDatabaseServiceFluent<F> withNewSpec() {
+        return new NestedEntandoDatabaseServiceFluent<>(thisAsF());
     }
 
-    @SuppressWarnings("unchecked")
-    public A withSpec(EntandoDatabaseServiceSpec spec) {
+    public F withSpec(EntandoDatabaseServiceSpec spec) {
         this.spec = new EntandoDatabaseServiceSpecBuilder(spec);
-        return (A) this;
-    }
-
-    public static class SpecNestedImpl<N extends EntandoDatabaseServiceFluent> extends
-            EntandoDatabaseServiceSpecFluent<SpecNestedImpl<N>> implements
-            Nested<N> {
-
-        private final N parentBuilder;
-
-        SpecNestedImpl(N parentBuilder, EntandoDatabaseServiceSpec item) {
-            super(item);
-            this.parentBuilder = parentBuilder;
-        }
-
-        public SpecNestedImpl(N parentBuilder) {
-            super();
-            this.parentBuilder = parentBuilder;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public N and() {
-            return (N) parentBuilder.withSpec(this.build());
-        }
-
-        public N endSpec() {
-            return this.and();
-        }
+        return thisAsF();
     }
 
 }

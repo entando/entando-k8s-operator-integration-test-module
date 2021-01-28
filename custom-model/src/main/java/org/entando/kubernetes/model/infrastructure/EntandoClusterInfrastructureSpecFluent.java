@@ -16,10 +16,10 @@
 
 package org.entando.kubernetes.model.infrastructure;
 
-import org.entando.kubernetes.model.KeycloakAwareSpecBuilder;
+import org.entando.kubernetes.model.KeycloakAwareSpecFluent;
 
-public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfrastructureSpecFluent> extends
-        KeycloakAwareSpecBuilder<N> {
+public class EntandoClusterInfrastructureSpecFluent<F extends EntandoClusterInfrastructureSpecFluent<F>>
+        extends KeycloakAwareSpecFluent<F> {
 
     private boolean isDefault;
 
@@ -33,9 +33,9 @@ public class EntandoClusterInfrastructureSpecFluent<N extends EntandoClusterInfr
     }
 
     @SuppressWarnings("unchecked")
-    public N withDefault(boolean isDefault) {
+    public F withDefault(boolean isDefault) {
         this.isDefault = isDefault;
-        return (N) this;
+        return (F) this;
     }
 
     public EntandoClusterInfrastructureSpec build() {

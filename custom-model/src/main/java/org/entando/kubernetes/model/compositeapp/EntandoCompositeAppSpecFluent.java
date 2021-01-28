@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
-import org.entando.kubernetes.model.EntandoBaseFluentImpl;
+import org.entando.kubernetes.model.EntandoFluent;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.app.EntandoAppFluent;
@@ -53,25 +53,35 @@ import org.entando.kubernetes.model.plugin.EntandoPluginFluent;
 public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAppSpecFluent<A>> {
 
     private static final Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
-            Class<? extends EntandoBaseFluentImpl<?>>> BUILDERS = createBuilderMap();
-    protected List<EntandoBaseFluentImpl<?>> components;
+            Class<? extends EntandoFluent<?>>> BUILDERS = createBuilderMap();
+    protected List<EntandoFluent<?>> components;
     private String ingressHostNameOverride;
     private DbmsVendor dbmsOVerride;
+    private String tlsSecretNameOverride;
 
     protected EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
         this.components = createComponentBuilders(spec.getComponents());
         this.ingressHostNameOverride = spec.getIngressHostNameOverride().orElse(null);
-        this.dbmsOVerride = spec.getDbmsOVerride().orElse(null);
+        this.dbmsOVerride = spec.getDbmsOverride().orElse(null);
+        this.tlsSecretNameOverride = spec.getTlsSecretNameOverride().orElse(null);
     }
 
     protected EntandoCompositeAppSpecFluent() {
         this.components = new ArrayList<>();
     }
 
+    public static EntandoFluent<?> newBuilderFrom(EntandoBaseCustomResource<? extends Serializable> r) {
+        try {
+            return BUILDERS.get(r.getClass()).getConstructor(r.getClass()).newInstance(r);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private static Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
-            Class<? extends EntandoBaseFluentImpl<?>>> createBuilderMap() {
+            Class<? extends EntandoFluent<?>>> createBuilderMap() {
         Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
-                Class<? extends EntandoBaseFluentImpl<?>>> result = new ConcurrentHashMap<>();
+                Class<? extends EntandoFluent<?>>> result = new ConcurrentHashMap<>();
         result.put(EntandoKeycloakServer.class, EntandoKeycloakServerBuilder.class);
         result.put(EntandoClusterInfrastructure.class, EntandoClusterInfrastructureBuilder.class);
         result.put(EntandoApp.class, EntandoAppBuilder.class);
@@ -85,6 +95,11 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
 
     public final A withDbmsOverride(DbmsVendor dbmsOverride) {
         this.dbmsOVerride = dbmsOverride;
+        return thisAsA();
+    }
+
+    public final A withTlsSecretNameOverride(String tlsSecretNameOverride) {
+        this.tlsSecretNameOverride = tlsSecretNameOverride;
         return thisAsA();
     }
 
@@ -103,17 +118,9 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         return withComponents(Arrays.asList(components));
     }
 
-    private List<EntandoBaseFluentImpl<?>> createComponentBuilders(List<EntandoBaseCustomResource<? extends Serializable>> components) {
+    private List<EntandoFluent<?>> createComponentBuilders(List<EntandoBaseCustomResource<? extends Serializable>> components) {
         return components.stream()
-                .map(this::newBuilderFrom).collect(Collectors.toList());
-    }
-
-    private EntandoBaseFluentImpl<?> newBuilderFrom(EntandoBaseCustomResource<? extends Serializable> r) {
-        try {
-            return BUILDERS.get(r.getClass()).getConstructor(r.getClass()).newInstance(r);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
+                .map(EntandoCompositeAppSpecFluent::newBuilderFrom).collect(Collectors.<EntandoFluent<?>>toList());
     }
 
     @SuppressWarnings("unchecked")
@@ -126,7 +133,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
                 .map(Builder.class::cast)
                 .map(Builder::build)
                 .map(o -> (EntandoBaseCustomResource<? extends Serializable>) o)
-                .collect(Collectors.toList()), ingressHostNameOverride, dbmsOVerride);
+                .collect(Collectors.toList()), ingressHostNameOverride, dbmsOVerride, tlsSecretNameOverride);
     }
 
     public EntandoKeycloakServerNested<A> addNewEntandoKeycloakServer() {

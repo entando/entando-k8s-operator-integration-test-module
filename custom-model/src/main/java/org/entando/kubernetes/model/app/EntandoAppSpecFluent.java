@@ -16,13 +16,13 @@
 
 package org.entando.kubernetes.model.app;
 
-import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecFluent;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.gitspec.GitSpec;
 import org.entando.kubernetes.model.gitspec.GitSpecBuilder;
 import org.entando.kubernetes.model.gitspec.GitSpecFluent;
 
-public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends ClusterInfrastructureAwareSpecBuilder<N> {
+public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends ClusterInfrastructureAwareSpecFluent<N> {
 
     protected JeeServer standardServerImage;
     protected String customServerImage;
@@ -46,36 +46,36 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent> extends Cluste
     public N withStandardServerImage(JeeServer jeeServer) {
         this.standardServerImage = jeeServer;
         this.customServerImage = jeeServer == null ? this.customServerImage : null;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withIngressPath(String ingressPath) {
         this.ingressPath = ingressPath;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withCustomServerImage(String customServerImage) {
         this.customServerImage = customServerImage;
         this.standardServerImage = customServerImage == null ? standardServerImage : null;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withEcrGitSshSecretname(String ecrGitSshSecretName) {
         this.ecrGitSshSecretName = ecrGitSshSecretName;
-        return thisAsN();
+        return thisAsF();
     }
 
     public GitSpecBuilderNested<N> editBackupGitSpec() {
-        return new GitSpecBuilderNested<>(thisAsN(), this.backupGitSpec.build());
+        return new GitSpecBuilderNested<>(thisAsF(), this.backupGitSpec.build());
     }
 
     public GitSpecBuilderNested<N> withNewBackupGitSpec() {
-        return new GitSpecBuilderNested<>(thisAsN());
+        return new GitSpecBuilderNested<>(thisAsF());
     }
 
     public N withBackupGitSpec(GitSpec gitSpec) {
         this.backupGitSpec = new GitSpecBuilder(gitSpec);
-        return thisAsN();
+        return thisAsF();
     }
 
     public EntandoAppSpec build() {

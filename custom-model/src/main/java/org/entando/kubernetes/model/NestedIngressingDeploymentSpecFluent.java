@@ -16,20 +16,12 @@
 
 package org.entando.kubernetes.model;
 
-public class ClusterInfrastructureAwareSpecBuilder<N extends ClusterInfrastructureAwareSpecBuilder> extends KeycloakAwareSpecBuilder<N> {
+import io.fabric8.kubernetes.api.builder.Nested;
 
-    protected ResourceReference clusterInfrastructureToUse;
+public interface NestedIngressingDeploymentSpecFluent<F extends EntandoIngressingDeploymentBaseFluent<F, N>,
+        N extends NestedIngressingDeploymentSpecFluent<F, N>> extends
+        EntandoIngressingDeploymentSpecBaseFluent<N>, Nested<F> {
 
-    public ClusterInfrastructureAwareSpecBuilder(ClusterInfrastructureAwareSpec spec) {
-        super(spec);
-        this.clusterInfrastructureToUse = spec.getClusterInfrastructureToUse().orElse(null);
-    }
+    F endSpec();
 
-    public ClusterInfrastructureAwareSpecBuilder() {
-    }
-
-    public N withClusterInfrastructureToUse(String namespace, String name) {
-        this.clusterInfrastructureToUse = new ResourceReference(namespace, name);
-        return thisAsN();
-    }
 }

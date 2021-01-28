@@ -58,6 +58,14 @@ spec:
                     the documentation for each component's CRD for more information on the exact semantics of this value.
                   type: string
                   pattern: '^([A-Za-z0-9-]{1,63}\.)*[[A-Za-z0-9-]{1,63}$'
+                tlsSecretNameOverride:
+                  description: >
+                    The name of a Kubernetes TLS Secret that will be used to enable TLS on the the hostname specified
+                    in the property spec.ingressHostnameOverride. This TLS Secret  will be used for TLS on
+                    every component deployed in this EntandoCompositeApp.Please consult
+                    the documentation for each component's CRD for more information on the exact semantics of this value.
+                  type: string
+                  pattern: '^([A-Za-z0-9-]{1,63}\.)*[[A-Za-z0-9-]{1,63}$'
                 components:
                   description: >
                     A list of Entando custom resources that need to be deployed in the sequence specified. Each entry in

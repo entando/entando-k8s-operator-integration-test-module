@@ -16,14 +16,14 @@
 
 package org.entando.kubernetes.model.infrastructure;
 
-import io.fabric8.kubernetes.api.builder.Fluent;
-import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluentImpl;
+import org.entando.kubernetes.model.EntandoFluent;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentBaseFluent;
 
-public class EntandoClusterInfrastructureFluent<A extends EntandoClusterInfrastructureFluent<A>> extends EntandoBaseFluentImpl<A> implements
-        Fluent<A> {
+public class EntandoClusterInfrastructureFluent<F extends EntandoClusterInfrastructureFluent<F>>
+        extends EntandoFluent<F>
+        implements EntandoIngressingDeploymentBaseFluent<F, NestedEntandClusterInfrastructureSpecFluent<F>> {
 
     protected EntandoClusterInfrastructureSpecBuilder spec;
 
@@ -41,46 +41,20 @@ public class EntandoClusterInfrastructureFluent<A extends EntandoClusterInfrastr
     }
 
     @SuppressWarnings("unchecked")
-    public SpecNestedImplCluster<A> editSpec() {
-        return new SpecNestedImplCluster<>((A) this, this.spec.build());
+    @Override
+    public NestedEntandClusterInfrastructureSpecFluent<F> editSpec() {
+        return new NestedEntandClusterInfrastructureSpecFluent<>((F) this, this.spec.build());
     }
 
     @SuppressWarnings("unchecked")
-    public SpecNestedImplCluster<A> withNewSpec() {
-        return new SpecNestedImplCluster<>((A) this);
+    public NestedEntandClusterInfrastructureSpecFluent<F> withNewSpec() {
+        return new NestedEntandClusterInfrastructureSpecFluent<>((F) this);
     }
 
     @SuppressWarnings("unchecked")
-    public A withSpec(EntandoClusterInfrastructureSpec spec) {
+    public F withSpec(EntandoClusterInfrastructureSpec spec) {
         this.spec = new EntandoClusterInfrastructureSpecBuilder(spec);
-        return (A) this;
-    }
-
-    public static class SpecNestedImplCluster<N extends EntandoClusterInfrastructureFluent> extends
-            EntandoClusterInfrastructureSpecFluent<SpecNestedImplCluster<N>> implements
-            Nested<N> {
-
-        private final N parentBuilder;
-
-        SpecNestedImplCluster(N parentBuilder, EntandoClusterInfrastructureSpec item) {
-            super(item);
-            this.parentBuilder = parentBuilder;
-        }
-
-        public SpecNestedImplCluster(N parentBuilder) {
-            super();
-            this.parentBuilder = parentBuilder;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public N and() {
-            return (N) parentBuilder.withSpec(this.build());
-        }
-
-        public N endSpec() {
-            return this.and();
-        }
+        return (F) this;
     }
 
 }

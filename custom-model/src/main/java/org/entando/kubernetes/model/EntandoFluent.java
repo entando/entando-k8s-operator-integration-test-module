@@ -20,11 +20,11 @@ import io.fabric8.kubernetes.api.builder.BaseFluent;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 
-public abstract class EntandoBaseFluentImpl<F extends EntandoBaseFluentImpl<F>> extends BaseFluent<F> implements EntandoBaseFluent<F> {
+public abstract class EntandoFluent<F extends EntandoFluent<F>> extends BaseFluent<F> implements EntandoBaseFluent<F> {
 
     protected ObjectMetaBuilder metadata;
 
-    protected EntandoBaseFluentImpl(ObjectMetaBuilder metadata) {
+    protected EntandoFluent(ObjectMetaBuilder metadata) {
         this.metadata = metadata;
     }
 
@@ -42,7 +42,7 @@ public abstract class EntandoBaseFluentImpl<F extends EntandoBaseFluentImpl<F>> 
     }
 
     @SuppressWarnings("unchecked")
-    private F thisAsF() {
+    protected F thisAsF() {
         return (F) this;
     }
 
