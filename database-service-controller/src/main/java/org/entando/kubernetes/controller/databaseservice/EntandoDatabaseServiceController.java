@@ -21,7 +21,6 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.quarkus.runtime.StartupEvent;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
@@ -58,18 +57,18 @@ public class EntandoDatabaseServiceController extends AbstractDbAwareController<
     @Override
     protected void synchronizeDeploymentState(EntandoDatabaseService newEntandoDatabaseService) {
         if (newEntandoDatabaseService.getSpec().getCreateDeployment().orElse(false)) {
-            DatabaseDeployable<EntandoDatabaseServiceSpec> deployable = new DatabaseDeployable<EntandoDatabaseServiceSpec>(
+            DatabaseDeployable deployable = new DatabaseDeployable(
                     DbmsDockerVendorStrategy
                             .forVendor(newEntandoDatabaseService.getSpec().getDbms(), EntandoOperatorSpiConfig.getComplianceMode()),
                     newEntandoDatabaseService, newEntandoDatabaseService.getSpec().getPort().orElse(null)) {
                 @Override
                 protected String getDatabaseAdminSecretName() {
-                    return getCustomResource().getSpec().getSecretName().orElse(super.getDatabaseAdminSecretName());
+                    return newEntandoDatabaseService.getSpec().getSecretName().orElse(super.getDatabaseAdminSecretName());
                 }
 
                 @Override
                 public List<Secret> getSecrets() {
-                    if (getCustomResource().getSpec().getSecretName().isPresent()) {
+                    if (newEntandoDatabaseService.getSpec().getSecretName().isPresent()) {
                         //because it already exists
                         return Collections.emptyList();
                     } else {
@@ -79,10 +78,10 @@ public class EntandoDatabaseServiceController extends AbstractDbAwareController<
 
                 @Override
                 protected String getDatabaseName() {
-                    return getCustomResource().getSpec().getDatabaseName().orElse(super.getDatabaseName());
+                    return newEntandoDatabaseService.getSpec().getDatabaseName().orElse(super.getDatabaseName());
                 }
             };
-            DatabaseDeploymentResult result = new DeployCommand<>(deployable).execute(k8sClient, Optional.ofNullable(keycloakClient));
+            DatabaseDeploymentResult result = new DeployCommand<>(deployable).execute(k8sClient, keycloakClient);
             k8sClient.entandoResources().updateStatus(newEntandoDatabaseService, result.getStatus());
         } else {
             CreateExternalServiceCommand command = new CreateExternalServiceCommand(newEntandoDatabaseService);
