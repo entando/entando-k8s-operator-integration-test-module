@@ -313,7 +313,7 @@ public abstract class EntandoCompositeAppSpecFluent<F extends EntandoCompositeAp
         }
 
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoDatabaseServices(new EntandoDatabaseService(super.metadata.build(), super.spec.build()));
         }
 
@@ -333,7 +333,7 @@ public abstract class EntandoCompositeAppSpecFluent<F extends EntandoCompositeAp
         }
 
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoCustomResourceReferences(new EntandoCustomResourceReference(super.metadata.build(), super.spec.build()));
         }
 
