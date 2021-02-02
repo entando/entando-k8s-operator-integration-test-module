@@ -47,60 +47,51 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
 
     @BeforeEach
     public void deleteEntandoDeBundles() {
-        try {
-            this.registry = new EntandoResourceOperationsRegistry(getClient());
-            prepareNamespace(entandoDeBundles(), MY_NAMESPACE);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ;
-        }
+        this.registry = new EntandoResourceOperationsRegistry(getClient());
+        prepareNamespace(entandoDeBundles(), MY_NAMESPACE);
     }
 
     @Test
     public void testCreateEntandoDeBundle() {
-        try {
-            //Given
-            EntandoDeBundle entandoDeBundle = new EntandoDeBundleBuilder()
-                    .withNewMetadata().withName(MY_BUNDLE)
-                    .withNamespace(MY_NAMESPACE)
-                    .endMetadata()
-                    .withNewSpec()
-                    .withNewDetails()
-                    .withDescription(MY_DESCRIPTION)
-                    .withName(MY_BUNDLE)
-                    .withThumbnail(MY_THUMBNAIL)
-                    .addNewKeyword(MY_KEYWORD)
-                    .addNewVersion(MY_VERSION)
-                    .addNewDistTag(SOME_TAG, SOME_VALUE)
-                    .endDetails()
-                    .addNewTag()
-                    .withIntegrity(MY_INTEGRITY)
-                    .withShasum(MY_SHASUM)
-                    .withTarball(MY_TARBALL)
-                    .withVersion(MY_VERSION)
-                    .endTag()
-                    .endSpec()
-                    .build();
-            entandoDeBundles().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoDeBundle.getMetadata())
-                    .withSpec(entandoDeBundle.getSpec()).done();
-            //When
-            EntandoDeBundle actual = entandoDeBundles().inNamespace(MY_NAMESPACE).withName(MY_BUNDLE).get();
+        //Given
+        EntandoDeBundle entandoDeBundle = new EntandoDeBundleBuilder()
+                .withNewMetadata().withName(MY_BUNDLE)
+                .withNamespace(MY_NAMESPACE)
+                .endMetadata()
+                .withNewSpec()
+                .withNewDetails()
+                .withDescription(MY_DESCRIPTION)
+                .withName(MY_BUNDLE)
+                .withThumbnail(MY_THUMBNAIL)
+                .addNewKeyword(MY_KEYWORD)
+                .addNewVersion(MY_VERSION)
+                .addNewDistTag(SOME_TAG, SOME_VALUE)
+                .endDetails()
+                .addNewTag()
+                .withIntegrity(MY_INTEGRITY)
+                .withShasum(MY_SHASUM)
+                .withTarball(MY_TARBALL)
+                .withVersion(MY_VERSION)
+                .endTag()
+                .endSpec()
+                .build();
+        entandoDeBundles().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoDeBundle.getMetadata())
+                .withSpec(entandoDeBundle.getSpec()).done();
+        //When
+        EntandoDeBundle actual = entandoDeBundles().inNamespace(MY_NAMESPACE).withName(MY_BUNDLE).get();
 
-            //Then
-            assertThat(actual.getSpec().getDetails().getName(), is(MY_BUNDLE));
-            assertThat(actual.getSpec().getDetails().getDescription(), is(MY_DESCRIPTION));
-            assertThat(actual.getSpec().getDetails().getThumbnail(), is(MY_THUMBNAIL));
-            assertThat(actual.getSpec().getDetails().getDistTags(), is(Collections.singletonMap(SOME_TAG, SOME_VALUE)));
-            assertThat(actual.getSpec().getDetails().getKeywords(), is(Collections.singletonList(MY_KEYWORD)));
-            assertThat(actual.getSpec().getDetails().getVersions(), is(Collections.singletonList(MY_VERSION)));
-            assertThat(actual.getSpec().getTags().get(0).getIntegrity(), is(MY_INTEGRITY));
-            assertThat(actual.getSpec().getTags().get(0).getShasum(), is(MY_SHASUM));
-            assertThat(actual.getSpec().getTags().get(0).getTarball(), is(MY_TARBALL));
-            assertThat(actual.getSpec().getTags().get(0).getVersion(), is(MY_VERSION));
-            assertThat(actual.getMetadata().getName(), is(MY_BUNDLE));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //Then
+        assertThat(actual.getSpec().getDetails().getName(), is(MY_BUNDLE));
+        assertThat(actual.getSpec().getDetails().getDescription(), is(MY_DESCRIPTION));
+        assertThat(actual.getSpec().getDetails().getThumbnail(), is(MY_THUMBNAIL));
+        assertThat(actual.getSpec().getDetails().getDistTags(), is(Collections.singletonMap(SOME_TAG, SOME_VALUE)));
+        assertThat(actual.getSpec().getDetails().getKeywords(), is(Collections.singletonList(MY_KEYWORD)));
+        assertThat(actual.getSpec().getDetails().getVersions(), is(Collections.singletonList(MY_VERSION)));
+        assertThat(actual.getSpec().getTags().get(0).getIntegrity(), is(MY_INTEGRITY));
+        assertThat(actual.getSpec().getTags().get(0).getShasum(), is(MY_SHASUM));
+        assertThat(actual.getSpec().getTags().get(0).getTarball(), is(MY_TARBALL));
+        assertThat(actual.getSpec().getTags().get(0).getVersion(), is(MY_VERSION));
+        assertThat(actual.getMetadata().getName(), is(MY_BUNDLE));
     }
 
     @Test

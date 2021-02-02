@@ -63,7 +63,7 @@ public class EntandoCompositeAppSpec implements Serializable {
         this.tlsSecretNameOverride = tlsSecretNameOverride;
     }
 
-    public List<EntandoBaseCustomResource<? extends Serializable>> getComponents() {
+    public List<EntandoBaseCustomResource<?>> getComponents() {
         return this.components == null ? Collections.emptyList() : this.components;
     }
 

@@ -27,7 +27,7 @@ public enum StandardKeycloakImage {
 
     @JsonValue
     public String toValue() {
-        return name().toLowerCase().replaceAll("_", "-");
+        return name().toLowerCase().replace("_", "-");
     }
 
     @JsonCreator
@@ -35,7 +35,7 @@ public enum StandardKeycloakImage {
         if (Strings.isNullOrEmpty(value)) {
             return null;
         }
-        return valueOf(value.toUpperCase(Locale.getDefault()).replaceAll("-", "_"));
+        return valueOf(value.toUpperCase(Locale.getDefault()).replace("-", "_"));
     }
 
 }
