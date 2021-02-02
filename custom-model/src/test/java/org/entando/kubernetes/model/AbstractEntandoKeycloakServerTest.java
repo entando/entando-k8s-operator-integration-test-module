@@ -24,9 +24,12 @@ import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
 import org.entando.kubernetes.model.keycloakserver.DoneableEntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
+import org.entando.kubernetes.model.keycloakserver.StandardKeycloakImage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoKeycloakServerTest implements CustomResourceTestUtil {
 
     protected static final String MY_KEYCLOAK = "my-keycloak";
@@ -34,6 +37,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
     private static final String ENTANDO_SOMEKEYCLOAK = "entando/somekeycloak";
     private static final String MYHOST_COM = "myhost.com";
     private static final String MY_TLS_SECRET = "my-tls-secret";
+    public static final String HTTP_MY_FRONTEND_URL = "http://my.frontend/url";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -43,7 +47,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
     }
 
     @Test
-    public void testCreateEntandoKeycloakServer() {
+    void testCreateEntandoKeycloakServer() {
         //Given
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServerBuilder()
                 .withNewMetadata().withName(MY_KEYCLOAK)
@@ -51,8 +55,10 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withImageName(ENTANDO_SOMEKEYCLOAK)
+                .withCustomImage(ENTANDO_SOMEKEYCLOAK)
                 .withReplicas(5)
+                .withStandardImage(StandardKeycloakImage.REDHAT_SSO)
+                .withFrontEndUrl(HTTP_MY_FRONTEND_URL)
                 .withDefault(true)
                 .withIngressHostName(MYHOST_COM)
                 .withTlsSecretName(MY_TLS_SECRET)
@@ -65,7 +71,9 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
 
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
+        assertThat(actual.getSpec().getFrontEndUrl().get(), is(HTTP_MY_FRONTEND_URL));
+        assertThat(actual.getSpec().getStandardImage().get(), is(StandardKeycloakImage.REDHAT_SSO));
+        assertThat(actual.getSpec().getCustomImage().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
@@ -74,7 +82,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
     }
 
     @Test
-    public void testEditEntandoKeycloakServer() {
+    void testEditEntandoKeycloakServer() {
         //Given
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServerBuilder()
                 .withNewMetadata()
@@ -83,8 +91,10 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.POSTGRESQL)
-                .withIngressHostName(MYHOST_COM)
-                .withImageName("entando/anotherkeycloak")
+                .withIngressHostName("some.other.host.com")
+                .withFrontEndUrl("http://other.frontend/url")
+                .withStandardImage(StandardKeycloakImage.KEYCLOAK)
+                .withCustomImage("entando/anotherkeycloak")
                 .withReplicas(3)
                 .withTlsSecretName("some-othersecret")
                 .withDefault(false)
@@ -98,21 +108,28 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
                 .endMetadata()
                 .editSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withImageName(ENTANDO_SOMEKEYCLOAK)
+                .withCustomImage(ENTANDO_SOMEKEYCLOAK)
+                .withStandardImage(StandardKeycloakImage.REDHAT_SSO)
+                .withFrontEndUrl(HTTP_MY_FRONTEND_URL)
                 .withIngressHostName(MYHOST_COM)
                 .withReplicas(5)
                 .withDefault(true)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new WebServerStatus("some-other-qualifier"))
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
+        actual = keycloakServers().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
+        assertThat(actual.getSpec().getFrontEndUrl().get(), is(HTTP_MY_FRONTEND_URL));
+        assertThat(actual.getSpec().getStandardImage().get(), is(StandardKeycloakImage.REDHAT_SSO));
+        assertThat(actual.getSpec().getCustomImage().get(), is(ENTANDO_SOMEKEYCLOAK));
+        assertThat(actual.getSpec().getFrontEndUrl().get(), is(HTTP_MY_FRONTEND_URL));
+        assertThat(actual.getSpec().getStandardImage().get(), is(StandardKeycloakImage.REDHAT_SSO));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
@@ -121,6 +138,8 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
+        assertThat(actual.getStatus().getObservedGeneration(), is(5L));
     }
 
     protected final DoneableEntandoKeycloakServer editEntandoKeycloakServer(EntandoKeycloakServer keycloakServer) {

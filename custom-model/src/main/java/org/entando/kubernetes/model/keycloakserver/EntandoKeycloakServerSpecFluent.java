@@ -16,37 +16,51 @@
 
 package org.entando.kubernetes.model.keycloakserver;
 
-import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecBuilder;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecFluent;
 
-public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent> extends EntandoIngressingDeploymentSpecBuilder<N> {
+public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpecFluent<N>>
+        extends EntandoIngressingDeploymentSpecFluent<N> {
 
-    protected String imageName;
+    protected String customImage;
     protected boolean isDefault;
+    private StandardKeycloakImage standardImage;
+    private String frontEndUrl;
 
     public EntandoKeycloakServerSpecFluent(EntandoKeycloakServerSpec spec) {
         super(spec);
         this.isDefault = spec.isDefault();
-        this.imageName = spec.getImageName().orElse(null);
+        this.customImage = spec.getCustomImage().orElse(null);
+        this.standardImage = spec.getStandardImage().orElse(null);
+        this.frontEndUrl = spec.getFrontEndUrl().orElse(null);
     }
 
     public EntandoKeycloakServerSpecFluent() {
 
     }
 
-    @SuppressWarnings("unchecked")
     public N withDefault(boolean isDefault) {
         this.isDefault = isDefault;
-        return (N) this;
+        return thisAsF();
     }
 
-    @SuppressWarnings("unchecked")
-    public N withImageName(String imageName) {
-        this.imageName = imageName;
-        return (N) this;
+    public N withCustomImage(String customImage) {
+        this.customImage = customImage;
+        return thisAsF();
+    }
+
+    public N withFrontEndUrl(String frontEndUrl) {
+        this.frontEndUrl = frontEndUrl;
+        return thisAsF();
+    }
+
+    public N withStandardImage(StandardKeycloakImage standardImage) {
+        this.standardImage = standardImage;
+        return thisAsF();
     }
 
     public EntandoKeycloakServerSpec build() {
-        return new EntandoKeycloakServerSpec(imageName, dbms, ingressHostName, tlsSecretName, replicas, isDefault,
+        return new EntandoKeycloakServerSpec(customImage, standardImage, frontEndUrl, dbms, ingressHostName, tlsSecretName, replicas,
+                isDefault,
                 serviceAccountToUse, environmentVariables, resourceRequirements);
     }
 }

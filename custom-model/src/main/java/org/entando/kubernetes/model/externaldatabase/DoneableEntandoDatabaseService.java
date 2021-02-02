@@ -19,14 +19,12 @@ package org.entando.kubernetes.model.externaldatabase;
 import io.fabric8.kubernetes.api.builder.Function;
 import io.fabric8.kubernetes.api.model.Doneable;
 import java.util.Optional;
-import org.entando.kubernetes.model.AbstractServerStatus;
 import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.EntandoDeploymentPhase;
 
 public class DoneableEntandoDatabaseService extends EntandoDatabaseServiceFluent<DoneableEntandoDatabaseService> implements
         Doneable<EntandoDatabaseService>,
-        DoneableEntandoCustomResource<DoneableEntandoDatabaseService, EntandoDatabaseService> {
+        DoneableEntandoCustomResource<EntandoDatabaseService, DoneableEntandoDatabaseService> {
 
     private final Function<EntandoDatabaseService, EntandoDatabaseService> function;
     private final EntandoCustomResourceStatus status;
@@ -46,18 +44,6 @@ public class DoneableEntandoDatabaseService extends EntandoDatabaseServiceFluent
     @Override
     public EntandoDatabaseService done() {
         return function.apply(build());
-    }
-
-    @Override
-    public DoneableEntandoDatabaseService withStatus(AbstractServerStatus status) {
-        this.status.putServerStatus(status);
-        return this;
-    }
-
-    @Override
-    public DoneableEntandoDatabaseService withPhase(EntandoDeploymentPhase phase) {
-        status.setEntandoDeploymentPhase(phase);
-        return this;
     }
 
     private EntandoDatabaseService build() {

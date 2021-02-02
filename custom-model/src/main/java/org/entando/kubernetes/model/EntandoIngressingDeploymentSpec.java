@@ -42,7 +42,8 @@ public abstract class EntandoIngressingDeploymentSpec extends EntandoDeploymentS
     protected EntandoIngressingDeploymentSpec() {
     }
 
-    @SuppressWarnings("unchecked")
+    //Acceptable because it is only used from JsonCreator constructors
+    @SuppressWarnings("java:S107")
     protected EntandoIngressingDeploymentSpec(String ingressHostName,
             String tlsSecretName,
             Integer replicas,

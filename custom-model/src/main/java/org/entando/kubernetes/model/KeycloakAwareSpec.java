@@ -26,11 +26,13 @@ public abstract class KeycloakAwareSpec extends EntandoIngressingDeploymentSpec 
 
     protected KeycloakToUse keycloakToUse;
 
-    public KeycloakAwareSpec() {
+    protected KeycloakAwareSpec() {
         super();
     }
 
-    public KeycloakAwareSpec(
+    //Acceptable because it is only used from JsonCreator constructors
+    @SuppressWarnings("java:S107")
+    protected KeycloakAwareSpec(
             String ingressHostName,
             String tlsSecretName,
             Integer replicas,

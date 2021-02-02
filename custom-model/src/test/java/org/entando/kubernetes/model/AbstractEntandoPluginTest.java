@@ -34,6 +34,8 @@ import org.entando.kubernetes.model.plugin.Permission;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoPluginTest implements CustomResourceTestUtil {
 
     protected static final String MY_PLUGIN = "my-plugin";
@@ -65,7 +67,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     }
 
     @Test
-    public void testCreateEntandoPlugin() {
+    void testCreateEntandoPlugin() {
         //Given
         EntandoPlugin entandoPlugin = new EntandoPluginBuilder()
                 .withNewMetadata().withName(MY_PLUGIN)
@@ -101,10 +103,7 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getPublicClientId().get(), is(MY_PUBLIC_CLIENT));
+        verifyKeycloakToUse(actual);
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
@@ -125,8 +124,15 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getStatus(), is(notNullValue()));
     }
 
+    private void verifyKeycloakToUse(EntandoPlugin actual) {
+        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
+        assertThat(actual.getSpec().getKeycloakToUse().get().getPublicClientId().get(), is(MY_PUBLIC_CLIENT));
+    }
+
     @Test
-    public void testEditEntandoPlugin() {
+    void testEditEntandoPlugin() {
         //Given
         EntandoPlugin entandoPlugin = new EntandoPluginBuilder()
                 .withNewMetadata()
@@ -179,17 +185,18 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .endKeycloakToUse()
                 .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
+        actual = entandoPlugins().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
+
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getImage(), is(IMAGE));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getPublicClientId().get(), is(MY_PUBLIC_CLIENT));
+        verifyKeycloakToUse(actual);
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
@@ -205,6 +212,11 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
+        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat(actual.getStatus().getObservedGeneration(), is(5L));
+        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
     }
 
     protected CustomResourceOperationsImpl<EntandoPlugin, CustomResourceList<EntandoPlugin>, DoneableEntandoPlugin> entandoPlugins() {

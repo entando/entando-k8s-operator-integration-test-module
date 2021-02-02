@@ -18,13 +18,11 @@ package org.entando.kubernetes.model.plugin;
 
 import io.fabric8.kubernetes.api.builder.Function;
 import java.util.Optional;
-import org.entando.kubernetes.model.AbstractServerStatus;
 import org.entando.kubernetes.model.DoneableEntandoCustomResource;
 import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.EntandoDeploymentPhase;
 
 public class DoneableEntandoPlugin extends EntandoPluginFluent<DoneableEntandoPlugin> implements
-        DoneableEntandoCustomResource<DoneableEntandoPlugin, EntandoPlugin> {
+        DoneableEntandoCustomResource<EntandoPlugin, DoneableEntandoPlugin> {
 
     private final EntandoCustomResourceStatus status;
     private final Function<EntandoPlugin, EntandoPlugin> function;
@@ -38,18 +36,6 @@ public class DoneableEntandoPlugin extends EntandoPluginFluent<DoneableEntandoPl
         super(resource.getSpec(), resource.getMetadata());
         this.function = function;
         this.status = Optional.ofNullable(resource.getStatus()).orElse(new EntandoCustomResourceStatus());
-    }
-
-    @Override
-    public DoneableEntandoPlugin withStatus(AbstractServerStatus status) {
-        this.status.putServerStatus(status);
-        return this;
-    }
-
-    @Override
-    public DoneableEntandoPlugin withPhase(EntandoDeploymentPhase phase) {
-        status.setEntandoDeploymentPhase(phase);
-        return this;
     }
 
     @Override

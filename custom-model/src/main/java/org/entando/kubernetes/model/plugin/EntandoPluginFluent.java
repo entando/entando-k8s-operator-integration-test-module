@@ -16,13 +16,14 @@
 
 package org.entando.kubernetes.model.plugin;
 
-import io.fabric8.kubernetes.api.builder.Fluent;
-import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluent;
+import org.entando.kubernetes.model.EntandoFluent;
+import org.entando.kubernetes.model.EntandoIngressingDeploymentBaseFluent;
 
-public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends EntandoBaseFluent<A> implements Fluent<A> {
+public class EntandoPluginFluent<F extends EntandoPluginFluent<F>>
+        extends EntandoFluent<F>
+        implements EntandoIngressingDeploymentBaseFluent<F, NestedEntandoPluginSpecFluent<F>> {
 
     protected EntandoPluginSpecBuilder spec;
 
@@ -39,47 +40,17 @@ public class EntandoPluginFluent<A extends EntandoPluginFluent<A>> extends Entan
         this.spec = spec;
     }
 
-    @SuppressWarnings("unchecked")
-    public NestedEntandoPluginSpecFluent<A> editSpec() {
-        return new NestedEntandoPluginSpecFluent<>((A) this, this.spec.build());
+    public NestedEntandoPluginSpecFluent<F> editSpec() {
+        return new NestedEntandoPluginSpecFluent<>(thisAsF(), this.spec.build());
     }
 
-    @SuppressWarnings("unchecked")
-    public NestedEntandoPluginSpecFluent<A> withNewSpec() {
-        return new NestedEntandoPluginSpecFluent<>((A) this);
+    public NestedEntandoPluginSpecFluent<F> withNewSpec() {
+        return new NestedEntandoPluginSpecFluent<>(thisAsF());
     }
 
-    @SuppressWarnings("unchecked")
-    public A withSpec(EntandoPluginSpec spec) {
+    public F withSpec(EntandoPluginSpec spec) {
         this.spec = new EntandoPluginSpecBuilder(spec);
-        return (A) this;
-    }
-
-    public static class NestedEntandoPluginSpecFluent<N extends EntandoPluginFluent> extends
-            EntandoPluginSpecFluent<NestedEntandoPluginSpecFluent<N>> implements
-            Nested<N> {
-
-        private final N parentBuilder;
-
-        NestedEntandoPluginSpecFluent(N parentBuilder, EntandoPluginSpec item) {
-            super(item);
-            this.parentBuilder = parentBuilder;
-        }
-
-        public NestedEntandoPluginSpecFluent(N parentBuilder) {
-            super();
-            this.parentBuilder = parentBuilder;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public N and() {
-            return (N) parentBuilder.withSpec(this.build());
-        }
-
-        public N endSpec() {
-            return this.and();
-        }
+        return thisAsF();
     }
 
 }

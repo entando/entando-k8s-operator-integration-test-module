@@ -16,35 +16,35 @@
 
 package org.entando.kubernetes.model;
 
-public abstract class KeycloakAwareSpecBuilder<N extends KeycloakAwareSpecBuilder> extends EntandoIngressingDeploymentSpecBuilder<N> {
+public abstract class KeycloakAwareSpecFluent<N extends KeycloakAwareSpecFluent<N>> extends EntandoIngressingDeploymentSpecFluent<N> {
 
     protected KeycloakToUse keycloakToUse;
 
-    protected KeycloakAwareSpecBuilder(KeycloakAwareSpec spec) {
+    protected KeycloakAwareSpecFluent(KeycloakAwareSpec spec) {
         super(spec);
         this.keycloakToUse = spec.getKeycloakToUse().orElse(null);
     }
 
-    protected KeycloakAwareSpecBuilder() {
+    protected KeycloakAwareSpecFluent() {
     }
 
     public N withKeycloakToUse(KeycloakToUse keycloakToUse) {
         this.keycloakToUse = keycloakToUse;
-        return thisAsN();
+        return thisAsF();
     }
 
     public KeycloakToUseNested withNewKeycloakToUse() {
-        return new KeycloakToUseNested(thisAsN());
+        return new KeycloakToUseNested(thisAsF());
     }
 
     public KeycloakToUseNested editKeycloakToUse() {
-        return new KeycloakToUseNested(thisAsN(), keycloakToUse);
+        return new KeycloakToUseNested(thisAsF(), keycloakToUse);
     }
 
     public class KeycloakToUseNested extends
             KeycloakToUseFluent<KeycloakToUseNested> {
 
-        private N parentBuilder;
+        private final N parentBuilder;
 
         public KeycloakToUseNested(N parentBuilder, KeycloakToUse keycloakToUse) {
             super(keycloakToUse);
@@ -55,9 +55,8 @@ public abstract class KeycloakAwareSpecBuilder<N extends KeycloakAwareSpecBuilde
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N endKeycloakToUse() {
-            return (N) parentBuilder.withKeycloakToUse(super.build());
+            return parentBuilder.withKeycloakToUse(super.build());
         }
     }
 

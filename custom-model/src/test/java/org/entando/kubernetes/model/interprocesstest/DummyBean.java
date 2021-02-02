@@ -71,7 +71,7 @@ import org.entando.kubernetes.model.plugin.EntandoPluginOperationFactory;
  * purposes, uncomment the @Observes annotation in {@link #onStartup(StartupEvent)}
  */
 @Singleton
-public class DummyBean {
+class DummyBean {
 
     private static final String MY_EXTERNAL_DATABASE = "my-external-database";
     private static final String MY_DB = "my_db";
@@ -144,7 +144,7 @@ public class DummyBean {
 
     private <R extends EntandoCustomResource,
             L extends CustomResourceList<R>,
-            D extends DoneableEntandoCustomResource<D, R>> void deleteAll(
+            D extends DoneableEntandoCustomResource<R, D>> void deleteAll(
             CustomResourceOperationsImpl<R, L, D> op) {
         try {
             op.inNamespace(MY_NAMESPACE).delete();
@@ -260,7 +260,7 @@ public class DummyBean {
         //Test statuses
         DbServerStatus db = new DbServerStatus("db");
         db.setEntandoControllerFailure(new EntandoControllerFailure("app", MY_APP, "Failed", "Failedmiserably"));
-        entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit().withStatus(db).withPhase(EntandoDeploymentPhase.STARTED).done();
+        entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit().done();
         actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).fromServer().get();
         DbServerStatus db1 = actual.getStatus().forDbQualifiedBy("db").get();
         assertThat(db1.getEntandoControllerFailure().getMessage(), "Failed");
@@ -276,7 +276,7 @@ public class DummyBean {
                 .endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.MYSQL)
-                .withImageName(ENTANDO_SOMEKEYCLOAK)
+                .withCustomImage(ENTANDO_SOMEKEYCLOAK)
                 .withReplicas(5)
                 .withDefault(true)
                 .withIngressHostName(MYHOST_COM)
@@ -290,7 +290,7 @@ public class DummyBean {
         EntandoKeycloakServer actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getImageName().get(), is(ENTANDO_SOMEKEYCLOAK));
+        assertThat(actual.getSpec().getCustomImage().get(), is(ENTANDO_SOMEKEYCLOAK));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));

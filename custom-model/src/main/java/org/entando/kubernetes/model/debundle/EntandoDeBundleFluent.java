@@ -19,9 +19,9 @@ package org.entando.kubernetes.model.debundle;
 import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluent;
+import org.entando.kubernetes.model.EntandoFluent;
 
-public class EntandoDeBundleFluent<A extends EntandoDeBundleFluent<A>> extends EntandoBaseFluent<A> {
+public class EntandoDeBundleFluent<A extends EntandoDeBundleFluent<A>> extends EntandoFluent<A> {
 
     protected EntandoDeBundleSpecBuilder spec;
 

@@ -18,6 +18,7 @@ package org.entando.kubernetes.model.compositeapp;
 
 import io.fabric8.kubernetes.api.builder.Builder;
 import io.fabric8.kubernetes.api.builder.Nested;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
-import org.entando.kubernetes.model.EntandoBaseFluent;
+import org.entando.kubernetes.model.EntandoFluent;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.app.EntandoAppFluent;
@@ -48,22 +50,40 @@ import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
 import org.entando.kubernetes.model.plugin.EntandoPluginFluent;
 
-public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAppSpecFluent> {
+//Sonar gets confused with generics within generics in return types
+@SuppressWarnings("java:S1452")
+public abstract class EntandoCompositeAppSpecFluent<F extends EntandoCompositeAppSpecFluent<F>> {
 
-    private static final Map<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> BUILDERS = createBuilderMap();
-    protected List<EntandoBaseFluent<?>> components;
+    private static final Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
+            Class<? extends EntandoFluent<?>>> BUILDERS = createBuilderMap();
+    protected List<EntandoFluent<?>> components;
+    private String ingressHostNameOverride;
+    private DbmsVendor dbmsOverride;
+    private String tlsSecretNameOverride;
 
     protected EntandoCompositeAppSpecFluent(EntandoCompositeAppSpec spec) {
         this.components = createComponentBuilders(spec.getComponents());
+        this.ingressHostNameOverride = spec.getIngressHostNameOverride().orElse(null);
+        this.dbmsOverride = spec.getDbmsOverride().orElse(null);
+        this.tlsSecretNameOverride = spec.getTlsSecretNameOverride().orElse(null);
     }
 
     protected EntandoCompositeAppSpecFluent() {
         this.components = new ArrayList<>();
     }
 
-    private static ConcurrentHashMap<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> createBuilderMap() {
-        ConcurrentHashMap<Class<? extends EntandoBaseCustomResource>, Class<? extends EntandoBaseFluent>> result =
-                new ConcurrentHashMap<>();
+    public static EntandoFluent<?> newBuilderFrom(EntandoBaseCustomResource<? extends Serializable> r) {
+        try {
+            return BUILDERS.get(r.getClass()).getConstructor(r.getClass()).newInstance(r);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
+            Class<? extends EntandoFluent<?>>> createBuilderMap() {
+        Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
+                Class<? extends EntandoFluent<?>>> result = new ConcurrentHashMap<>();
         result.put(EntandoKeycloakServer.class, EntandoKeycloakServerBuilder.class);
         result.put(EntandoClusterInfrastructure.class, EntandoClusterInfrastructureBuilder.class);
         result.put(EntandoApp.class, EntandoAppBuilder.class);
@@ -75,106 +95,115 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         return result;
     }
 
-    public A withComponents(List<EntandoBaseCustomResource> components) {
-        this.components = createComponentBuilders(components);
-        return thisAsA();
+    public final F withDbmsOverride(DbmsVendor dbmsOverride) {
+        this.dbmsOverride = dbmsOverride;
+        return thisAsF();
     }
 
-    public A withComponents(EntandoBaseCustomResource... components) {
+    public final F withTlsSecretNameOverride(String tlsSecretNameOverride) {
+        this.tlsSecretNameOverride = tlsSecretNameOverride;
+        return thisAsF();
+    }
+
+    public final F withIngressHostNameOverride(String ingressHostNameOverride) {
+        this.ingressHostNameOverride = ingressHostNameOverride;
+        return thisAsF();
+    }
+
+    public F withComponents(List<EntandoBaseCustomResource<? extends Serializable>> components) {
+        this.components = createComponentBuilders(components);
+        return thisAsF();
+    }
+
+    @SafeVarargs
+    public final F withComponents(EntandoBaseCustomResource<? extends Serializable>... components) {
         return withComponents(Arrays.asList(components));
     }
 
-    private List<EntandoBaseFluent<?>> createComponentBuilders(List<EntandoBaseCustomResource> components) {
-        return new ArrayList<>(components.stream()
-                .map(this::newBuilderFrom)
-                .collect(Collectors.toList()));
-    }
-
-    private EntandoBaseFluent<?> newBuilderFrom(EntandoBaseCustomResource r) {
-        try {
-            return BUILDERS.get(r.getClass()).getConstructor(r.getClass()).newInstance(r);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
+    private List<EntandoFluent<?>> createComponentBuilders(List<EntandoBaseCustomResource<? extends Serializable>> components) {
+        return components.stream()
+                .map(EntandoCompositeAppSpecFluent::newBuilderFrom).collect(Collectors.<EntandoFluent<?>>toList());
     }
 
     @SuppressWarnings("unchecked")
-    protected A thisAsA() {
-        return (A) this;
+    protected F thisAsF() {
+        return (F) this;
     }
 
+    //Sonar's solution gives compilation errors
+    @SuppressWarnings("java:S1612")
     public EntandoCompositeAppSpec build() {
         return new EntandoCompositeAppSpec(this.components.stream()
                 .map(Builder.class::cast)
                 .map(Builder::build)
-                .map(EntandoBaseCustomResource.class::cast)
-                .collect(Collectors.toList()));
+                .map(o -> (EntandoBaseCustomResource<?>) o)
+                .collect(Collectors.toList()), ingressHostNameOverride, dbmsOverride, tlsSecretNameOverride);
     }
 
-    public EntandoKeycloakServerNested<A> addNewEntandoKeycloakServer() {
-        return new EntandoKeycloakServerNested<>(thisAsA());
+    public EntandoKeycloakServerNested<F> addNewEntandoKeycloakServer() {
+        return new EntandoKeycloakServerNested<>(thisAsF());
     }
 
-    public A addToEntandoKeycloakServers(EntandoKeycloakServer item) {
+    public F addToEntandoKeycloakServers(EntandoKeycloakServer item) {
         this.components.add(new EntandoKeycloakServerBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoAppNested<A> addNewEntandoApp() {
-        return new EntandoAppNested<>(thisAsA());
+    public EntandoAppNested<F> addNewEntandoApp() {
+        return new EntandoAppNested<>(thisAsF());
     }
 
-    public A addToEntandoApps(EntandoApp item) {
+    public F addToEntandoApps(EntandoApp item) {
         this.components.add(new EntandoAppBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoClusterInfrastructureNested<A> addNewEntandoClusterInfrastructure() {
-        return new EntandoClusterInfrastructureNested<>(thisAsA());
+    public EntandoClusterInfrastructureNested<F> addNewEntandoClusterInfrastructure() {
+        return new EntandoClusterInfrastructureNested<>(thisAsF());
     }
 
-    public A addToEntandoClusterInfrastructures(EntandoClusterInfrastructure item) {
+    public F addToEntandoClusterInfrastructures(EntandoClusterInfrastructure item) {
         this.components.add(new EntandoClusterInfrastructureBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoPluginNested<A> addNewEntandoPlugin() {
-        return new EntandoPluginNested<>(thisAsA());
+    public EntandoPluginNested<F> addNewEntandoPlugin() {
+        return new EntandoPluginNested<>(thisAsF());
     }
 
-    public A addToEntandoPlugins(EntandoPlugin item) {
+    public F addToEntandoPlugins(EntandoPlugin item) {
         this.components.add(new EntandoPluginBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoCustomResourceReferenceNested<A> addNewEntandoCustomResourceReference() {
-        return new EntandoCustomResourceReferenceNested<>(thisAsA());
+    public EntandoCustomResourceReferenceNested<F> addNewEntandoCustomResourceReference() {
+        return new EntandoCustomResourceReferenceNested<>(thisAsF());
     }
 
-    public A addToEntandoCustomResourceReferences(EntandoCustomResourceReference item) {
+    public F addToEntandoCustomResourceReferences(EntandoCustomResourceReference item) {
         this.components.add(new EntandoCustomResourceReferenceBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoAppPluginLinkNested<A> addNewEntandoAppPluginLink() {
-        return new EntandoAppPluginLinkNested<>(thisAsA());
+    public EntandoAppPluginLinkNested<F> addNewEntandoAppPluginLink() {
+        return new EntandoAppPluginLinkNested<>(thisAsF());
     }
 
-    public A addToEntandoAppPluginLinks(EntandoAppPluginLink item) {
+    public F addToEntandoAppPluginLinks(EntandoAppPluginLink item) {
         this.components.add(new EntandoAppPluginLinkBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoDatabaseServiceNested<A> addNewEntandoDatabaseService() {
-        return new EntandoDatabaseServiceNested<>(thisAsA());
+    public EntandoDatabaseServiceNested<F> addNewEntandoDatabaseService() {
+        return new EntandoDatabaseServiceNested<>(thisAsF());
     }
 
-    public A addToEntandoDatabaseServices(EntandoDatabaseService item) {
+    public F addToEntandoDatabaseServices(EntandoDatabaseService item) {
         this.components.add(new EntandoDatabaseServiceBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public static class EntandoKeycloakServerNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoKeycloakServerNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoKeycloakServerFluent<EntandoKeycloakServerNested<N>> implements Nested<N> {
 
         private final N parentBuilder;
@@ -184,9 +213,8 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder.addToEntandoKeycloakServers(new EntandoKeycloakServer(super.metadata.build(), super.spec.build()));
+            return parentBuilder.addToEntandoKeycloakServers(new EntandoKeycloakServer(super.metadata.build(), super.spec.build()));
         }
 
         public N endEntandoKeycloakServer() {
@@ -194,7 +222,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         }
     }
 
-    public static class EntandoAppNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoAppNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoAppFluent<EntandoAppNested<N>> implements Nested<N> {
 
         private final N parentBuilder;
@@ -204,9 +232,8 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoApps(new EntandoApp(super.metadata.build(), super.spec.build()));
         }
 
@@ -215,7 +242,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         }
     }
 
-    public static class EntandoClusterInfrastructureNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoClusterInfrastructureNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoClusterInfrastructureFluent<EntandoClusterInfrastructureNested<N>> implements Nested<N> {
 
         private final N parentBuilder;
@@ -225,9 +252,8 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoClusterInfrastructures(new EntandoClusterInfrastructure(super.metadata.build(), super.spec.build()));
         }
 
@@ -236,7 +262,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         }
     }
 
-    public static class EntandoPluginNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoPluginNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoPluginFluent<EntandoPluginNested<N>> implements Nested<N> {
 
         private final N parentBuilder;
@@ -246,9 +272,8 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoPlugins(new EntandoPlugin(super.metadata.build(), super.spec.build()));
         }
 
@@ -257,7 +282,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         }
     }
 
-    public static class EntandoAppPluginLinkNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoAppPluginLinkNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoAppPluginLinkFluent<EntandoAppPluginLinkNested<N>> implements Nested<N> {
 
         private final N parentBuilder;
@@ -267,9 +292,8 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoAppPluginLinks(new EntandoAppPluginLink(super.metadata.build(), super.spec.build()));
         }
 
@@ -278,7 +302,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         }
     }
 
-    public static class EntandoDatabaseServiceNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoDatabaseServiceNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoDatabaseServiceFluent<EntandoDatabaseServiceNested<N>> implements Nested<N> {
 
         private final N parentBuilder;
@@ -288,9 +312,8 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoDatabaseServices(new EntandoDatabaseService(super.metadata.build(), super.spec.build()));
         }
 
@@ -299,7 +322,7 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         }
     }
 
-    public static class EntandoCustomResourceReferenceNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoCustomResourceReferenceNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoCustomResourceReferenceFluent<EntandoCustomResourceReferenceNested<N>> implements Nested<N> {
 
         private final N parentBuilder;
@@ -309,9 +332,8 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
             this.parentBuilder = parentBuilder;
         }
 
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder
+            return parentBuilder
                     .addToEntandoCustomResourceReferences(new EntandoCustomResourceReference(super.metadata.build(), super.spec.build()));
         }
 

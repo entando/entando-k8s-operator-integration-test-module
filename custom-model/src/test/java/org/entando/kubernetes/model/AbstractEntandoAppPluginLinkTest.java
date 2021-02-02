@@ -28,6 +28,8 @@ import org.entando.kubernetes.model.link.EntandoAppPluginLinkBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoAppPluginLinkTest implements CustomResourceTestUtil {
 
     protected static final String MY_APP_PLUGIN_LINK = "my-app-plugin-link";
@@ -44,7 +46,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     }
 
     @Test
-    public void testCreateEntandoAppPluginLink() {
+    void testCreateEntandoAppPluginLink() {
         //Given
         EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
                 .withNewMetadata().withName(MY_APP_PLUGIN_LINK)
@@ -69,7 +71,7 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
     }
 
     @Test
-    public void testEditEntandoAppPluginLink() {
+    void testEditEntandoAppPluginLink() {
         //Given
         EntandoAppPluginLink entandoAppPluginLink = new EntandoAppPluginLinkBuilder()
                 .withNewMetadata()
@@ -91,9 +93,6 @@ public abstract class AbstractEntandoAppPluginLinkTest implements CustomResource
                 .withEntandoApp(MY_APP_NAMESPACE, MY_APP)
                 .withEntandoPlugin(MY_PLUGIN_NAMESPACE, MY_PLUGIN)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
         //Then
         assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));

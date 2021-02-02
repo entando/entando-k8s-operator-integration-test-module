@@ -17,11 +17,10 @@
 package org.entando.kubernetes.model.plugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecBuilder;
+import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecFluent;
 
-public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends ClusterInfrastructureAwareSpecBuilder<N> {
+public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent<N>> extends ClusterInfrastructureAwareSpecFluent<N> {
 
     protected final List<String> connectionConfigNames;
     protected final List<ExpectedRole> roles;
@@ -54,66 +53,66 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent> extends 
 
     public N withIngressPath(String ingressPath) {
         this.ingressPath = ingressPath;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N addNewConnectionConfigName(String name) {
         connectionConfigNames.add(name);
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withImage(String image) {
         this.image = image;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withSecurityLevel(PluginSecurityLevel level) {
         this.securityLevel = level;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N addNewRole(String code, String name) {
         roles.add(new ExpectedRole(code, name));
-        return thisAsN();
+        return thisAsF();
     }
 
     public N addNewCompanionContainer(String name) {
         this.companionContainers.add(name);
-        return thisAsN();
+        return thisAsF();
     }
 
     public N addNewPermission(String clientId, String role) {
         permissions.add(new Permission(clientId, role));
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withHealthCheckPath(String healthCheckPath) {
         this.healthCheckPath = healthCheckPath;
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withConnectionConfigNames(List<String> strings) {
         this.connectionConfigNames.clear();
         this.connectionConfigNames.addAll(strings);
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withCompanionContainers(List<String> strings) {
         this.companionContainers.clear();
         this.companionContainers.addAll(strings);
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withRoles(List<ExpectedRole> roles) {
         this.roles.clear();
         this.roles.addAll(roles);
-        return thisAsN();
+        return thisAsF();
     }
 
     public N withPermissions(List<Permission> permissions) {
         this.permissions.clear();
         this.permissions.addAll(permissions);
-        return thisAsN();
+        return thisAsF();
     }
 
     public EntandoPluginSpec build() {

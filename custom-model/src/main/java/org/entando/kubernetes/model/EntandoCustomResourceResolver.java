@@ -42,7 +42,7 @@ import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
 
 public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L extends CustomResourceList<R>, D extends
-        DoneableEntandoCustomResource<D, R>> {
+        DoneableEntandoCustomResource<R, D>> {
 
     private static final Logger LOGGER = Logger.getLogger(EntandoCustomResourceResolver.class.getName());
 
@@ -112,7 +112,6 @@ public class EntandoCustomResourceResolver<R extends EntandoCustomResource, L ex
             if (crd == null) {
                 crd = client.customResourceDefinitions().load(loadYamlFile()).get();
                 // see issue https://github.com/fabric8io/kubernetes-client/issues/1486
-                crd.getSpec().getValidation().getOpenAPIV3Schema().setDependencies(null);
                 client.customResourceDefinitions().create(crd);
             }
             return crd;

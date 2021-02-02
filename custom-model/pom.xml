@@ -20,11 +20,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.entando</groupId>
-        <version>6.2.5</version>
+        <version>6.3.10</version>
         <artifactId>entando-quarkus-parent</artifactId>
         <relativePath/>
     </parent>
-    <version>6.2.0-SNAPSHOT</version>
+    <version>6.3.0-SNAPSHOT</version>
     <artifactId>entando-k8s-custom-model</artifactId>
 
     <name>Entando Kubernetes Custom Model</name>
@@ -78,7 +78,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-kubernetes-client</artifactId>
         </dependency>
-
         <!-- Test-scoped dependencies. -->
         <dependency>
             <groupId>org.hamcrest</groupId>

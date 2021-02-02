@@ -14,17 +14,14 @@
  *
  */
 
-package org.entando.kubernetes.model.compositeapp;
+package org.entando.kubernetes.model;
 
-public class EntandoCustomResourceReferenceSpecBuilder extends
-        EntandoCustomResourceReferenceSpecFluent<EntandoCustomResourceReferenceSpecBuilder> {
+public interface EntandoIngressingDeploymentBaseFluent<
+        F extends EntandoIngressingDeploymentBaseFluent<F, N>,
+        N extends NestedIngressingDeploymentSpecFluent<F, N>
+        >
+        extends EntandoBaseFluent<F> {
 
-    public EntandoCustomResourceReferenceSpecBuilder() {
-        super();
-    }
-
-    public EntandoCustomResourceReferenceSpecBuilder(EntandoCustomResourceReferenceSpec spec) {
-        super(spec);
-    }
+    N editSpec();
 
 }

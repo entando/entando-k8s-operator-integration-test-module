@@ -18,15 +18,19 @@ package org.entando.kubernetes.model.compositeapp;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoBaseCustomResource;
 
 @JsonSerialize
@@ -36,19 +40,44 @@ import org.entando.kubernetes.model.EntandoBaseCustomResource;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
+//Sonar gets confused with generics within generics in return types
+@SuppressWarnings("java:S1452")
 public class EntandoCompositeAppSpec implements Serializable {
 
-    private List<EntandoBaseCustomResource> components;
+    private List<EntandoBaseCustomResource<? extends Serializable>> components;
+    private String ingressHostNameOverride;
+    private DbmsVendor dbmsOverride;
+    private String tlsSecretNameOverride;
 
     public EntandoCompositeAppSpec() {
         super();
     }
 
-    public EntandoCompositeAppSpec(List<EntandoBaseCustomResource> components) {
+    @JsonCreator
+    public EntandoCompositeAppSpec(
+            @JsonProperty("components") List<EntandoBaseCustomResource<? extends Serializable>> components,
+            @JsonProperty("ingressHostNameOverride") String ingressHostNameOverride,
+            @JsonProperty("dbmsOverride") DbmsVendor dbmsOverride,
+            @JsonProperty("tlsSecretNameOverride") String tlsSecretNameOverride) {
         this.components = components;
+        this.ingressHostNameOverride = ingressHostNameOverride;
+        this.dbmsOverride = dbmsOverride;
+        this.tlsSecretNameOverride = tlsSecretNameOverride;
     }
 
-    public List<EntandoBaseCustomResource> getComponents() {
+    public List<EntandoBaseCustomResource<? extends Serializable>> getComponents() {
         return this.components == null ? Collections.emptyList() : this.components;
+    }
+
+    public Optional<DbmsVendor> getDbmsOverride() {
+        return Optional.ofNullable(dbmsOverride);
+    }
+
+    public Optional<String> getIngressHostNameOverride() {
+        return Optional.ofNullable(ingressHostNameOverride);
+    }
+
+    public Optional<String> getTlsSecretNameOverride() {
+        return Optional.ofNullable(tlsSecretNameOverride);
     }
 }

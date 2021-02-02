@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.io.Serializable;
 import java.util.Optional;
 
 @JsonInclude(Include.NON_NULL)
@@ -32,7 +33,7 @@ import java.util.Optional;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResourceReference {
+public class ResourceReference implements Serializable {
 
     protected String namespace;
     protected String name;

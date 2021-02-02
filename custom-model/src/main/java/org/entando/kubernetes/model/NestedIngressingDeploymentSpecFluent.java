@@ -14,17 +14,14 @@
  *
  */
 
-package org.entando.kubernetes.model.compositeapp;
+package org.entando.kubernetes.model;
 
-public class EntandoCustomResourceReferenceSpecBuilder extends
-        EntandoCustomResourceReferenceSpecFluent<EntandoCustomResourceReferenceSpecBuilder> {
+import io.fabric8.kubernetes.api.builder.Nested;
 
-    public EntandoCustomResourceReferenceSpecBuilder() {
-        super();
-    }
+public interface NestedIngressingDeploymentSpecFluent<F extends EntandoIngressingDeploymentBaseFluent<F, N>,
+        N extends NestedIngressingDeploymentSpecFluent<F, N>> extends
+        EntandoIngressingDeploymentSpecBaseFluent<N>, Nested<F> {
 
-    public EntandoCustomResourceReferenceSpecBuilder(EntandoCustomResourceReferenceSpec spec) {
-        super(spec);
-    }
+    F endSpec();
 
 }

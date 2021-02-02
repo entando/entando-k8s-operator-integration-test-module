@@ -14,17 +14,13 @@
  *
  */
 
-package org.entando.kubernetes.model.compositeapp;
+package org.entando.kubernetes.model;
 
-public class EntandoCustomResourceReferenceSpecBuilder extends
-        EntandoCustomResourceReferenceSpecFluent<EntandoCustomResourceReferenceSpecBuilder> {
+public interface EntandoIngressingDeploymentSpecBaseFluent<F extends EntandoIngressingDeploymentSpecBaseFluent<F>> {
 
-    public EntandoCustomResourceReferenceSpecBuilder() {
-        super();
-    }
+    F withTlsSecretName(String tlsSecretName);
 
-    public EntandoCustomResourceReferenceSpecBuilder(EntandoCustomResourceReferenceSpec spec) {
-        super(spec);
-    }
+    F withIngressHostName(String ingressHostName);
 
+    F withDbms(DbmsVendor dbms);
 }

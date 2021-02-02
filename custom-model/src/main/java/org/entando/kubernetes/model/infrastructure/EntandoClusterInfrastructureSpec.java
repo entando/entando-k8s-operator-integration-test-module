@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
-import java.util.Map;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.EntandoResourceRequirements;
 import org.entando.kubernetes.model.KeycloakAwareSpec;

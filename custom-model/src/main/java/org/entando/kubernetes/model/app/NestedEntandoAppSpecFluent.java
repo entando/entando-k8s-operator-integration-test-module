@@ -16,18 +16,32 @@
 
 package org.entando.kubernetes.model.app;
 
+import org.entando.kubernetes.model.NestedIngressingDeploymentSpecFluent;
+
 //This will be compliant again once we remove EntandoClusterInfrastructure
 @SuppressWarnings("java:S110")
-public class EntandoAppSpecBuilder extends EntandoAppSpecFluent<EntandoAppSpecBuilder> {
+public class NestedEntandoAppSpecFluent<N extends EntandoAppFluent<N>>
+        extends EntandoAppSpecFluent<NestedEntandoAppSpecFluent<N>>
+        implements NestedIngressingDeploymentSpecFluent<N, NestedEntandoAppSpecFluent<N>> {
 
-    public EntandoAppSpecBuilder() {
+    private final N parentBuilder;
+
+    NestedEntandoAppSpecFluent(N parentBuilder, EntandoAppSpec item) {
+        super(item);
+        this.parentBuilder = parentBuilder;
+    }
+
+    public NestedEntandoAppSpecFluent(N parentBuilder) {
         super();
-        //Needed for JSON Deserialization
-
+        this.parentBuilder = parentBuilder;
     }
 
-    public EntandoAppSpecBuilder(EntandoAppSpec spec) {
-        super(spec);
+    @Override
+    public N and() {
+        return parentBuilder.withSpec(this.build());
     }
 
+    public N endSpec() {
+        return this.and();
+    }
 }

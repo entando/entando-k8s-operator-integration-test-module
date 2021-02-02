@@ -66,17 +66,17 @@ import org.entando.kubernetes.model.plugin.EntandoPlugin;
 public abstract class EntandoBaseCustomResource<S extends Serializable> extends CustomResource implements EntandoCustomResource {
 
     private S spec;
-    private EntandoCustomResourceStatus entandoStatus;
+    private EntandoCustomResourceStatus status;
 
     protected EntandoBaseCustomResource() {
         super();
     }
 
-    protected EntandoBaseCustomResource(ObjectMeta objectMeta, S spec, EntandoCustomResourceStatus entandoStatus) {
+    protected EntandoBaseCustomResource(ObjectMeta objectMeta, S spec, EntandoCustomResourceStatus status) {
         super();
         super.setMetadata(objectMeta);
         this.spec = spec;
-        this.entandoStatus = entandoStatus;
+        this.status = status;
     }
 
     public S getSpec() {
@@ -89,14 +89,14 @@ public abstract class EntandoBaseCustomResource<S extends Serializable> extends 
 
     @Override
     public EntandoCustomResourceStatus getStatus() {
-        if (entandoStatus == null) {
+        if (status == null) {
             setStatus(new EntandoCustomResourceStatus());
         }
-        return this.entandoStatus;
+        return this.status;
     }
 
     @Override
     public void setStatus(EntandoCustomResourceStatus status) {
-        this.entandoStatus = status;
+        this.status = status;
     }
 }

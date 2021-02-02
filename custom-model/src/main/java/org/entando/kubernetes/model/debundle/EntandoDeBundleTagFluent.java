@@ -23,14 +23,14 @@ public abstract class EntandoDeBundleTagFluent<N extends EntandoDeBundleTagFluen
     private String shasum;
     private String tarball;
 
-    public EntandoDeBundleTagFluent(EntandoDeBundleTag tag) {
+    protected EntandoDeBundleTagFluent(EntandoDeBundleTag tag) {
         this.version = tag.getVersion();
         this.integrity = tag.getIntegrity();
         this.shasum = tag.getShasum();
         this.tarball = tag.getTarball();
     }
 
-    public EntandoDeBundleTagFluent() {
+    protected EntandoDeBundleTagFluent() {
     }
 
     public EntandoDeBundleTag build() {

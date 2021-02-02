@@ -17,11 +17,15 @@
 package org.entando.kubernetes.model;
 
 import io.fabric8.kubernetes.api.model.Doneable;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 
-public interface DoneableEntandoCustomResource<D extends DoneableEntandoCustomResource,
-        R extends EntandoCustomResource> extends Doneable<R> {
+public interface DoneableEntandoCustomResource<R extends EntandoCustomResource, D extends DoneableEntandoCustomResource<R, D>>
+        extends Doneable<R>, EntandoBaseFluent<D> {
 
-    D withStatus(AbstractServerStatus status);
+    MetadataNestedImpl<D> editMetadata();
 
-    D withPhase(EntandoDeploymentPhase phase);
+    MetadataNestedImpl<D> withNewMetadata();
+
+    D withMetadata(ObjectMeta metadata);
+
 }

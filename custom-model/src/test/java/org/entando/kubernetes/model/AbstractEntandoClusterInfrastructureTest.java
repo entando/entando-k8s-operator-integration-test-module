@@ -27,6 +27,8 @@ import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureB
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoClusterInfrastructureTest implements CustomResourceTestUtil {
 
     protected static final String MY_ENTANDO_CLUSTER_INFRASTRUCTURE = "my-entando-cluster-infrastructure";
@@ -46,7 +48,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     }
 
     @Test
-    public void testCreateEntandoClusterInfrastructure() {
+    void testCreateEntandoClusterInfrastructure() {
         //Given
         EntandoClusterInfrastructure clusterInfrastructure = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata().withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
@@ -72,7 +74,6 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         EntandoClusterInfrastructure actual = entandoInfrastructure().inNamespace(MY_NAMESPACE).withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
                 .get();
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
         assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
         assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
@@ -85,7 +86,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     }
 
     @Test
-    public void testEditEntandoClusterInfrastructure() {
+    void testEditEntandoClusterInfrastructure() {
         //Given
         EntandoClusterInfrastructure keycloakServer = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata()
@@ -126,14 +127,15 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withDefault(true)
                 .endSpec()
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new WebServerStatus("some-other-qualifier"))
-                .withStatus(new WebServerStatus("some-qualifier"))
-                .withStatus(new DbServerStatus("another-qualifier"))
-                .withPhase(EntandoDeploymentPhase.STARTED)
                 .done();
+
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+        actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
+        actual = entandoInfrastructure().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
         //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
         assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
         assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
@@ -145,10 +147,11 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
         assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
         assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
         assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getPublicClientId().get(), is(MY_PUBLIC_CLIENT));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
         assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat(actual.getStatus().getObservedGeneration(), is(5L));
+        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
     }
 
     protected CustomResourceOperationsImpl<EntandoClusterInfrastructure, CustomResourceList<EntandoClusterInfrastructure>,

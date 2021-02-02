@@ -19,9 +19,10 @@ package org.entando.kubernetes.model.compositeapp;
 import io.fabric8.kubernetes.api.builder.Nested;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoBaseFluent;
+import org.entando.kubernetes.model.EntandoFluent;
 
-public abstract class EntandoCustomResourceReferenceFluent<N extends EntandoCustomResourceReferenceFluent<N>> extends EntandoBaseFluent<N> {
+public abstract class EntandoCustomResourceReferenceFluent<N extends EntandoCustomResourceReferenceFluent<N>> extends
+        EntandoFluent<N> {
 
     protected EntandoCustomResourceReferenceSpecBuilder spec;
 
@@ -73,9 +74,8 @@ public abstract class EntandoCustomResourceReferenceFluent<N extends EntandoCust
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public P and() {
-            return (P) parentBuilder.withSpec(this.build());
+            return parentBuilder.withSpec(this.build());
         }
 
         public P endSpec() {
