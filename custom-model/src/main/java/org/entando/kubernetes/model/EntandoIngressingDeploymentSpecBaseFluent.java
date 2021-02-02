@@ -16,8 +16,6 @@
 
 package org.entando.kubernetes.model;
 
-import io.fabric8.kubernetes.api.builder.Fluent;
-
 public interface EntandoIngressingDeploymentSpecBaseFluent<F extends EntandoIngressingDeploymentSpecBaseFluent<F>> {
 
     F withTlsSecretName(String tlsSecretName);

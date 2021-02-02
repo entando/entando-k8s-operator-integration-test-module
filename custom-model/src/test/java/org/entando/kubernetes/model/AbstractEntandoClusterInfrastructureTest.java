@@ -27,6 +27,8 @@ import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureB
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoClusterInfrastructureTest implements CustomResourceTestUtil {
 
     protected static final String MY_ENTANDO_CLUSTER_INFRASTRUCTURE = "my-entando-cluster-infrastructure";
@@ -46,7 +48,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     }
 
     @Test
-    public void testCreateEntandoClusterInfrastructure() {
+    void testCreateEntandoClusterInfrastructure() {
         //Given
         EntandoClusterInfrastructure clusterInfrastructure = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata().withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
@@ -84,7 +86,7 @@ public abstract class AbstractEntandoClusterInfrastructureTest implements Custom
     }
 
     @Test
-    public void testEditEntandoClusterInfrastructure() {
+    void testEditEntandoClusterInfrastructure() {
         //Given
         EntandoClusterInfrastructure keycloakServer = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata()

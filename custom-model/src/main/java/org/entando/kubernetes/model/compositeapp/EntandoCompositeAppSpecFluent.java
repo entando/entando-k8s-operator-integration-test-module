@@ -50,7 +50,9 @@ import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
 import org.entando.kubernetes.model.plugin.EntandoPluginFluent;
 
-public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAppSpecFluent<A>> {
+//Sonar gets confused with generics within generics in return types
+@SuppressWarnings("java:S1452")
+public abstract class EntandoCompositeAppSpecFluent<F extends EntandoCompositeAppSpecFluent<F>> {
 
     private static final Map<Class<? extends EntandoBaseCustomResource<? extends Serializable>>,
             Class<? extends EntandoFluent<?>>> BUILDERS = createBuilderMap();
@@ -93,28 +95,28 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
         return result;
     }
 
-    public final A withDbmsOverride(DbmsVendor dbmsOverride) {
+    public final F withDbmsOverride(DbmsVendor dbmsOverride) {
         this.dbmsOverride = dbmsOverride;
-        return thisAsA();
+        return thisAsF();
     }
 
-    public final A withTlsSecretNameOverride(String tlsSecretNameOverride) {
+    public final F withTlsSecretNameOverride(String tlsSecretNameOverride) {
         this.tlsSecretNameOverride = tlsSecretNameOverride;
-        return thisAsA();
+        return thisAsF();
     }
 
-    public final A withIngressHostNameOverride(String ingressHostNameOverride) {
+    public final F withIngressHostNameOverride(String ingressHostNameOverride) {
         this.ingressHostNameOverride = ingressHostNameOverride;
-        return thisAsA();
+        return thisAsF();
     }
 
-    public A withComponents(List<EntandoBaseCustomResource<? extends Serializable>> components) {
+    public F withComponents(List<EntandoBaseCustomResource<? extends Serializable>> components) {
         this.components = createComponentBuilders(components);
-        return thisAsA();
+        return thisAsF();
     }
 
     @SafeVarargs
-    public final A withComponents(EntandoBaseCustomResource<? extends Serializable>... components) {
+    public final F withComponents(EntandoBaseCustomResource<? extends Serializable>... components) {
         return withComponents(Arrays.asList(components));
     }
 
@@ -124,82 +126,83 @@ public abstract class EntandoCompositeAppSpecFluent<A extends EntandoCompositeAp
     }
 
     @SuppressWarnings("unchecked")
-    protected A thisAsA() {
-        return (A) this;
+    protected F thisAsF() {
+        return (F) this;
     }
 
+    @SuppressWarnings("unchecked")
     public EntandoCompositeAppSpec build() {
         return new EntandoCompositeAppSpec(this.components.stream()
                 .map(Builder.class::cast)
                 .map(Builder::build)
-                .map(o -> (EntandoBaseCustomResource<? extends Serializable>) o)
+                .map(o -> (EntandoBaseCustomResource<?>) o)
                 .collect(Collectors.toList()), ingressHostNameOverride, dbmsOverride, tlsSecretNameOverride);
     }
 
-    public EntandoKeycloakServerNested<A> addNewEntandoKeycloakServer() {
-        return new EntandoKeycloakServerNested<>(thisAsA());
+    public EntandoKeycloakServerNested<F> addNewEntandoKeycloakServer() {
+        return new EntandoKeycloakServerNested<>(thisAsF());
     }
 
-    public A addToEntandoKeycloakServers(EntandoKeycloakServer item) {
+    public F addToEntandoKeycloakServers(EntandoKeycloakServer item) {
         this.components.add(new EntandoKeycloakServerBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoAppNested<A> addNewEntandoApp() {
-        return new EntandoAppNested<>(thisAsA());
+    public EntandoAppNested<F> addNewEntandoApp() {
+        return new EntandoAppNested<>(thisAsF());
     }
 
-    public A addToEntandoApps(EntandoApp item) {
+    public F addToEntandoApps(EntandoApp item) {
         this.components.add(new EntandoAppBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoClusterInfrastructureNested<A> addNewEntandoClusterInfrastructure() {
-        return new EntandoClusterInfrastructureNested<>(thisAsA());
+    public EntandoClusterInfrastructureNested<F> addNewEntandoClusterInfrastructure() {
+        return new EntandoClusterInfrastructureNested<>(thisAsF());
     }
 
-    public A addToEntandoClusterInfrastructures(EntandoClusterInfrastructure item) {
+    public F addToEntandoClusterInfrastructures(EntandoClusterInfrastructure item) {
         this.components.add(new EntandoClusterInfrastructureBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoPluginNested<A> addNewEntandoPlugin() {
-        return new EntandoPluginNested<>(thisAsA());
+    public EntandoPluginNested<F> addNewEntandoPlugin() {
+        return new EntandoPluginNested<>(thisAsF());
     }
 
-    public A addToEntandoPlugins(EntandoPlugin item) {
+    public F addToEntandoPlugins(EntandoPlugin item) {
         this.components.add(new EntandoPluginBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoCustomResourceReferenceNested<A> addNewEntandoCustomResourceReference() {
-        return new EntandoCustomResourceReferenceNested<>(thisAsA());
+    public EntandoCustomResourceReferenceNested<F> addNewEntandoCustomResourceReference() {
+        return new EntandoCustomResourceReferenceNested<>(thisAsF());
     }
 
-    public A addToEntandoCustomResourceReferences(EntandoCustomResourceReference item) {
+    public F addToEntandoCustomResourceReferences(EntandoCustomResourceReference item) {
         this.components.add(new EntandoCustomResourceReferenceBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoAppPluginLinkNested<A> addNewEntandoAppPluginLink() {
-        return new EntandoAppPluginLinkNested<>(thisAsA());
+    public EntandoAppPluginLinkNested<F> addNewEntandoAppPluginLink() {
+        return new EntandoAppPluginLinkNested<>(thisAsF());
     }
 
-    public A addToEntandoAppPluginLinks(EntandoAppPluginLink item) {
+    public F addToEntandoAppPluginLinks(EntandoAppPluginLink item) {
         this.components.add(new EntandoAppPluginLinkBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public EntandoDatabaseServiceNested<A> addNewEntandoDatabaseService() {
-        return new EntandoDatabaseServiceNested<>(thisAsA());
+    public EntandoDatabaseServiceNested<F> addNewEntandoDatabaseService() {
+        return new EntandoDatabaseServiceNested<>(thisAsF());
     }
 
-    public A addToEntandoDatabaseServices(EntandoDatabaseService item) {
+    public F addToEntandoDatabaseServices(EntandoDatabaseService item) {
         this.components.add(new EntandoDatabaseServiceBuilder(item));
-        return thisAsA();
+        return thisAsF();
     }
 
-    public static class EntandoKeycloakServerNested<N extends EntandoCompositeAppSpecFluent> extends
+    public static class EntandoKeycloakServerNested<N extends EntandoCompositeAppSpecFluent<N>> extends
             EntandoKeycloakServerFluent<EntandoKeycloakServerNested<N>> implements Nested<N> {
 
         private final N parentBuilder;

@@ -21,12 +21,12 @@ public abstract class ClusterInfrastructureAwareSpecFluent<N extends ClusterInfr
 
     protected ResourceReference clusterInfrastructureToUse;
 
-    public ClusterInfrastructureAwareSpecFluent(ClusterInfrastructureAwareSpec spec) {
+    protected ClusterInfrastructureAwareSpecFluent(ClusterInfrastructureAwareSpec spec) {
         super(spec);
         this.clusterInfrastructureToUse = spec.getClusterInfrastructureToUse().orElse(null);
     }
 
-    public ClusterInfrastructureAwareSpecFluent() {
+    protected ClusterInfrastructureAwareSpecFluent() {
     }
 
     public N withClusterInfrastructureToUse(String namespace, String name) {

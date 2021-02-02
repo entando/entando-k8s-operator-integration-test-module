@@ -40,20 +40,17 @@ public class EntandoPluginFluent<F extends EntandoPluginFluent<F>>
         this.spec = spec;
     }
 
-    @SuppressWarnings("unchecked")
     public NestedEntandoPluginSpecFluent<F> editSpec() {
-        return new NestedEntandoPluginSpecFluent<>((F) this, this.spec.build());
+        return new NestedEntandoPluginSpecFluent<>(thisAsF(), this.spec.build());
     }
 
-    @SuppressWarnings("unchecked")
     public NestedEntandoPluginSpecFluent<F> withNewSpec() {
-        return new NestedEntandoPluginSpecFluent<>((F) this);
+        return new NestedEntandoPluginSpecFluent<>(thisAsF());
     }
 
-    @SuppressWarnings("unchecked")
     public F withSpec(EntandoPluginSpec spec) {
         this.spec = new EntandoPluginSpecBuilder(spec);
-        return (F) this;
+        return thisAsF();
     }
 
 }

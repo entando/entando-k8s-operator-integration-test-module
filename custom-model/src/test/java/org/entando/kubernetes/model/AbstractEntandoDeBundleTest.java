@@ -30,6 +30,8 @@ import org.entando.kubernetes.model.debundle.EntandoDeBundleTagBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestUtil {
 
     public static final String MY_BUNDLE = "my-bundle";
@@ -52,7 +54,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
     }
 
     @Test
-    public void testCreateEntandoDeBundle() {
+    void testCreateEntandoDeBundle() {
         //Given
         EntandoDeBundle entandoDeBundle = new EntandoDeBundleBuilder()
                 .withNewMetadata().withName(MY_BUNDLE)
@@ -95,7 +97,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
     }
 
     @Test
-    public void testEditEntandoDeBundle() {
+    void testEditEntandoDeBundle() {
         //Given
         EntandoDeBundle entandoApp = new EntandoDeBundleBuilder()
                 .withNewMetadata()

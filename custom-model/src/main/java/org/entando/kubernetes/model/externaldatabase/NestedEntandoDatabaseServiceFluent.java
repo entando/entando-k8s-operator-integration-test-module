@@ -36,7 +36,7 @@ public class NestedEntandoDatabaseServiceFluent<F extends EntandoDatabaseService
 
     @Override
     public F and() {
-        return (F) parentBuilder.withSpec(this.build());
+        return parentBuilder.withSpec(this.build());
     }
 
     public F endSpec() {

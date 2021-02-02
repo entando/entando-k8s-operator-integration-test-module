@@ -18,6 +18,8 @@ package org.entando.kubernetes.model.plugin;
 
 import org.entando.kubernetes.model.NestedIngressingDeploymentSpecFluent;
 
+//This will be compliant again once we remove EntandoClusterInfrastructure
+@SuppressWarnings("java:S110")
 public class NestedEntandoPluginSpecFluent<F extends EntandoPluginFluent<F>> extends
         EntandoPluginSpecFluent<NestedEntandoPluginSpecFluent<F>> implements
         NestedIngressingDeploymentSpecFluent<F, NestedEntandoPluginSpecFluent<F>> {
@@ -36,7 +38,7 @@ public class NestedEntandoPluginSpecFluent<F extends EntandoPluginFluent<F>> ext
 
     @Override
     public F and() {
-        return (F) parentBuilder.withSpec(this.build());
+        return parentBuilder.withSpec(this.build());
     }
 
     @Override

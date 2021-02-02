@@ -16,6 +16,8 @@
 
 package org.entando.kubernetes.model.plugin;
 
+//This will be compliant again once we remove EntandoClusterInfrastructure
+@SuppressWarnings("java:S110")
 public class EntandoPluginSpecBuilder extends EntandoPluginSpecFluent<EntandoPluginSpecBuilder> {
 
     public EntandoPluginSpecBuilder() {

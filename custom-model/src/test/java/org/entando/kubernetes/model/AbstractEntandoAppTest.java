@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.is;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
-import java.sql.Timestamp;
 import java.util.Collections;
 import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
@@ -31,6 +30,8 @@ import org.entando.kubernetes.model.gitspec.GitResponsibility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
     public static final String MY_CUSTOM_SERVER_IMAGE = "somenamespace/someimage:3.2.2";
@@ -71,7 +72,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     }
 
     @Test
-    public void testCreateEntandoApp() {
+    void testCreateEntandoApp() {
         //Given
         EntandoApp entandoApp = new EntandoAppBuilder()
                 .withNewMetadata().withName(MY_APP)
@@ -119,9 +120,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
+        verifyKeycloakToUSer(actual);
         assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getIngressPath().get(), is(MY_INGRESS_PATH));
@@ -129,13 +128,23 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getNamespace().get(), is(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE));
+        verifyClusterInfrastructureToUse(actual.getSpec().getClusterInfrastructureToUse().get(), MY_CLUSTER_INFRASTRUCTURE,
+                MY_CLUSTER_INFRASTRUCTURE_NAMESPACE);
+        verifyBackupGitSpec(actual);
+        assertThat(actual.getSpec().getEcrGitSshSecretName().get(), is(MY_GIT_SECRET_NAME));
+        verifyResourceRequirements(actual);
+        assertThat(findParameter(actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
+        assertThat(actual.getMetadata().getName(), is(MY_APP));
+    }
+
+    private void verifyBackupGitSpec(EntandoApp actual) {
         assertThat(actual.getSpec().getBackupGitSpec().get().getRepository(), is(MY_BACKUP_GIT_REPO));
         assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
         assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
         assertThat(actual.getSpec().getBackupGitSpec().get().getTargetRef().get(), is("master"));
-        assertThat(actual.getSpec().getEcrGitSshSecretName().get(), is(MY_GIT_SECRET_NAME));
+    }
+
+    private void verifyResourceRequirements(EntandoApp actual) {
         assertThat(actual.getSpec().getResourceRequirements().get().getCpuLimit().get(), is(CPU_LIMIT));
         assertThat(actual.getSpec().getResourceRequirements().get().getCpuRequest().get(), is(CPU_REQUEST));
         assertThat(actual.getSpec().getResourceRequirements().get().getFileUploadLimit().get(), is(FILE_UPLOAD_LIMIT));
@@ -143,12 +152,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getResourceRequirements().get().getMemoryRequest().get(), is(MEMORY_REQUEST));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageLimit().get(), is(STORAGE_LIMIT));
         assertThat(actual.getSpec().getResourceRequirements().get().getStorageRequest().get(), is(STORAGE_REQUEST));
-        assertThat(findParameter(actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
-        assertThat(actual.getMetadata().getName(), is(MY_APP));
     }
 
     @Test
-    public void testEditEntandoApp() {
+    void testEditEntandoApp() {
         //Given
         EntandoApp entandoApp = new EntandoAppBuilder()
                 .withNewMetadata()
@@ -229,32 +236,36 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .endSpec()
                 .done();
         //Then
+        verifySpec(actual);
+        verifyKeycloakToUSer(actual);
+        verifyClusterInfrastructureToUse(actual.getSpec().getClusterInfrastructureToUse().get(), MY_CLUSTER_INFRASTRUCTURE,
+                MY_CLUSTER_INFRASTRUCTURE_NAMESPACE);
+        verifyBackupGitSpec(actual);
+        verifyResourceRequirements(actual);
+        assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
+    }
+
+    private void verifySpec(EntandoApp actual) {
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
         assertThat(actual.getSpec().getStandardServerImage().isPresent(), is(false));//overridden by customServerImage
         assertThat(actual.getSpec().getCustomServerImage().get(), is(MY_CUSTOM_SERVER_IMAGE));
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getNamespace().get(), is(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
-        assertThat(actual.getSpec().getServiceAccountToUse().get(), is(MY_SERVICE_ACCOUNT));
-        assertThat(actual.getSpec().getBackupGitSpec().get().getRepository(), is(MY_BACKUP_GIT_REPO));
-        assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
-        assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
-        assertThat(actual.getSpec().getBackupGitSpec().get().getTargetRef().get(), is("master"));
         assertThat(actual.getSpec().getEcrGitSshSecretName().get(), is(MY_GIT_SECRET_NAME));
-        assertThat(actual.getSpec().getResourceRequirements().get().getCpuLimit().get(), is(CPU_LIMIT));
-        assertThat(actual.getSpec().getResourceRequirements().get().getCpuRequest().get(), is(CPU_REQUEST));
-        assertThat(actual.getSpec().getResourceRequirements().get().getFileUploadLimit().get(), is(FILE_UPLOAD_LIMIT));
-        assertThat(actual.getSpec().getResourceRequirements().get().getMemoryLimit().get(), is(MEMORY_LIMIT));
-        assertThat(actual.getSpec().getResourceRequirements().get().getMemoryRequest().get(), is(MEMORY_REQUEST));
-        assertThat(actual.getSpec().getResourceRequirements().get().getStorageLimit().get(), is(STORAGE_LIMIT));
-        assertThat(actual.getSpec().getResourceRequirements().get().getStorageRequest().get(), is(STORAGE_REQUEST));
+        assertThat(actual.getSpec().getServiceAccountToUse().get(), is(MY_SERVICE_ACCOUNT));
         assertThat(findParameter(actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
-        assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
+    }
+
+    private void verifyClusterInfrastructureToUse(ResourceReference resourceReference, String myClusterInfrastructure,
+            String myClusterInfrastructureNamespace) {
+        assertThat(resourceReference.getName(), is(myClusterInfrastructure));
+        assertThat(resourceReference.getNamespace().get(), is(myClusterInfrastructureNamespace));
+    }
+
+    private void verifyKeycloakToUSer(EntandoApp actual) {
+        verifyClusterInfrastructureToUse(actual.getSpec().getKeycloakToUse().get(), MY_KEYCLOAK_NAME, MY_KEYCLOAK_NAME_SPACE);
+        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
     }
 
     protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) {

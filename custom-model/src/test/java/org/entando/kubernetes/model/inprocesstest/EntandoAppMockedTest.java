@@ -30,7 +30,7 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 @Tags({@Tag("in-process"), @Tag("pre-deployment")})
 @EnableRuleMigrationSupport
-public class EntandoAppMockedTest extends AbstractEntandoAppTest {
+class EntandoAppMockedTest extends AbstractEntandoAppTest {
 
     @Rule
     public KubernetesServer server = new KubernetesServer(false, true);
@@ -41,7 +41,7 @@ public class EntandoAppMockedTest extends AbstractEntandoAppTest {
     }
 
     @Test
-    public void testOverriddenEqualsMethods() {
+    void testOverriddenEqualsMethods() {
         //The ObjectMetaBuilder's equals method is broken. There is no way to fix it.
         // These tests just verify that inequality corresponds with hashcode
         EntandoAppBuilder builder = new EntandoAppBuilder().editMetadata().withNamespace("ns").withName("name").endMetadata();

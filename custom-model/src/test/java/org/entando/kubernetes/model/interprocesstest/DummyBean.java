@@ -71,7 +71,7 @@ import org.entando.kubernetes.model.plugin.EntandoPluginOperationFactory;
  * purposes, uncomment the @Observes annotation in {@link #onStartup(StartupEvent)}
  */
 @Singleton
-public class DummyBean {
+class DummyBean {
 
     private static final String MY_EXTERNAL_DATABASE = "my-external-database";
     private static final String MY_DB = "my_db";

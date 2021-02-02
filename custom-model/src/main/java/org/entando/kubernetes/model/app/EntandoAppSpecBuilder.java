@@ -16,6 +16,8 @@
 
 package org.entando.kubernetes.model.app;
 
+//This will be compliant again once we remove EntandoClusterInfrastructure
+@SuppressWarnings("java:S110")
 public class EntandoAppSpecBuilder extends EntandoAppSpecFluent<EntandoAppSpecBuilder> {
 
     public EntandoAppSpecBuilder() {

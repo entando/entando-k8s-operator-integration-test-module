@@ -31,13 +31,13 @@ public abstract class EntandoDeBundleDetailsFluent<N extends EntandoDeBundleDeta
     private List<String> keywords;
     private String thumbnail;
 
-    public EntandoDeBundleDetailsFluent() {
+    protected EntandoDeBundleDetailsFluent() {
         this.distTags = new ConcurrentHashMap<>();
         this.versions = new ArrayList<>();
         this.keywords = new ArrayList<>();
     }
 
-    public EntandoDeBundleDetailsFluent(EntandoDeBundleDetails details) {
+    protected EntandoDeBundleDetailsFluent(EntandoDeBundleDetails details) {
         this.name = details.getName();
         this.description = details.getDescription();
         this.distTags = Optional.ofNullable(details.getDistTags()).orElse(new ConcurrentHashMap<>());

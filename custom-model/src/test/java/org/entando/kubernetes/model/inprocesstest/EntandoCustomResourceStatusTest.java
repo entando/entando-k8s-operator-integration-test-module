@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 @Tags({@Tag("in-process"), @Tag("pre-deployment")})
-public class EntandoCustomResourceStatusTest {
+class EntandoCustomResourceStatusTest {
 
     private static void populateStatus(AbstractServerStatus dbServerStatus) {
         dbServerStatus.setInitPodStatus(new PodStatus());
@@ -63,7 +63,7 @@ public class EntandoCustomResourceStatusTest {
     }
 
     @Test
-    public void testSerializeDeserialize() {
+    void testSerializeDeserialize() {
         DbServerStatus dbServerStatus = new DbServerStatus();
         dbServerStatus.setQualifier("db");
         populateStatus(dbServerStatus);

@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.is;
 
 import io.fabric8.kubernetes.client.CustomResourceList;
 import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
-import java.nio.file.Paths;
 import org.entando.kubernetes.model.keycloakserver.DoneableEntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
@@ -29,6 +28,8 @@ import org.entando.kubernetes.model.keycloakserver.StandardKeycloakImage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoKeycloakServerTest implements CustomResourceTestUtil {
 
     protected static final String MY_KEYCLOAK = "my-keycloak";
@@ -46,7 +47,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
     }
 
     @Test
-    public void testCreateEntandoKeycloakServer() {
+    void testCreateEntandoKeycloakServer() {
         //Given
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServerBuilder()
                 .withNewMetadata().withName(MY_KEYCLOAK)
@@ -81,7 +82,7 @@ public abstract class AbstractEntandoKeycloakServerTest implements CustomResourc
     }
 
     @Test
-    public void testEditEntandoKeycloakServer() {
+    void testEditEntandoKeycloakServer() {
         //Given
         EntandoKeycloakServer keycloakServer = new EntandoKeycloakServerBuilder()
                 .withNewMetadata()

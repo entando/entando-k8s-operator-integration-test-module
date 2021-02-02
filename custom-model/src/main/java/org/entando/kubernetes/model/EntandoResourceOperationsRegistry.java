@@ -39,11 +39,12 @@ import org.entando.kubernetes.model.link.EntandoAppPluginLinkOperationFactory;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginOperationFactory;
 
+//suppress raw types because we end of with too many type arguments
+@SuppressWarnings({"rawtypes"})
 public class EntandoResourceOperationsRegistry {
 
     private static final Map<Class<? extends EntandoBaseCustomResource>, OperationsSupplier> OPERATION_SUPPLIERS = getOperationSuppliers();
     private final KubernetesClient client;
-    @SuppressWarnings("unchecked")
     private final Map<Class, CustomResourceOperationsImpl> customResourceOperations =
             new ConcurrentHashMap<>();
 

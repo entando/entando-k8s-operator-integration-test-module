@@ -74,9 +74,8 @@ public abstract class EntandoCustomResourceReferenceFluent<N extends EntandoCust
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public P and() {
-            return (P) parentBuilder.withSpec(this.build());
+            return parentBuilder.withSpec(this.build());
         }
 
         public P endSpec() {

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 
 @Tags({@Tag("inter-process"), @Tag("pre-deployment")})
-public class EntandoKeycloakServerIntegratedTest extends AbstractEntandoKeycloakServerTest {
+class EntandoKeycloakServerIntegratedTest extends AbstractEntandoKeycloakServerTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 

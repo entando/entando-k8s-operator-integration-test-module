@@ -40,21 +40,18 @@ public class EntandoClusterInfrastructureFluent<F extends EntandoClusterInfrastr
         this.spec = spec;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public NestedEntandClusterInfrastructureSpecFluent<F> editSpec() {
-        return new NestedEntandClusterInfrastructureSpecFluent<>((F) this, this.spec.build());
+        return new NestedEntandClusterInfrastructureSpecFluent<>(thisAsF(), this.spec.build());
     }
 
-    @SuppressWarnings("unchecked")
     public NestedEntandClusterInfrastructureSpecFluent<F> withNewSpec() {
-        return new NestedEntandClusterInfrastructureSpecFluent<>((F) this);
+        return new NestedEntandClusterInfrastructureSpecFluent<>(thisAsF());
     }
 
-    @SuppressWarnings("unchecked")
     public F withSpec(EntandoClusterInfrastructureSpec spec) {
         this.spec = new EntandoClusterInfrastructureSpecBuilder(spec);
-        return (F) this;
+        return thisAsF();
     }
 
 }

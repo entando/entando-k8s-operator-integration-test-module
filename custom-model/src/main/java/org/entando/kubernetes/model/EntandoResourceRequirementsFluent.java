@@ -26,7 +26,7 @@ public abstract class EntandoResourceRequirementsFluent<N extends EntandoResourc
     private String cpuLimit;
     private String fileUploadLimit;
 
-    public EntandoResourceRequirementsFluent(EntandoResourceRequirements resourceRequirements) {
+    protected EntandoResourceRequirementsFluent(EntandoResourceRequirements resourceRequirements) {
         this.storageRequest = resourceRequirements.getStorageRequest().orElse(null);
         this.storageLimit = resourceRequirements.getStorageLimit().orElse(null);
         this.memoryRequest = resourceRequirements.getMemoryRequest().orElse(null);

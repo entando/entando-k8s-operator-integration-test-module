@@ -39,24 +39,19 @@ public class EntandoCompositeAppFluent<A extends EntandoCompositeAppFluent<A>> e
     }
 
     public NestedEntandoCompositeAppFluent<A> editSpec() {
-        return new NestedEntandoCompositeAppFluent<>(thisAsA(), this.spec.build());
+        return new NestedEntandoCompositeAppFluent<>(thisAsF(), this.spec.build());
     }
 
     public NestedEntandoCompositeAppFluent<A> withNewSpec() {
-        return new NestedEntandoCompositeAppFluent<>(thisAsA());
+        return new NestedEntandoCompositeAppFluent<>(thisAsF());
     }
 
     public A withSpec(EntandoCompositeAppSpec spec) {
         this.spec = new EntandoCompositeAppSpecBuilder(spec);
-        return thisAsA();
+        return thisAsF();
     }
 
-    @SuppressWarnings("unchecked")
-    protected A thisAsA() {
-        return (A) this;
-    }
-
-    public static class NestedEntandoCompositeAppFluent<N extends EntandoCompositeAppFluent> extends
+    public static class NestedEntandoCompositeAppFluent<N extends EntandoCompositeAppFluent<N>> extends
             EntandoCompositeAppSpecFluent<NestedEntandoCompositeAppFluent<N>> implements
             Nested<N> {
 
@@ -73,9 +68,8 @@ public class EntandoCompositeAppFluent<A extends EntandoCompositeAppFluent<A>> e
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public N and() {
-            return (N) parentBuilder.withSpec(this.build());
+            return parentBuilder.withSpec(this.build());
         }
 
         public N endSpec() {

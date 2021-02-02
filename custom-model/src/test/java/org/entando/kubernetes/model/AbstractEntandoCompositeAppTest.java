@@ -36,6 +36,8 @@ import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+//Sonar doesn't pick up that this class is extended in other packages
+@SuppressWarnings("java:S5786")
 public abstract class AbstractEntandoCompositeAppTest implements CustomResourceTestUtil {
 
     public static final String MY_COMPOSITE_APP = "my-comnposite-app";
@@ -58,7 +60,7 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
     }
 
     @Test
-    public void testCreateEntandoCompositeApp() {
+    void testCreateEntandoCompositeApp() {
         //Given
         EntandoCompositeApp entandoCompositeApp = new EntandoCompositeAppBuilder()
                 .withNewMetadata().withName(MY_COMPOSITE_APP)
@@ -108,7 +110,7 @@ public abstract class AbstractEntandoCompositeAppTest implements CustomResourceT
     }
 
     @Test
-    public void testEditEntandoCompositeApp() {
+    void testEditEntandoCompositeApp() {
         //Given
         EntandoCompositeApp entandoCompositeApp = new EntandoCompositeAppBuilder()
                 .withNewMetadata()

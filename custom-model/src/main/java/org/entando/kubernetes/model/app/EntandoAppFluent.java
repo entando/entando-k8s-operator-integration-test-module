@@ -41,21 +41,16 @@ public class EntandoAppFluent<F extends EntandoAppFluent<F>>
     }
 
     public NestedEntandoAppSpecFluent<F> editSpec() {
-        return new NestedEntandoAppSpecFluent<>(thisAsA(), this.spec.build());
+        return new NestedEntandoAppSpecFluent<>(thisAsF(), this.spec.build());
     }
 
     public NestedEntandoAppSpecFluent<F> withNewSpec() {
-        return new NestedEntandoAppSpecFluent<>(thisAsA());
+        return new NestedEntandoAppSpecFluent<>(thisAsF());
     }
 
     public F withSpec(EntandoAppSpec spec) {
         this.spec = new EntandoAppSpecBuilder(spec);
-        return thisAsA();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected F thisAsA() {
-        return (F) this;
+        return thisAsF();
     }
 
 }

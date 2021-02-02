@@ -22,14 +22,16 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import java.util.List;
 import java.util.Optional;
 
-public class ClusterInfrastructureAwareSpec extends KeycloakAwareSpec {
+public abstract class ClusterInfrastructureAwareSpec extends KeycloakAwareSpec {
 
     private ResourceReference clusterInfrastructureToUse;
 
-    public ClusterInfrastructureAwareSpec() {
+    protected ClusterInfrastructureAwareSpec() {
     }
 
-    public ClusterInfrastructureAwareSpec(String ingressHostName, String tlsSecretName, Integer replicas,
+    //Acceptable because it is only used from JsonCreator constructors
+    @SuppressWarnings("java:S107")
+    protected ClusterInfrastructureAwareSpec(String ingressHostName, String tlsSecretName, Integer replicas,
             DbmsVendor dbms, String serviceAccountToUse,
             List<EnvVar> environmentVariables,
             EntandoResourceRequirements resourceRequirements, KeycloakToUse keycloakToUse, ResourceReference clusterInfrastructureToUse) {

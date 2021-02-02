@@ -40,6 +40,8 @@ import org.entando.kubernetes.model.EntandoBaseCustomResource;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
+//Sonar gets confused with generics within generics in return types
+@SuppressWarnings("java:S1452")
 public class EntandoCompositeAppSpec implements Serializable {
 
     private List<EntandoBaseCustomResource<? extends Serializable>> components;
@@ -63,7 +65,7 @@ public class EntandoCompositeAppSpec implements Serializable {
         this.tlsSecretNameOverride = tlsSecretNameOverride;
     }
 
-    public List<EntandoBaseCustomResource<?>> getComponents() {
+    public List<EntandoBaseCustomResource<? extends Serializable>> getComponents() {
         return this.components == null ? Collections.emptyList() : this.components;
     }
 

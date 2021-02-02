@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 @Tags({@Tag("inter-process"), @Tag("pre-deployment")})
-public class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoClusterInfrastructureTest {
+class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoClusterInfrastructureTest {
 
     private final KubernetesClient client = new AutoAdaptableKubernetesClient();
 
@@ -40,7 +40,7 @@ public class EntandoClusterInfrastructureIntegratedTest extends AbstractEntandoC
     }
 
     @Test
-    public void testUnderstandingOfGeneration() {
+    void testUnderstandingOfGeneration() {
         EntandoClusterInfrastructure keycloakServer = new EntandoClusterInfrastructureBuilder()
                 .withNewMetadata()
                 .withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
