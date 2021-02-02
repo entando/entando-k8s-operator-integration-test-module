@@ -6,7 +6,7 @@
         <groupId>org.entando</groupId>
         <artifactId>entando-maven-root</artifactId>
         <!--keep it here for now. we will be moving there soon-->
-        <version>6.3.2</version>
+        <version>6.3.4</version>
         <relativePath/>
     </parent>
     <groupId>org.entando</groupId>
@@ -367,7 +367,6 @@ if [ -n "$(git rev-list $(git branch --show-current)..origin/master)" ]; then
   exit 1
 fi
 cd $(git rev-parse --show-toplevel)
-git merge origin/master
 MODEL_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-custom-model" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
 COMMON_VERSION=$(curl -v -X GET "https://nexus-jx.apps.serv.run/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&maven.groupId=org.entando&maven.artifactId=entando-k8s-operator-common" -H "accept: application/json" 2>&1 | awk -F "/" '/Location/ {print $9}')
 sed -i "s:\(.*<entando-k8s-custom-model.version>\)\(.*\)\(</entando-k8s-custom-model.version>.*\):\1${MODEL_VERSION}\3:g" pom.xml
