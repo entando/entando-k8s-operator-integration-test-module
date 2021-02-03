@@ -1,6 +1,20 @@
-FROM fabric8/java-alpine-openjdk8-jre
-ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+#FROM entando/entando-ubi8-java11-base:6.3.0
+FROM entando/entando-k8s-operator-common:6.3.1
+ARG VERSION
+LABEL name="Entando K8S Database Service Controller" \
+      vendor="Entando" \
+      version="v${VERSION}" \
+      release="6" \
+      summary="This container processes the EntandoDatabaseService custom resource and makes the database service available." \
+      description="This is a run-to-completion container. It processes new EntandoDatabaseService Custom \
+                   Resources. If the EntandoDatbaseService specifies that a deployment should be created, \
+                   it deploys an instance of the specified database Docker image  to your cluster. Alternatively, \
+                   it just creates Kubernetes service that points to an external database service. \
+                   Subsequent executions of this container against the same EntandoDatbaseService will patch the existing \
+                   deployment resources"
+ENV JAVA_OPTIONS="-Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV AB_ENABLED=jmx_exporter
+COPY target/generated-resources/licenses /licenses
 COPY target/lib/* /deployments/lib/
 COPY target/*-runner.jar /deployments/app.jar
 ENTRYPOINT [ "/deployments/run-java.sh" ]
