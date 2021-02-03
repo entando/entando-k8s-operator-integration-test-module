@@ -1,4 +1,5 @@
-FROM fabric8/java-ubi-openjdk11-jdk
+#FROM entando/entando-ubi8-java11-base:6.3.0
+FROM entando/entando-k8s-operator-common:6.3.1
 ARG VERSION
 LABEL name="Entando K8S Database Service Controller" \
       vendor="Entando" \
