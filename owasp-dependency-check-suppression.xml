@@ -55,6 +55,7 @@
         background processes that do not expose services.
       ]]></notes>
         <gav regex="true">org\.keycloak:keycloak-.*:9\.0\.2</gav>
+        <cve>CVE-2020-1725</cve>
         <cve>CVE-2020-10776</cve>
         <cve>CVE-2020-1728</cve>
         <cve>CVE-2020-14366</cve>
