@@ -241,3 +241,6 @@ spec:
     shortNames:
       - eds
   scope: Namespaced
+  subresources:
+    status: {}
+
