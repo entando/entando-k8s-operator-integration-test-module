@@ -22,7 +22,7 @@
         this version of Quarkus has been linked to certain versions of K8S. The client only needs to upgrade to
         later versions of the K8S to avoid these vulnerabilities
       ]]></notes>
-        <gav>io.quarkus:quarkus-kubernetes-client:1.2.0.Final</gav>
+        <gav regex="true">io.quarkus:quarkus-(kubernetes-client|core|arc|jackson):1.2.0.Final</gav>
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
         <cve>CVE-2019-10169</cve>
         <cve>CVE-2020-1728</cve>
@@ -32,6 +32,16 @@
         <cve>CVE-2020-1758</cve>
         <cve>CVE-2020-1698</cve>
         <cve>CVE-2019-10170</cve>
+        <cve>CVE-2020-10693</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        These vulnerabilities are K8S server side vulnerabilities related to specific versions of K8S. Somehow
+        this version of Quarkus has been linked to certain versions of K8S. The client only needs to upgrade to
+        later versions of the K8S to avoid these vulnerabilities
+      ]]></notes>
+        <gav>io.quarkus.arc:arc:1.2.0.Final</gav>
+        <cve>CVE-2020-10693</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
@@ -66,7 +76,9 @@
         <cve>CVE-2020-1758</cve>
         <cve>CVE-2020-10758</cve>
         <cve>CVE-2020-1694</cve>
+        <cve>CVE-2020-14359</cve>
     </suppress>
+
     <suppress>
         <notes><![CDATA[
         Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
