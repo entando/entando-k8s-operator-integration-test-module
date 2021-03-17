@@ -96,6 +96,7 @@
         <cve>CVE-2020-10758</cve>
         <cve>CVE-2020-1694</cve>
         <cve>CVE-2020-14359</cve>
+        <cve>CVE-2020-27838</cve>
     </suppress>
 
     <suppress>
