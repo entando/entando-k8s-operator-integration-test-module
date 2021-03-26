@@ -83,20 +83,20 @@
         These are generally serverside vulnerabilities. The entando-k8s containers that use Keycloak run as
         background processes that do not expose services.
       ]]></notes>
-        <gav regex="true">org\.keycloak:keycloak-.*:9\.0\.2</gav>
-        <cve>CVE-2020-1725</cve>
-        <cve>CVE-2020-10776</cve>
+        <gav regex="true">org\.keycloak:keycloak-.*:9\.0\.3</gav>
+        <cve>CVE-2020-27838</cve>
+        <cve>CVE-2020-10758</cve>
         <cve>CVE-2020-1728</cve>
+        <cve>CVE-2020-14359</cve>
+        <cve>CVE-2020-10776</cve>
+        <cve>CVE-2020-1714</cve>
+        <cve>CVE-2020-1725</cve>
+        <cve>CVE-2020-1758</cve>
         <cve>CVE-2020-14366</cve>
         <cve>CVE-2020-14389</cve>
         <cve>CVE-2020-14302</cve>
         <cve>CVE-2020-10770</cve>
-        <cve>CVE-2020-1714</cve>
-        <cve>CVE-2020-1758</cve>
-        <cve>CVE-2020-10758</cve>
         <cve>CVE-2020-1694</cve>
-        <cve>CVE-2020-14359</cve>
-        <cve>CVE-2020-27838</cve>
     </suppress>
 
     <suppress>
