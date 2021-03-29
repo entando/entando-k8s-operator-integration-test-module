@@ -19,7 +19,6 @@ package org.entando.kubernetes.model.app;
 import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecFluent;
 import org.entando.kubernetes.model.JeeServer;
 import org.entando.kubernetes.model.gitspec.GitSpec;
-import org.entando.kubernetes.model.gitspec.GitSpecBuilder;
 import org.entando.kubernetes.model.gitspec.GitSpecFluent;
 
 public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends ClusterInfrastructureAwareSpecFluent<N> {
@@ -27,7 +26,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Clu
     protected JeeServer standardServerImage;
     protected String customServerImage;
     protected String ingressPath;
-    private GitSpecBuilder backupGitSpec;
+    private GitSpec backupGitSpec;
     private String ecrGitSshSecretName;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
@@ -35,12 +34,12 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Clu
         this.standardServerImage = spec.getStandardServerImage().orElse(null);
         this.customServerImage = spec.getCustomServerImage().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
-        this.backupGitSpec = spec.getBackupGitSpec().map(GitSpecBuilder::new).orElse(new GitSpecBuilder());
+        this.backupGitSpec = spec.getBackupGitSpec().orElse(null);
         this.ecrGitSshSecretName = spec.getEcrGitSshSecretName().orElse(null);
     }
 
     public EntandoAppSpecFluent() {
-        this.backupGitSpec = new GitSpecBuilder();
+
     }
 
     public N withStandardServerImage(JeeServer jeeServer) {
@@ -66,7 +65,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Clu
     }
 
     public GitSpecBuilderNested<N> editBackupGitSpec() {
-        return new GitSpecBuilderNested<>(thisAsF(), this.backupGitSpec.build());
+        return new GitSpecBuilderNested<>(thisAsF(), this.backupGitSpec);
     }
 
     public GitSpecBuilderNested<N> withNewBackupGitSpec() {
@@ -74,7 +73,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Clu
     }
 
     public N withBackupGitSpec(GitSpec gitSpec) {
-        this.backupGitSpec = new GitSpecBuilder(gitSpec);
+        this.backupGitSpec = gitSpec;
         return thisAsF();
     }
 
@@ -82,7 +81,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Clu
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.tlsSecretName, this.keycloakToUse,
                 this.clusterInfrastructureToUse,
-                this.backupGitSpec.build(), this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
+                this.backupGitSpec, this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
                 this.ecrGitSshSecretName);
     }
 
