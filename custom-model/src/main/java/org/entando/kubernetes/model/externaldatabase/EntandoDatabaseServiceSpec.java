@@ -70,8 +70,9 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
-            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
-        super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements);
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
+            @JsonProperty("storageClass") String storageClass) {
+        super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements, storageClass);
         this.dbms = dbms;
         this.host = host;
         this.tablespace = tablespace;

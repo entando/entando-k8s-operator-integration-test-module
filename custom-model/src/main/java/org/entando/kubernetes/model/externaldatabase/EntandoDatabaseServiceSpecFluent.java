@@ -66,7 +66,8 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
                 replicas,
                 serviceAccountToUse,
                 environmentVariables,
-                resourceRequirements);
+                resourceRequirements,
+                storageClass);
     }
 
     public F withDatabaseName(String databaseName) {

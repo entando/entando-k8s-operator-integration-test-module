@@ -42,6 +42,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
     private static final String MYHOST_COM = "myhost.com";
     private static final int PORT_1521 = 1521;
     private static final String MY_DB_SECRET = "my-db-secret";
+    private static final String MY_STORAGE_CLASS = "my-storage-class";
     private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
@@ -63,6 +64,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withPort(PORT_1521)
                 .withTablespace(MY_TABLESPACE)
                 .withSecretName(MY_DB_SECRET)
+                .withStorageClass(MY_STORAGE_CLASS)
                 .addToJdbcParameters(MY_PARAM, MY_PARAM_VALUE)
                 .withDbms(DbmsVendor.ORACLE)
                 .withCreateDeployment(true)
@@ -80,6 +82,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
         assertThat(actual.getSpec().getCreateDeployment().get(), is(true));
         assertThat(actual.getSpec().getTablespace().get(), is(MY_TABLESPACE));
         assertThat(actual.getSpec().getSecretName().get(), is(MY_DB_SECRET));
+        assertThat(actual.getSpec().getStorageClass().get(), is(MY_STORAGE_CLASS));
         assertThat(actual.getSpec().getJdbcParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_EXTERNAL_DATABASE));
     }
@@ -93,6 +96,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .endMetadata()
                 .withNewSpec()
                 .withDatabaseName("other_db")
+                .withStorageClass("another-storage-class")
                 .withHost("otherhost.com")
                 .withTablespace(MY_TABLESPACE)
                 .withJdbcParameters(Collections.singletonMap("asdfasdf", "afafafaf"))
@@ -114,6 +118,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withDatabaseName(MY_DB)
                 .withHost(MYHOST_COM)
                 .withPort(PORT_1521)
+                .withStorageClass(MY_STORAGE_CLASS)
                 .withTablespace(MY_TABLESPACE)
                 .withJdbcParameters(Collections.singletonMap(MY_PARAM, MY_PARAM_VALUE))
                 .withSecretName(MY_DB_SECRET)
@@ -136,6 +141,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
         assertThat(actual.getSpec().getJdbcParameters().get(MY_PARAM), is(MY_PARAM_VALUE));
         assertThat(actual.getSpec().getJdbcParameters().get("asdfasdf"), is(nullValue()));
         assertThat(actual.getSpec().getSecretName().get(), is(MY_DB_SECRET));
+        assertThat(actual.getSpec().getStorageClass().get(), is(MY_STORAGE_CLASS));
         assertThat(actual.getSpec().getTablespace().get(), is(MY_TABLESPACE));
         assertThat(actual.getMetadata().getLabels().get("my-label"), is("my-value"));
         assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());

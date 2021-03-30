@@ -75,9 +75,10 @@ public class EntandoAppSpec extends ClusterInfrastructureAwareSpec {
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
-            @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName) {
+            @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName,
+            @JsonProperty("storageClass") String storageClass) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
-                keycloakToUse, clusterInfrastructureToUse);
+                keycloakToUse, clusterInfrastructureToUse, storageClass);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
