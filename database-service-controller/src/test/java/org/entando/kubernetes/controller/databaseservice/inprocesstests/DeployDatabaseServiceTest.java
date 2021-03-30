@@ -6,13 +6,17 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
+import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.ServiceStatus;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.Watcher.Action;
 import io.quarkus.runtime.StartupEvent;
+import java.util.Collections;
+import java.util.function.UnaryOperator;
 import org.entando.kubernetes.controller.databaseservice.EntandoDatabaseServiceController;
+import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfigProperty;
 import org.entando.kubernetes.controller.support.client.SimpleK8SClient;
 import org.entando.kubernetes.controller.support.client.SimpleKeycloakClient;
 import org.entando.kubernetes.controller.support.client.doubles.EntandoResourceClientDouble;
@@ -21,10 +25,12 @@ import org.entando.kubernetes.controller.support.common.KubeUtils;
 import org.entando.kubernetes.model.DbmsVendor;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
+import org.entando.kubernetes.model.externaldatabase.NestedEntandoDatabaseServiceFluent;
 import org.entando.kubernetes.test.common.FluentTraversals;
 import org.entando.kubernetes.test.componenttest.InProcessTestUtil;
 import org.entando.kubernetes.test.componenttest.argumentcaptors.NamedArgumentCaptor;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -51,7 +57,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     @Test
     void testServiceOnly() {
-        EntandoDatabaseService database = createDatabaseService(false, true);
+        EntandoDatabaseService database = createDatabaseService(builder -> builder.withCreateDeployment(false));
         emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
         lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
@@ -70,8 +76,9 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     }
 
-    private EntandoDatabaseService createDatabaseService(boolean createDeployment, boolean withExistingSecret) {
-        EntandoDatabaseService database = newTestEntandoDatabaseService(createDeployment, withExistingSecret);
+    private EntandoDatabaseService createDatabaseService(
+            UnaryOperator<NestedEntandoDatabaseServiceFluent<EntandoDatabaseServiceBuilder>> modifier) {
+        EntandoDatabaseService database = newTestEntandoDatabaseService(modifier);
         client.entandoResources().createOrPatchEntandoResource(database);
         System.setProperty(KubeUtils.ENTANDO_RESOURCE_ACTION, Action.ADDED.name());
         System.setProperty(KubeUtils.ENTANDO_RESOURCE_NAMESPACE, database.getMetadata().getNamespace());
@@ -81,7 +88,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     @Test
     void testServiceAndDeploymentWithGeneratedSecret() {
-        EntandoDatabaseService database = createDatabaseService(true, false);
+        EntandoDatabaseService database = createDatabaseService(builder -> builder.withCreateDeployment(true));
         emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
         lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
@@ -110,7 +117,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     @Test
     void testServiceAndDeploymentWithExistingSecret() {
-        EntandoDatabaseService database = createDatabaseService(true, true);
+        EntandoDatabaseService database = createDatabaseService(builder -> builder.withCreateDeployment(true).withSecretName("pg-secret"));
         emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
         lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
@@ -136,17 +143,80 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         ServicePort port = resultingService.getSpec().getPorts().get(0);
         assertThat(port.getPort(), is(5432));
 
+        //Then a K8S Deployment was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
+        NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
+                MY_DATABASE_SERVICE + "-db-pvc");
+        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(eq(database), pvcCaptor.capture());
     }
 
-    private EntandoDatabaseService newTestEntandoDatabaseService(boolean createDeployment, boolean withExistingSecret) {
-        return new EntandoDatabaseServiceBuilder()
+    @Test
+    void testOverriddenPersistentVolumeClaimStorageClass() {
+        //Given that I have configured the operator to use the clustered storage "azure-files"
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_DEFAULT_CLUSTERED_STORAGE_CLASS.getJvmSystemProperty(),
+                "azure-files");
+        //And I have configured the operator to use the non clustered storage "some-persistence-provider"
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_DEFAULT_NON_CLUSTERED_STORAGE_CLASS.getJvmSystemProperty(),
+                "some-persistence-provider");
+        //Given that I have configured the operator to use required ReadWriteMany access mode
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_PVC_ACCESSMODE_OVERRIDE.getJvmSystemProperty(),
+                "ReadWriteMany");
+        EntandoDatabaseService database = createDatabaseService(
+                builder -> builder.withCreateDeployment(true).withStorageClass("azure-disk"));
+        emulateKeycloakDeployment(client);
+        //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
+        databaseServiceController.onStartup(new StartupEvent());
+        //Then the PersistentVolumeClaim attributes are suitable for a single pod container
+        NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
+                MY_DATABASE_SERVICE + "-db-pvc");
+        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(eq(database), pvcCaptor.capture());
+        assertThat(pvcCaptor.getValue().getSpec().getAccessModes(), is(Collections.singletonList("ReadWriteOnce")));
+        //And the storageClass "azure-disk" as specified in the EntandoDatabaseService is used.
+        assertThat(pvcCaptor.getValue().getSpec().getStorageClassName(), is("azure-disk"));
+    }
+
+    @BeforeEach
+    @AfterEach
+    void resetSystemProperties() {
+        System.clearProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_DEFAULT_CLUSTERED_STORAGE_CLASS.getJvmSystemProperty());
+        System.clearProperty(
+                EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_DEFAULT_NON_CLUSTERED_STORAGE_CLASS.getJvmSystemProperty());
+        System.clearProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_PVC_ACCESSMODE_OVERRIDE.getJvmSystemProperty());
+
+    }
+
+    @Test
+    void testDefaultPersistentVolumeClaimStorageClass() {
+        //Given that I have configured the operator to use the clustered storage "azure-files"
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_DEFAULT_CLUSTERED_STORAGE_CLASS.getJvmSystemProperty(),
+                "azure-files");
+        //And I have configured the operator to use the non clustered storage "azure-disk"
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_DEFAULT_NON_CLUSTERED_STORAGE_CLASS.getJvmSystemProperty(),
+                "azure-disk");
+        //Given that I have configured the operator to use required ReadWriteMany access mode
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_PVC_ACCESSMODE_OVERRIDE.getJvmSystemProperty(),
+                "ReadWriteMany");
+        EntandoDatabaseService database = createDatabaseService(
+                builder -> builder.withCreateDeployment(true));
+        emulateKeycloakDeployment(client);
+        //When the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
+        databaseServiceController.onStartup(new StartupEvent());
+        //Then the PersistentVolumeClaim attributes are suitable for a single pod container
+        NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
+                MY_DATABASE_SERVICE + "-db-pvc");
+        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(eq(database), pvcCaptor.capture());
+        //And the ReadWriteMany access mode is overridden for the single-pod database container
+        assertThat(pvcCaptor.getValue().getSpec().getAccessModes(), is(Collections.singletonList("ReadWriteOnce")));
+        //And the non-clustered storageClass "azure-disk" is used
+        assertThat(pvcCaptor.getValue().getSpec().getStorageClassName(), is("azure-disk"));
+    }
+
+    private EntandoDatabaseService newTestEntandoDatabaseService(
+            UnaryOperator<NestedEntandoDatabaseServiceFluent<EntandoDatabaseServiceBuilder>> modifier) {
+        return modifier.apply(new EntandoDatabaseServiceBuilder()
                 .withNewMetadata().withName(MY_DATABASE_SERVICE).withNamespace("my-namespace").endMetadata()
                 .withNewSpec()
                 .withDbms(DbmsVendor.POSTGRESQL)
-                .withHost("somedatabase.com")
-                .withCreateDeployment(createDeployment)
-                .withSecretName(withExistingSecret ? "pg-secret" : null)
-                .endSpec()
+                .withHost("somedatabase.com")).endSpec()
                 .build();
     }
 }
