@@ -1,6 +1,7 @@
 package org.entando.kubernetes.controller.databaseservice;
 
 import java.util.Optional;
+import javax.swing.text.html.Option;
 import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
 import org.entando.kubernetes.controller.spi.container.ConfigurableResourceContainer;
 import org.entando.kubernetes.controller.spi.database.DatabaseContainer;
@@ -22,4 +23,15 @@ public class DatabaseServiceContainer extends DatabaseContainer implements Confi
     public Optional<EntandoResourceRequirements> getResourceRequirementsOverride() {
         return entandoDatabaseService.getSpec().getResourceRequirements();
     }
+
+    @Override
+    public Optional<String> getAccessMode() {
+        return Optional.of("ReadWriteOnce");
+    }
+
+    @Override
+    public Optional<String> getStorageClass() {
+        return Optional.ofNullable(this.entandoDatabaseService.getSpec().getStorageClass().orElse(super.getStorageClass().orElse(null)));
+    }
 }
+
