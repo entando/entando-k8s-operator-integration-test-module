@@ -83,10 +83,11 @@ public class EntandoPluginSpec extends ClusterInfrastructureAwareSpec {
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
             @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
             @JsonProperty("companionContainers") List<String> companionContainers,
-            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
+            @JsonProperty("storageClass") String storageClass
     ) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
-                keycloakToUse, clusterInfrastructureToUse);
+                keycloakToUse, clusterInfrastructureToUse, storageClass);
         this.image = image;
         this.ingressPath = ingressPath;
         this.keycloakToUse = keycloakToUse;

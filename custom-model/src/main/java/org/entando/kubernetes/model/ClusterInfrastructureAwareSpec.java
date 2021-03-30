@@ -18,6 +18,7 @@ package org.entando.kubernetes.model;
 
 import static java.util.Optional.ofNullable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import java.util.List;
 import java.util.Optional;
@@ -34,9 +35,10 @@ public abstract class ClusterInfrastructureAwareSpec extends KeycloakAwareSpec {
     protected ClusterInfrastructureAwareSpec(String ingressHostName, String tlsSecretName, Integer replicas,
             DbmsVendor dbms, String serviceAccountToUse,
             List<EnvVar> environmentVariables,
-            EntandoResourceRequirements resourceRequirements, KeycloakToUse keycloakToUse, ResourceReference clusterInfrastructureToUse) {
+            EntandoResourceRequirements resourceRequirements, KeycloakToUse keycloakToUse, ResourceReference clusterInfrastructureToUse,
+            @JsonProperty("storageClass") String storageClass) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
-                keycloakToUse);
+                keycloakToUse,storageClass);
 
         this.clusterInfrastructureToUse = clusterInfrastructureToUse;
     }

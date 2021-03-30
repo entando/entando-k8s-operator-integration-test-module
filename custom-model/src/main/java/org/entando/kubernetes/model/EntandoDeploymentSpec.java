@@ -42,6 +42,7 @@ public abstract class EntandoDeploymentSpec implements Serializable {
     private String serviceAccountToUse;
     private List<EnvVar> environmentVariables;
     private EntandoResourceRequirements resourceRequirements;
+    private String storageClass;
 
     protected EntandoDeploymentSpec() {
     }
@@ -49,11 +50,17 @@ public abstract class EntandoDeploymentSpec implements Serializable {
     protected EntandoDeploymentSpec(Integer replicas,
             String serviceAccountToUse,
             List<EnvVar> environmentVariables,
-            EntandoResourceRequirements resourceRequirements) {
+            EntandoResourceRequirements resourceRequirements,
+            String storageClass) {
         this.replicas = replicas;
         this.serviceAccountToUse = serviceAccountToUse;
         this.environmentVariables = environmentVariables;
         this.resourceRequirements = resourceRequirements;
+        this.storageClass = storageClass;
+    }
+
+    public Optional<String> getStorageClass() {
+        return ofNullable(storageClass);
     }
 
     public Optional<Integer> getReplicas() {

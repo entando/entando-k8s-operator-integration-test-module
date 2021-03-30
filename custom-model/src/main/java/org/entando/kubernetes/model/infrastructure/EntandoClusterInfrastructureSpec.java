@@ -58,9 +58,10 @@ public class EntandoClusterInfrastructureSpec extends KeycloakAwareSpec {
             @JsonProperty("isDefault") Boolean isDefault,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
-            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements) {
+            @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
+            @JsonProperty("storageClass") String storageClass) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
-                keycloakToUse);
+                keycloakToUse, storageClass);
         this.isDefault = Boolean.TRUE.equals(isDefault);
     }
 

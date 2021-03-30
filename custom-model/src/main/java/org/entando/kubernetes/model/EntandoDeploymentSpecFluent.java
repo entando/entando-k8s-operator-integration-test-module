@@ -26,6 +26,7 @@ public abstract class EntandoDeploymentSpecFluent<F extends EntandoDeploymentSpe
     protected String serviceAccountToUse;
     protected List<EnvVar> environmentVariables;
     protected EntandoResourceRequirements resourceRequirements;
+    protected String storageClass;
 
     protected EntandoDeploymentSpecFluent() {
 
@@ -36,6 +37,7 @@ public abstract class EntandoDeploymentSpecFluent<F extends EntandoDeploymentSpe
         this.serviceAccountToUse = spec.getServiceAccountToUse().orElse(null);
         this.environmentVariables = new ArrayList<>(spec.getEnvironmentVariables());
         this.resourceRequirements = spec.getResourceRequirements().orElse(null);
+        this.storageClass = spec.getStorageClass().orElse(null);
 
     }
 
@@ -46,6 +48,11 @@ public abstract class EntandoDeploymentSpecFluent<F extends EntandoDeploymentSpe
 
     public final F withReplicas(Integer replicas) {
         this.replicas = replicas;
+        return thisAsF();
+    }
+
+    public final F withStorageClass(String storageClass) {
+        this.storageClass = storageClass;
         return thisAsF();
     }
 

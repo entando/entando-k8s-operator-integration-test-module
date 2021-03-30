@@ -82,7 +82,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Clu
                 this.replicas, this.tlsSecretName, this.keycloakToUse,
                 this.clusterInfrastructureToUse,
                 this.backupGitSpec, this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
-                this.ecrGitSshSecretName);
+                this.ecrGitSshSecretName, this.storageClass);
     }
 
     public static class GitSpecBuilderNested<P extends EntandoAppSpecFluent> extends GitSpecFluent<GitSpecBuilderNested<P>> {

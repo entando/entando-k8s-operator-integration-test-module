@@ -50,8 +50,9 @@ public abstract class EntandoIngressingDeploymentSpec extends EntandoDeploymentS
             DbmsVendor dbms,
             String serviceAccountToUse,
             List<EnvVar> environmentVariables,
-            EntandoResourceRequirements resourceRequirements) {
-        super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements);
+            EntandoResourceRequirements resourceRequirements,
+            String storageClass) {
+        super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements, storageClass);
         this.ingressHostName = ingressHostName;
         this.tlsSecretName = tlsSecretName;
         this.dbms = dbms;

@@ -61,6 +61,7 @@ public class EntandoKeycloakServerSpecFluent<N extends EntandoKeycloakServerSpec
     public EntandoKeycloakServerSpec build() {
         return new EntandoKeycloakServerSpec(customImage, standardImage, frontEndUrl, dbms, ingressHostName, tlsSecretName, replicas,
                 isDefault,
-                serviceAccountToUse, environmentVariables, resourceRequirements);
+                serviceAccountToUse, environmentVariables, resourceRequirements,
+                storageClass);
     }
 }
