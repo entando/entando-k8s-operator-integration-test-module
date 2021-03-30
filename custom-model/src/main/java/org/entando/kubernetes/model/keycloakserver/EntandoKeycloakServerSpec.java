@@ -64,9 +64,9 @@ public class EntandoKeycloakServerSpec extends EntandoIngressingDeploymentSpec {
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
-            @JsonProperty("storageClass") String storageClass
-            ) {
-        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,storageClass);
+            @JsonProperty("storageClass") String storageClass) {
+        super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
+                storageClass);
         this.customImage = customImage;
         this.standardImage = standardImage;
         this.frontEndUrl = frontEndUrl;
