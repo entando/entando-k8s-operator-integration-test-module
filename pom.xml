@@ -88,6 +88,7 @@
         <httpclient.version>4.5.13</httpclient.version>
         <bcprov-jdk15on.version>1.68</bcprov-jdk15on.version>
         <junit-platform-launcher.version>1.7.0</junit-platform-launcher.version>
+        <commons-io.version>2.7</commons-io.version>
     </properties>
     <issueManagement>
         <system>Github</system>
@@ -342,7 +343,11 @@
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
