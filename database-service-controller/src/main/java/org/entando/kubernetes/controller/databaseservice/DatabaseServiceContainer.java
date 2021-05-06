@@ -1,12 +1,11 @@
 package org.entando.kubernetes.controller.databaseservice;
 
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
 import org.entando.kubernetes.controller.spi.container.ConfigurableResourceContainer;
 import org.entando.kubernetes.controller.spi.database.DatabaseContainer;
 import org.entando.kubernetes.controller.spi.database.DatabaseVariableInitializer;
-import org.entando.kubernetes.model.EntandoResourceRequirements;
+import org.entando.kubernetes.model.common.EntandoResourceRequirements;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 
 public class DatabaseServiceContainer extends DatabaseContainer implements ConfigurableResourceContainer {

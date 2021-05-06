@@ -3,9 +3,11 @@ package org.entando.kubernetes.controller.databaseservice;
 import io.fabric8.kubernetes.api.model.Secret;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
 import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfig;
 import org.entando.kubernetes.controller.spi.database.DatabaseDeployable;
+import org.entando.kubernetes.controller.spi.deployable.ExternalService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 
 public class DatabaseServiceDeployable extends DatabaseDeployable {
@@ -20,6 +22,15 @@ public class DatabaseServiceDeployable extends DatabaseDeployable {
                 getVendorStrategy(newEntandoDatabaseService),
                 getPortOverride(newEntandoDatabaseService)));
 
+    }
+
+    @Override
+    public Optional<ExternalService> getExternalService() {
+        if (newEntandoDatabaseService.getSpec().getCreateDeployment().orElse(false)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new ExternalDatabaseService(newEntandoDatabaseService));
+        }
     }
 
     private static Integer getPortOverride(EntandoDatabaseService newEntandoDatabaseService) {
@@ -50,4 +61,5 @@ public class DatabaseServiceDeployable extends DatabaseDeployable {
     protected String getDatabaseName() {
         return newEntandoDatabaseService.getSpec().getDatabaseName().orElse(super.getDatabaseName());
     }
+
 }

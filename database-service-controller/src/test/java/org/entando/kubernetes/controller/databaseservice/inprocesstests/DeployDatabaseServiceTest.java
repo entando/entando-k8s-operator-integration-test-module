@@ -12,7 +12,6 @@ import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.ServiceStatus;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.Watcher.Action;
-import io.quarkus.runtime.StartupEvent;
 import java.util.Collections;
 import java.util.function.UnaryOperator;
 import org.entando.kubernetes.controller.databaseservice.EntandoDatabaseServiceController;
@@ -21,8 +20,9 @@ import org.entando.kubernetes.controller.support.client.SimpleK8SClient;
 import org.entando.kubernetes.controller.support.client.SimpleKeycloakClient;
 import org.entando.kubernetes.controller.support.client.doubles.EntandoResourceClientDouble;
 import org.entando.kubernetes.controller.support.client.doubles.SimpleK8SClientDouble;
+import org.entando.kubernetes.controller.support.command.InProcessCommandStream;
 import org.entando.kubernetes.controller.support.common.KubeUtils;
-import org.entando.kubernetes.model.DbmsVendor;
+import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.model.externaldatabase.NestedEntandoDatabaseServiceFluent;
@@ -52,7 +52,8 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
 
     @BeforeEach
     void createController() {
-        databaseServiceController = new EntandoDatabaseServiceController(client, keycloakClient);
+        databaseServiceController = new EntandoDatabaseServiceController(client.entandoResources(),
+                new InProcessCommandStream(client, keycloakClient));
     }
 
     @Test
@@ -64,7 +65,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
                 .then(respondWithServiceStatus(serviceStatus));
 
         //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
-        databaseServiceController.onStartup(new StartupEvent());
+        databaseServiceController.run();
         //Then a K8S Service was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Service> serviceCaptor = forResourceNamed(Service.class, MY_DATABASE_SERVICE + "-db-service");
         verify(client.services()).createOrReplaceService(eq(database), serviceCaptor.capture());
@@ -81,8 +82,9 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         EntandoDatabaseService database = newTestEntandoDatabaseService(modifier);
         client.entandoResources().createOrPatchEntandoResource(database);
         System.setProperty(KubeUtils.ENTANDO_RESOURCE_ACTION, Action.ADDED.name());
-        System.setProperty(KubeUtils.ENTANDO_RESOURCE_NAMESPACE, database.getMetadata().getNamespace());
-        System.setProperty(KubeUtils.ENTANDO_RESOURCE_NAME, database.getMetadata().getName());
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_RESOURCE_NAMESPACE.getJvmSystemProperty(),
+                database.getMetadata().getNamespace());
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_RESOURCE_NAME.getJvmSystemProperty(), database.getMetadata().getName());
         return database;
     }
 
@@ -95,7 +97,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
                 .then(respondWithServiceStatus(serviceStatus));
 
         //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
-        databaseServiceController.onStartup(new StartupEvent());
+        databaseServiceController.run();
         //Then a K8S Deployment was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Deployment> deploymentCaptor = forResourceNamed(Deployment.class, MY_DATABASE_SERVICE + "-db-deployment");
         verify(client.deployments()).createOrPatchDeployment(eq(database), deploymentCaptor.capture());
@@ -124,7 +126,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
                 .then(respondWithServiceStatus(serviceStatus));
 
         //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
-        databaseServiceController.onStartup(new StartupEvent());
+        databaseServiceController.run();
         //Then a K8S Deployment was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Deployment> deploymentCaptor = forResourceNamed(Deployment.class, MY_DATABASE_SERVICE + "-db-deployment");
         verify(client.deployments()).createOrPatchDeployment(eq(database), deploymentCaptor.capture());
@@ -164,7 +166,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
                 builder -> builder.withCreateDeployment(true).withStorageClass("azure-disk"));
         emulateKeycloakDeployment(client);
         //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
-        databaseServiceController.onStartup(new StartupEvent());
+        databaseServiceController.run();
         //Then the PersistentVolumeClaim attributes are suitable for a single pod container
         NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
                 MY_DATABASE_SERVICE + "-db-pvc");
@@ -199,7 +201,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
                 builder -> builder.withCreateDeployment(true));
         emulateKeycloakDeployment(client);
         //When the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
-        databaseServiceController.onStartup(new StartupEvent());
+        databaseServiceController.run();
         //Then the PersistentVolumeClaim attributes are suitable for a single pod container
         NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
                 MY_DATABASE_SERVICE + "-db-pvc");
