@@ -2,6 +2,7 @@ package org.entando.kubernetes.controller.databaseservice.inprocesstests;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import org.entando.kubernetes.controller.support.client.doubles.SimpleK8SClientD
 import org.entando.kubernetes.controller.support.command.InProcessCommandStream;
 import org.entando.kubernetes.controller.support.common.KubeUtils;
 import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoCustomResource;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.model.externaldatabase.NestedEntandoDatabaseServiceFluent;
@@ -35,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Spy;
 
@@ -61,14 +64,14 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         EntandoDatabaseService database = createDatabaseService(builder -> builder.withCreateDeployment(false));
         emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
-        lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
+        lenient().when(client.services().loadService(argThat(matchesDatabaseService(database)), eq(MY_DATABASE_SERVICE + "-service")))
                 .then(respondWithServiceStatus(serviceStatus));
 
         //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
         databaseServiceController.run();
         //Then a K8S Service was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Service> serviceCaptor = forResourceNamed(Service.class, MY_DATABASE_SERVICE + "-db-service");
-        verify(client.services()).createOrReplaceService(eq(database), serviceCaptor.capture());
+        verify(client.services()).createOrReplaceService(argThat(matchesDatabaseService(database)), serviceCaptor.capture());
         Service resultingService = serviceCaptor.getValue();
         //And the TCP port 3306 named 'db-port'
         ServicePort port = resultingService.getSpec().getPorts().get(0);
@@ -85,6 +88,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_RESOURCE_NAMESPACE.getJvmSystemProperty(),
                 database.getMetadata().getNamespace());
         System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_RESOURCE_NAME.getJvmSystemProperty(), database.getMetadata().getName());
+        System.setProperty(EntandoOperatorSpiConfigProperty.ENTANDO_RESOURCE_KIND.getJvmSystemProperty(), database.getKind());
         return database;
     }
 
@@ -93,14 +97,14 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         EntandoDatabaseService database = createDatabaseService(builder -> builder.withCreateDeployment(true));
         emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
-        lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
+        lenient().when(client.services().loadService(argThat(matchesDatabaseService(database)), eq(MY_DATABASE_SERVICE + "-service")))
                 .then(respondWithServiceStatus(serviceStatus));
 
         //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
         databaseServiceController.run();
         //Then a K8S Deployment was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Deployment> deploymentCaptor = forResourceNamed(Deployment.class, MY_DATABASE_SERVICE + "-db-deployment");
-        verify(client.deployments()).createOrPatchDeployment(eq(database), deploymentCaptor.capture());
+        verify(client.deployments()).createOrPatchDeployment(argThat(matchesDatabaseService(database)), deploymentCaptor.capture());
         Deployment resultingDeployment = deploymentCaptor.getValue();
         //And the TCP port 3306 named 'db-port'
         assertThat(thePortNamed("db-port").on(thePrimaryContainerOn(resultingDeployment)).getContainerPort(), is(5432));
@@ -109,7 +113,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
                 .getName(), is("my-database-service-db-admin-secret"));
         //Then a K8S Service was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Service> serviceCaptor = forResourceNamed(Service.class, MY_DATABASE_SERVICE + "-db-service");
-        verify(client.services()).createOrReplaceService(eq(database), serviceCaptor.capture());
+        verify(client.services()).createOrReplaceService(argThat(matchesDatabaseService(database)), serviceCaptor.capture());
         Service resultingService = serviceCaptor.getValue();
         //And the TCP port 3306 named 'db-port'
         ServicePort port = resultingService.getSpec().getPorts().get(0);
@@ -120,16 +124,16 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
     @Test
     void testServiceAndDeploymentWithExistingSecret() {
         EntandoDatabaseService database = createDatabaseService(builder -> builder.withCreateDeployment(true).withSecretName("pg-secret"));
-        emulateKeycloakDeployment(client);
         ServiceStatus serviceStatus = new ServiceStatus();
-        lenient().when(client.services().loadService(eq(database), eq(MY_DATABASE_SERVICE + "-service")))
+        lenient().when(client.services().loadService(argThat(matchesDatabaseService(database)), eq(MY_DATABASE_SERVICE + "-service")))
                 .then(respondWithServiceStatus(serviceStatus));
 
         //When the the EntandoDatabaseServiceController is notified that a new EntandoDatabaseService has been added
         databaseServiceController.run();
         //Then a K8S Deployment was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Deployment> deploymentCaptor = forResourceNamed(Deployment.class, MY_DATABASE_SERVICE + "-db-deployment");
-        verify(client.deployments()).createOrPatchDeployment(eq(database), deploymentCaptor.capture());
+        verify(client.deployments())
+                .createOrPatchDeployment(argThat(matchesDatabaseService(database)), deploymentCaptor.capture());
 
         Deployment resultingDeployment = deploymentCaptor.getValue();
         //And the TCP port 3306 named 'db-port'
@@ -139,7 +143,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
                 .getName(), is("pg-secret"));
         //Then a K8S Service was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<Service> serviceCaptor = forResourceNamed(Service.class, MY_DATABASE_SERVICE + "-db-service");
-        verify(client.services()).createOrReplaceService(eq(database), serviceCaptor.capture());
+        verify(client.services()).createOrReplaceService(argThat(matchesDatabaseService(database)), serviceCaptor.capture());
         Service resultingService = serviceCaptor.getValue();
         //And the TCP port 3306 named 'db-port'
         ServicePort port = resultingService.getSpec().getPorts().get(0);
@@ -148,7 +152,12 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         //Then a K8S Deployment was created with a name that reflects the EntandoDatabaseService and the fact that it is a DB service
         NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
                 MY_DATABASE_SERVICE + "-db-pvc");
-        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(eq(database), pvcCaptor.capture());
+        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(argThat(
+                matchesDatabaseService(database)), pvcCaptor.capture());
+    }
+
+    private ArgumentMatcher<EntandoCustomResource> matchesDatabaseService(EntandoDatabaseService database) {
+        return r -> r.getMetadata().equals(database.getMetadata());
     }
 
     @Test
@@ -170,7 +179,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         //Then the PersistentVolumeClaim attributes are suitable for a single pod container
         NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
                 MY_DATABASE_SERVICE + "-db-pvc");
-        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(eq(database), pvcCaptor.capture());
+        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(argThat(matchesDatabaseService(database)), pvcCaptor.capture());
         assertThat(pvcCaptor.getValue().getSpec().getAccessModes(), is(Collections.singletonList("ReadWriteOnce")));
         //And the storageClass "azure-disk" as specified in the EntandoDatabaseService is used.
         assertThat(pvcCaptor.getValue().getSpec().getStorageClassName(), is("azure-disk"));
@@ -205,7 +214,7 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         //Then the PersistentVolumeClaim attributes are suitable for a single pod container
         NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
                 MY_DATABASE_SERVICE + "-db-pvc");
-        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(eq(database), pvcCaptor.capture());
+        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(argThat(matchesDatabaseService(database)), pvcCaptor.capture());
         //And the ReadWriteMany access mode is overridden for the single-pod database container
         assertThat(pvcCaptor.getValue().getSpec().getAccessModes(), is(Collections.singletonList("ReadWriteOnce")));
         //And the non-clustered storageClass "azure-disk" is used
