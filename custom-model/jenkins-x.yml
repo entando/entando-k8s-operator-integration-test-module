@@ -6,5 +6,6 @@ pipelineConfig:
       value: cu
     - name: TEST_DEPLOYMENT
       value: "false"
-    - name: UPDATE_OWASP_DB
-      value: "false"
+    - name: SKIP_OWASP
+      value: "true"
+      
