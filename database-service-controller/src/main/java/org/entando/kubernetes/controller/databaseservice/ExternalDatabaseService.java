@@ -19,6 +19,11 @@ public class ExternalDatabaseService implements ExternalService {
     }
 
     @Override
+    public boolean getCreateDelegateService() {
+        return true;
+    }
+
+    @Override
     public String getHost() {
         return newEntandoDatabaseService.getSpec().getHost().orElseThrow(IllegalStateException::new);
     }

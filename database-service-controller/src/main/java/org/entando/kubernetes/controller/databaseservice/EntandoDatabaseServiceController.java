@@ -17,6 +17,7 @@
 package org.entando.kubernetes.controller.databaseservice;
 
 import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import java.util.Arrays;
@@ -25,12 +26,11 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-import org.entando.kubernetes.controller.spi.client.CustomResourceClient;
+import org.entando.kubernetes.controller.spi.client.KubernetesClientForControllers;
 import org.entando.kubernetes.controller.spi.command.CommandStream;
 import org.entando.kubernetes.controller.spi.command.SerializingDeployCommand;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
-import org.entando.kubernetes.controller.spi.database.DatabaseDeployable;
-import org.entando.kubernetes.controller.spi.database.DatabaseDeploymentResult;
+import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
 import org.entando.kubernetes.controller.support.common.KubeUtils;
 import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
 import org.entando.kubernetes.model.capability.CapabilityRequirement;
@@ -49,11 +49,11 @@ import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuild
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceSpec;
 import picocli.CommandLine;
 
-@CommandLine.Command
+@CommandLine.Command()
 public class EntandoDatabaseServiceController implements Runnable {
 
     private final Logger logger = Logger.getLogger(EntandoDatabaseServiceController.class.getName());
-    private final CustomResourceClient k8sClient;
+    private final KubernetesClientForControllers k8sClient;
     private final SerializingDeployCommand serializingDeployCommand;
     private static final Collection<Class<? extends EntandoCustomResource>> SUPPORTED_RESOURCE_KINDS = Arrays
             .asList(EntandoDatabaseService.class, ProvidedCapability.class);
@@ -61,7 +61,7 @@ public class EntandoDatabaseServiceController implements Runnable {
     private ProvidedCapability providedCapability;
 
     @Inject
-    public EntandoDatabaseServiceController(CustomResourceClient k8sClient, CommandStream commandStream) {
+    public EntandoDatabaseServiceController(KubernetesClientForControllers k8sClient, CommandStream commandStream) {
         this.k8sClient = k8sClient;
         this.serializingDeployCommand = new SerializingDeployCommand(k8sClient, commandStream);
     }
@@ -78,22 +78,23 @@ public class EntandoDatabaseServiceController implements Runnable {
             // ControllerCoordinator
             this.entandoDatabaseService = (EntandoDatabaseService) resourceToProcess;
             this.providedCapability = syncFromImplementingResourceToCapability(this.entandoDatabaseService);
+            this.k8sClient.createOrPatchEntandoResource(this.providedCapability);
         } else {
             //This event originated from the capability requirement, and we need to keep the implementing CustomResource in sync
             //The implementing CustomResource is to be owned by the ProvidedCapability and will therefore be ignored by
             // ControllerCoordinator
             this.providedCapability = (ProvidedCapability) resourceToProcess;
             this.entandoDatabaseService = syncFromCapabilityToImplementingCustomResource(this.providedCapability);
+            this.k8sClient.createOrPatchEntandoResource(this.entandoDatabaseService);
         }
         try {
-            DatabaseDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
+            DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
             DatabaseDeploymentResult result = serializingDeployCommand.processDeployable(deployable);
             k8sClient.updateStatus(entandoDatabaseService, result.getStatus());
             k8sClient.updateStatus(providedCapability, result.getStatus());
             k8sClient.updatePhase(entandoDatabaseService, EntandoDeploymentPhase.SUCCESSFUL);
             k8sClient.updatePhase(providedCapability, EntandoDeploymentPhase.SUCCESSFUL);
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             logger.log(Level.SEVERE, e, () -> format("Unexpected exception occurred while adding %s %s/%s",
                     entandoDatabaseService.getKind(),
                     entandoDatabaseService.getMetadata().getNamespace(),
@@ -123,20 +124,27 @@ public class EntandoDatabaseServiceController implements Runnable {
                 .editSpec()
                 .withDbms(DbmsVendor.valueOf(
                         providedCapability.getSpec().getImplementation().orElse(StandardCapabilityImplementation.POSTGRESQL).name()))
+                .withCreateDeployment(
+                        providedCapability.getSpec().getProvisioningStrategy().orElse(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY)
+                                != CapabilityProvisioningStrategy.USE_EXTERNAL)
                 .withSecretName(providedCapability.getSpec().getExternallyProvisionedService()
                         .map(ExternallyProvidedService::getAdminSecretName).orElse(null))
                 .withHost(providedCapability.getSpec().getExternallyProvisionedService()
                         .map(ExternallyProvidedService::getHost).orElse(null))
                 .withPort(providedCapability.getSpec().getExternallyProvisionedService()
                         .flatMap(ExternallyProvidedService::getPort).orElse(null))
-                .withTablespace(providedCapability.getSpec().getCapabilityParameters().get("tablespace"))
-                .withDatabaseName(providedCapability.getSpec().getCapabilityParameters().get("databaseName"))
+                .withTablespace(resolveParameterIfPresent(providedCapability, "tablespace"))
+                .withDatabaseName(resolveParameterIfPresent(providedCapability, "databaseName"))
                 .endSpec()
                 .build();
-        if (!KubeUtils.customResourceOwns(providedCapability, entandoDatabaseServiceToSyncTo)) {
+        if (!ResourceUtils.customResourceOwns(providedCapability, entandoDatabaseServiceToSyncTo)) {
             entandoDatabaseServiceToSyncTo.getMetadata().getOwnerReferences().add(ResourceUtils.buildOwnerReference(providedCapability));
         }
         return entandoDatabaseServiceToSyncTo;
+    }
+
+    private String resolveParameterIfPresent(ProvidedCapability providedCapability, String paramName) {
+        return ofNullable(providedCapability.getSpec().getCapabilityParameters()).map(params -> params.get(paramName)).orElse(null);
     }
 
     private ProvidedCapability syncFromImplementingResourceToCapability(EntandoDatabaseService resourceToProcess) {
@@ -153,6 +161,8 @@ public class EntandoDatabaseServiceController implements Runnable {
         final HashMap<String, String> parameters = new HashMap<>();
         resourceToProcess.getSpec().getDatabaseName().ifPresent(s -> parameters.put("databaseName", s));
         resourceToProcess.getSpec().getTablespace().ifPresent(s -> parameters.put("tablespace", s));
+        resourceToProcess.getSpec().getJdbcParameters()
+                .forEach((key, value) -> parameters.put(ProvidedDatabaseCapability.JDBC_PARAMETER_PREFIX + key, value));
         NestedCapabilityRequirementFluent<ProvidedCapabilityBuilder> specBuilder = builder
                 .editMetadata()
                 .withNamespace(resourceToProcess.getMetadata().getNamespace())
@@ -165,16 +175,16 @@ public class EntandoDatabaseServiceController implements Runnable {
                 .withCapabilityRequirementScope(CapabilityScope.NAMESPACE)
                 .withCapabilityParameters(parameters);
         if (resourceToProcess.getSpec().getCreateDeployment().orElse(false)) {
-            specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY)
-                    .withExternallyProvisionedService(
-                            resourceToProcess.getSpec().getHost().orElse(null),
-                            resourceToProcess.getSpec().getPort().orElse(null),
-                            resourceToProcess.getSpec().getSecretName().orElse(null));
+            specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY);
         } else {
-            specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL);
+            specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
+                    .withNewExternallyProvidedService().withHost(resourceToProcess.getSpec().getHost().orElseThrow(IllegalStateException::new))
+                    .withPort(resourceToProcess.getSpec().getPort().orElseThrow(IllegalStateException::new))
+                    .withAdminSecretName(resourceToProcess.getSpec().getSecretName().orElse(null))
+                    .endExternallyProvidedService();
         }
         capabilityToSyncTo = specBuilder.endSpec().build();
-        if (!KubeUtils.customResourceOwns(resourceToProcess, capabilityToSyncTo)) {
+        if (!ResourceUtils.customResourceOwns(resourceToProcess, capabilityToSyncTo)) {
             //If we are here, it means one of two things:
             // 1. This is a new EntandoDatabaseService and we need to create a ProvidedCapability owned by it so that the
             // ControllerCoordinator won't process changes against the ProvidedCapability.
