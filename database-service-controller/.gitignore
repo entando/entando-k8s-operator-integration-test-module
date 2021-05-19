@@ -3,7 +3,8 @@
 !.idea/codeStyles
 !.idea/copyright
 !.idea/sonarlint.xml
-
+.allure
+allure-results
 target/
 *.iml
 .classpath

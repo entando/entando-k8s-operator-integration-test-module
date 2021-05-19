@@ -19,6 +19,7 @@ import org.entando.kubernetes.controller.spi.container.DeployableContainer;
 import org.entando.kubernetes.controller.spi.deployable.Deployable;
 import org.entando.kubernetes.controller.spi.deployable.ExternalService;
 import org.entando.kubernetes.controller.spi.deployable.Secretive;
+import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoCustomResource;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 
@@ -55,12 +56,12 @@ public class DatabaseServiceDeployable implements Deployable<DatabaseDeploymentR
 
     private static DbmsDockerVendorStrategy getVendorStrategy(EntandoDatabaseService newEntandoDatabaseService) {
         return DbmsDockerVendorStrategy
-                .forVendor(newEntandoDatabaseService.getSpec().getDbms(), EntandoOperatorSpiConfig.getComplianceMode());
+                .forVendor(newEntandoDatabaseService.getSpec().getDbms().orElse(DbmsVendor.POSTGRESQL),
+                        EntandoOperatorSpiConfig.getComplianceMode());
     }
 
     protected String getDatabaseAdminSecretName() {
-        return newEntandoDatabaseService.getSpec().getSecretName().orElse(
-                format("%s-admin-secret", customResource.getMetadata().getName()));
+        return newEntandoDatabaseService.getSpec().getSecretName().orElse(NameUtils.standardAdminSecretName(newEntandoDatabaseService));
     }
 
     @Override

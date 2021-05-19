@@ -179,7 +179,8 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         //Then the PersistentVolumeClaim attributes are suitable for a single pod container
         NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
                 MY_DATABASE_SERVICE + "-db-pvc");
-        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(argThat(matchesDatabaseService(database)), pvcCaptor.capture());
+        verify(client.persistentVolumeClaims())
+                .createPersistentVolumeClaimIfAbsent(argThat(matchesDatabaseService(database)), pvcCaptor.capture());
         assertThat(pvcCaptor.getValue().getSpec().getAccessModes(), is(Collections.singletonList("ReadWriteOnce")));
         //And the storageClass "azure-disk" as specified in the EntandoDatabaseService is used.
         assertThat(pvcCaptor.getValue().getSpec().getStorageClassName(), is("azure-disk"));
@@ -214,7 +215,8 @@ class DeployDatabaseServiceTest implements InProcessTestUtil, FluentTraversals {
         //Then the PersistentVolumeClaim attributes are suitable for a single pod container
         NamedArgumentCaptor<PersistentVolumeClaim> pvcCaptor = forResourceNamed(PersistentVolumeClaim.class,
                 MY_DATABASE_SERVICE + "-db-pvc");
-        verify(client.persistentVolumeClaims()).createPersistentVolumeClaimIfAbsent(argThat(matchesDatabaseService(database)), pvcCaptor.capture());
+        verify(client.persistentVolumeClaims())
+                .createPersistentVolumeClaimIfAbsent(argThat(matchesDatabaseService(database)), pvcCaptor.capture());
         //And the ReadWriteMany access mode is overridden for the single-pod database container
         assertThat(pvcCaptor.getValue().getSpec().getAccessModes(), is(Collections.singletonList("ReadWriteOnce")));
         //And the non-clustered storageClass "azure-disk" is used
