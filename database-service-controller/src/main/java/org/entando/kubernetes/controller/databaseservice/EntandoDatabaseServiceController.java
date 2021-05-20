@@ -16,7 +16,9 @@
 
 package org.entando.kubernetes.controller.databaseservice;
 
+import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
+import static org.entando.kubernetes.controller.databaseservice.EntandoDatabaseServiceHelper.strategyFor;
 
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import java.util.Arrays;
@@ -25,12 +27,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.entando.kubernetes.controller.spi.client.KubernetesClientForControllers;
 import org.entando.kubernetes.controller.spi.command.CommandStream;
 import org.entando.kubernetes.controller.spi.command.SerializingDeployCommand;
+import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
+import org.entando.kubernetes.controller.spi.common.EntandoControllerException;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
 import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
@@ -53,7 +56,7 @@ import picocli.CommandLine;
 @CommandLine.Command()
 public class EntandoDatabaseServiceController implements Runnable {
 
-    private final Logger logger = Logger.getLogger(EntandoDatabaseServiceController.class.getName());
+    private static final String SECRET_KIND = "Secret";
     private final KubernetesClientForControllers k8sClient;
     private final SerializingDeployCommand serializingDeployCommand;
     private static final Collection<Class<? extends EntandoCustomResource>> SUPPORTED_RESOURCE_KINDS = Arrays
@@ -81,6 +84,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                 this.entandoDatabaseService = (EntandoDatabaseService) resourceToProcess;
                 this.providedCapability = syncFromImplementingResourceToCapability(this.entandoDatabaseService);
                 this.k8sClient.createOrPatchEntandoResource(this.providedCapability);
+                validateExternalServiceRequirements(this.entandoDatabaseService);
             } else {
                 //This event originated from the capability requirement, and we need to keep the implementing CustomResource in sync
                 //The implementing CustomResource is to be owned by the ProvidedCapability and will therefore be ignored by
@@ -88,6 +92,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                 this.providedCapability = (ProvidedCapability) resourceToProcess;
                 this.entandoDatabaseService = syncFromCapabilityToImplementingCustomResource(this.providedCapability);
                 this.k8sClient.createOrPatchEntandoResource(this.entandoDatabaseService);
+                validateExternalServiceRequirements(this.providedCapability);
             }
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
             DatabaseDeploymentResult result = serializingDeployCommand.processDeployable(deployable);
@@ -96,7 +101,6 @@ public class EntandoDatabaseServiceController implements Runnable {
             k8sClient.updatePhase(entandoDatabaseService, EntandoDeploymentPhase.SUCCESSFUL);
             k8sClient.updatePhase(providedCapability, EntandoDeploymentPhase.SUCCESSFUL);
         } catch (Exception e) {
-            e.printStackTrace();
             k8sClient.deploymentFailed(entandoDatabaseService, e);
             k8sClient.deploymentFailed(providedCapability, e);
             throw new CommandLine.ExecutionException(new CommandLine(this), e.getMessage());
@@ -120,7 +124,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                         providedCapability.getSpec().getImplementation().orElse(StandardCapabilityImplementation.POSTGRESQL).name()))
                 .withCreateDeployment(
                         providedCapability.getSpec().getProvisioningStrategy().orElse(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY)
-                                != CapabilityProvisioningStrategy.USE_EXTERNAL)
+                                == CapabilityProvisioningStrategy.DEPLOY_DIRECTLY)
                 .withSecretName(providedCapability.getSpec().getExternallyProvisionedService()
                         .map(ExternallyProvidedService::getAdminSecretName).orElse(null))
                 .withHost(providedCapability.getSpec().getExternallyProvisionedService()
@@ -142,6 +146,59 @@ public class EntandoDatabaseServiceController implements Runnable {
             entandoDatabaseServiceToSyncTo.getMetadata().getOwnerReferences().add(ResourceUtils.buildOwnerReference(providedCapability));
         }
         return entandoDatabaseServiceToSyncTo;
+    }
+
+    private void validateExternalServiceRequirements(EntandoDatabaseService entandoKeycloakServer) {
+        if (!entandoKeycloakServer.getSpec().getCreateDeployment().orElse(false)) {
+            if (entandoKeycloakServer.getSpec().getHost().isEmpty()) {
+                throw new EntandoControllerException(
+                        "Please provide the hostname of the database service you intend to connect to using the "
+                                + "EntandoDatabaseService.spec.host property.");
+            }
+            if (strategyFor(entandoKeycloakServer).getVendorConfig() != DbmsVendorConfig.MYSQL
+                    && entandoKeycloakServer.getSpec().getDatabaseName().isEmpty()) {
+                throw new EntandoControllerException(
+                        "Please provide the name of the database on the database service you intend to connect to using the "
+                                + "EntandoDatabaseService.spec.databaseName property.");
+            }
+            String adminSecretName = entandoKeycloakServer.getSpec().getSecretName()
+                    .orElseThrow(() -> new EntandoControllerException(
+                            "Please provide the name of the secret containing the admin credentials for the database service you intend "
+                                    + "to connect to using the EntandoDatabaseService.spec.secretName property."));
+            if (ofNullable(k8sClient.loadStandardResource(SECRET_KIND, entandoKeycloakServer.getMetadata().getNamespace(), adminSecretName))
+                    .isEmpty()) {
+                throw new EntandoControllerException(format(
+                        "Please ensure that a secret with the name '%s' exists in the requested namespace %s", adminSecretName,
+                        entandoKeycloakServer.getMetadata().getName()));
+            }
+        }
+    }
+
+    private void validateExternalServiceRequirements(ProvidedCapability providedCapability) {
+        if (providedCapability.getSpec().getProvisioningStrategy().map(CapabilityProvisioningStrategy.USE_EXTERNAL::equals)
+                .orElse(false)) {
+            final ExternallyProvidedService externallyProvidedService = providedCapability.getSpec().getExternallyProvisionedService()
+                    .orElseThrow(() -> new EntandoControllerException(
+                            "Please provide the connection information of the database service you intend to connect to using the "
+                                    + "ProvidedCapability.spec.externallyProvisionedService object."));
+            String adminSecretName = ofNullable(externallyProvidedService.getAdminSecretName())
+                    .orElseThrow(() -> new EntandoControllerException(
+                            "Please provide the name of the secret containing the admin credentials for the database service you intend "
+                                    + "to connect to "
+                                    + "using the "
+                                    + "ProvidedCapability.spec.externallyProvisionedService.adminSecretName property."));
+            if (ofNullable(k8sClient.loadStandardResource(SECRET_KIND, providedCapability.getMetadata().getNamespace(), adminSecretName))
+                    .isEmpty()) {
+                throw new EntandoControllerException(format(
+                        "Please ensure that a secret with the name '%s' exists in the requested namespace %s", adminSecretName,
+                        providedCapability.getMetadata().getName()));
+            }
+            if (ofNullable(externallyProvidedService.getHost()).isEmpty()) {
+                throw new EntandoControllerException(
+                        "Please provide the hostname of the database service you intend to connect to using the "
+                                + "ProvidedCapability.spec.externallyProvisionedService.host property.");
+            }
+        }
     }
 
     private String resolveParameterIfPresent(ProvidedCapability providedCapability, String paramName) {
@@ -170,7 +227,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                 .editSpec()
                 .withCapability(StandardCapability.DBMS)
                 .withImplementation(StandardCapabilityImplementation
-                        .valueOf(resourceToProcess.getSpec().getDbms().orElse(DbmsVendor.POSTGRESQL).name()))
+                        .valueOf(strategyFor(resourceToProcess).getVendorConfig().name()))
                 .withSelector(resourceToProcess.getSpec().getProvidedCapabilityScope().filter(CapabilityScope.LABELED::equals)
                         .map(s -> resourceToProcess.getMetadata().getLabels()).orElse(null))
                 .withCapabilityRequirementScope(resourceToProcess.getSpec().getProvidedCapabilityScope().orElse(CapabilityScope.NAMESPACE))
@@ -180,8 +237,8 @@ public class EntandoDatabaseServiceController implements Runnable {
         } else {
             specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
                     .withNewExternallyProvidedService()
-                    .withHost(resourceToProcess.getSpec().getHost().orElseThrow(IllegalStateException::new))
-                    .withPort(resourceToProcess.getSpec().getPort().orElseThrow(IllegalStateException::new))
+                    .withHost(resourceToProcess.getSpec().getHost().orElse(null))
+                    .withPort(resourceToProcess.getSpec().getPort().orElse(strategyFor(resourceToProcess).getPort()))
                     .withAdminSecretName(resourceToProcess.getSpec().getSecretName().orElse(null))
                     .endExternallyProvidedService();
         }

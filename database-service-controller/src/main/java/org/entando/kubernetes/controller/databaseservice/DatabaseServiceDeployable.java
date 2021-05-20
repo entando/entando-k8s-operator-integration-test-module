@@ -1,6 +1,7 @@
 package org.entando.kubernetes.controller.databaseservice;
 
 import static java.lang.String.format;
+import static org.entando.kubernetes.controller.databaseservice.EntandoDatabaseServiceHelper.strategyFor;
 
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -12,14 +13,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
-import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfig;
 import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.common.SecretUtils;
 import org.entando.kubernetes.controller.spi.container.DeployableContainer;
 import org.entando.kubernetes.controller.spi.deployable.Deployable;
 import org.entando.kubernetes.controller.spi.deployable.ExternalService;
 import org.entando.kubernetes.controller.spi.deployable.Secretive;
-import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoCustomResource;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 
@@ -31,12 +30,12 @@ public class DatabaseServiceDeployable implements Deployable<DatabaseDeploymentR
     protected List<DeployableContainer> containers;
 
     public DatabaseServiceDeployable(EntandoDatabaseService newEntandoDatabaseService) {
-        this.dbmsVendor = getVendorStrategy(newEntandoDatabaseService);
+        this.dbmsVendor = strategyFor(newEntandoDatabaseService);
         this.customResource = newEntandoDatabaseService;
         this.containers = Collections
                 .singletonList(new DatabaseServiceContainer(newEntandoDatabaseService,
-                        buildVariableInitializer(getVendorStrategy(newEntandoDatabaseService)),
-                        getVendorStrategy(newEntandoDatabaseService),
+                        buildVariableInitializer(strategyFor(newEntandoDatabaseService)),
+                        strategyFor(newEntandoDatabaseService),
                         getPortOverride(newEntandoDatabaseService)));
         this.newEntandoDatabaseService = newEntandoDatabaseService;
     }
@@ -52,12 +51,6 @@ public class DatabaseServiceDeployable implements Deployable<DatabaseDeploymentR
 
     private static Integer getPortOverride(EntandoDatabaseService newEntandoDatabaseService) {
         return newEntandoDatabaseService.getSpec().getPort().orElse(null);
-    }
-
-    private static DbmsDockerVendorStrategy getVendorStrategy(EntandoDatabaseService newEntandoDatabaseService) {
-        return DbmsDockerVendorStrategy
-                .forVendor(newEntandoDatabaseService.getSpec().getDbms().orElse(DbmsVendor.POSTGRESQL),
-                        EntandoOperatorSpiConfig.getComplianceMode());
     }
 
     protected String getDatabaseAdminSecretName() {

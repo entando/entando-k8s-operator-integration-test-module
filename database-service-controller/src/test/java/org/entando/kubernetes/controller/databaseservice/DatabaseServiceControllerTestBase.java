@@ -16,6 +16,8 @@ import org.mockito.Spy;
 
 class DatabaseServiceControllerTestBase implements FluentTraversals, ControllerTestHelper {
 
+    static final String DEFAULT_DBMS_IN_NAMESPACE = "default-dbms-in-namespace";
+
     @Spy
     protected final SimpleK8SClient<EntandoResourceClientDouble> client = new SimpleK8SClientDouble();
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);

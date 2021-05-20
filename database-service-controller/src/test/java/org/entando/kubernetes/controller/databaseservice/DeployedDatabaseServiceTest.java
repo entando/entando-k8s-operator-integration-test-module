@@ -26,13 +26,13 @@ import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapabilit
 import org.entando.kubernetes.controller.spi.result.DatabaseServiceResult;
 import org.entando.kubernetes.controller.support.client.doubles.SimpleK8SClientDouble;
 import org.entando.kubernetes.controller.support.common.EntandoOperatorConfigProperty;
-import org.entando.kubernetes.model.capability.CapabilityRequirementBuilder;
+import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
 import org.entando.kubernetes.model.capability.CapabilityScope;
 import org.entando.kubernetes.model.capability.ProvidedCapability;
-import org.entando.kubernetes.model.capability.StandardCapability;
 import org.entando.kubernetes.model.capability.StandardCapabilityImplementation;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
+import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.test.common.SourceLink;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -45,13 +45,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @Tags({@Tag("component"), @Tag("in-process"), @Tag("allure")})
-@Feature("As a controller developer, I would like request a DBMS Capability to be deployed on demand so that I don't need to concern "
-        + "myself with the details o deploying a DBMS server")
+@Feature("As a deployer, I would like to deploy an EntandoDatabaseService directly so that I have more granular control over the "
+        + "configuration settings")
 @Issue("ENG-2284")
-@SourceLink("DirectlyDeployedDatabaseCapabilityTest.java")
-class DirectlyDeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
-
-    private static final String DEFAULT_DATABASE_SERVICE_IN_NAMESPACE = "default-dbms-in-namespace";
+@SourceLink("DeployedDatabaseServiceTest.java")
+class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
 
     private static Stream<Arguments> providePostgresqlParameters() {
         return Stream.of(
@@ -80,24 +78,32 @@ class DirectlyDeployedDatabaseCapabilityTest extends DatabaseServiceControllerTe
                         complianceMode.getName()));
         step("And the Operator runs in a Kubernetes environment the requires a filesystem user/group override for mounted volumes",
                 () -> attachEnvironmentVariable(EntandoOperatorConfigProperty.ENTANDO_REQUIRES_FILESYSTEM_GROUP_OVERRIDE, "true"));
-        step("When I request an DBMS Capability with no additional parameters",
-                () -> runControllerAgainst(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
-                        .withCapability(StandardCapability.DBMS)
-                        .withCapabilityRequirementScope(CapabilityScope.NAMESPACE)
+
+        step("When I create an EntandoDatabaseService with no additional parameters",
+                () -> runControllerAgainst(new EntandoDatabaseServiceBuilder()
+                        .withNewMetadata()
+                        .withName(DEFAULT_DBMS_IN_NAMESPACE)
+                        .withNamespace(MY_NAMESPACE)
+                        .endMetadata()
+                        .withNewSpec()
+                        .withCreateDeployment(true)
+                        .withProvidedCapabilityScope(CapabilityScope.NAMESPACE)
+                        .endSpec()
                         .build()));
         final ProvidedCapability providedCapability = client.entandoResources()
-                .load(ProvidedCapability.class, MY_NAMESPACE, DEFAULT_DATABASE_SERVICE_IN_NAMESPACE);
+                .load(ProvidedCapability.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);
         final EntandoDatabaseService entandoDatabaseService = client.entandoResources()
-                .load(EntandoDatabaseService.class, MY_NAMESPACE, DEFAULT_DATABASE_SERVICE_IN_NAMESPACE);
-        step("Then an EntandoDatabaseService was provisioned:", () -> {
+                .load(EntandoDatabaseService.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);
+        step("Then a ProvidedCapability was made available:", () -> {
             step("using the DeployDirectly provisioningStrategy",
-                    () -> assertThat(entandoDatabaseService.getSpec().getCreateDeployment()).contains(Boolean.TRUE));
+                    () -> assertThat(providedCapability.getSpec().getScope()).contains(CapabilityScope.NAMESPACE));
             step("a PostgreSQL database",
-                    () -> assertThat(entandoDatabaseService.getSpec().getDbms()).contains(DbmsVendor.POSTGRESQL));
+                    () -> assertThat(providedCapability.getSpec().getImplementation())
+                            .contains(StandardCapabilityImplementation.POSTGRESQL));
             step("and it is owned by the ProvidedCapability to ensure only changes from the ProvidedCapability will change the "
                             + "implementing Kubernetes resources",
-                    () -> assertThat(ResourceUtils.customResourceOwns(providedCapability, entandoDatabaseService)));
-            attacheKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
+                    () -> assertThat(ResourceUtils.customResourceOwns(entandoDatabaseService, providedCapability)));
+            attacheKubernetesResource("ProvidedCapability", providedCapability);
         });
         step("And a Kubernetes Deployment was created reflecting the requirements of the PostgreSQL image:" + expectedDbmsStrategy
                         .getOrganization() + "/" + expectedDbmsStrategy.getImageRepository(),
@@ -208,31 +214,41 @@ class DirectlyDeployedDatabaseCapabilityTest extends DatabaseServiceControllerTe
                 () -> attachEnvironmentVariable(EntandoOperatorConfigProperty.ENTANDO_REQUIRES_FILESYSTEM_GROUP_OVERRIDE, "true"));
         final Map<String, String> selector = Map.of("my-label", "my-label-value");
         step("When I request an DBMS Capability with all additional parameters provided",
-                () -> runControllerAgainst(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
-                        .withCapability(StandardCapability.DBMS)
-                        .withImplementation(StandardCapabilityImplementation.MYSQL)
-                        .withCapabilityRequirementScope(CapabilityScope.LABELED)
-                        .withSelector(selector)
-                        .withCapabilityParameters(Map.of(ProvidedDatabaseCapability.DATABASE_NAME_PARAMETER, "my_db",
-                                ProvidedDatabaseCapability.JDBC_PARAMETER_PREFIX + "disconnectOnExpiredPasswords", "true"))
+                () -> runControllerAgainst(new EntandoDatabaseServiceBuilder()
+                        .withNewMetadata()
+                        .withNamespace(MY_NAMESPACE)
+                        .withName("my-labelled-mysql-dbms")
+                        .withLabels(selector)
+                        .endMetadata()
+                        .withNewSpec()
+                        .withCreateDeployment(true)
+                        .withJdbcParameters(Map.of("disconnectOnExpiredPasswords", "true"))
+                        .withDbms(DbmsVendor.MYSQL)
+                        .withProvidedCapabilityScope(CapabilityScope.LABELED)
+                        .withDatabaseName("my_db")
+                        .endSpec()
                         .build()));
         final ProvidedCapability providedCapability = client.capabilities().providedCapabilityByLabels(selector).get();
         final EntandoDatabaseService entandoDatabaseService = client.entandoResources()
                 .load(EntandoDatabaseService.class, providedCapability.getMetadata().getNamespace(),
                         providedCapability.getMetadata().getName());
-        step("Then an EntandoDatabaseService was provisioned:", () -> {
+        step("Then an ProvidedCapability was made available:", () -> {
             step("using the DeployDirectly provisioningStrategy",
-                    () -> assertThat(entandoDatabaseService.getSpec().getCreateDeployment()).contains(Boolean.TRUE));
+                    () -> assertThat(providedCapability.getSpec().getProvisioningStrategy()))
+                    .contains(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY);
             step("a PostgreSQL database",
-                    () -> assertThat(entandoDatabaseService.getSpec().getDbms()).contains(DbmsVendor.MYSQL));
-            step("and it is owned by the ProvidedCapability to ensure only changes from the ProvidedCapability will change the "
+                    () -> assertThat(providedCapability.getSpec().getImplementation()).contains(StandardCapabilityImplementation.MYSQL));
+            step("and it is owned by the EntandoDatabaseService to ensure only changes from the EntandoDatabaseService will change the "
                             + "implementing Kubernetes resources",
-                    () -> assertThat(ResourceUtils.customResourceOwns(providedCapability, entandoDatabaseService)));
+                    () -> assertThat(ResourceUtils.customResourceOwns(entandoDatabaseService, providedCapability)));
 
-            step("and is labeled with the labels requested in the CapabilityRequirement",
-                    () -> assertThat(entandoDatabaseService.getMetadata().getLabels()).containsAllEntriesOf(selector));
+            step("and is labeled with the labels from in the EntandoDatabaseService",
+                    () -> assertThat(providedCapability.getMetadata().getLabels()).containsAllEntriesOf(selector));
 
-            attacheKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
+            step("and the selector is set up to match these labels",
+                    () -> assertThat(providedCapability.getSpec().getSelector()).containsAllEntriesOf(selector));
+
+            attacheKubernetesResource("ProvidedCapability", providedCapability);
         });
         step("And a Kubernetes Deployment was created reflecting the requirements of the MySQL image:" + expectedDbmsStrategy
                         .getOrganization() + "/" + expectedDbmsStrategy.getImageRepository(),
@@ -314,7 +330,7 @@ class DirectlyDeployedDatabaseCapabilityTest extends DatabaseServiceControllerTe
             assertThat(connectionInfo.getInternalServiceHostname())
                     .isEqualTo(providedCapability.getMetadata().getName() + "-service.my-namespace.svc.cluster.local");
             assertThat(connectionInfo.getVendor()).isEqualTo(DbmsVendorConfig.MYSQL);
-            assertThat(connectionInfo.getJdbcParameters().get("disconnectOnExpiredPasswords")).isEqualTo("true");
+            assertThat(connectionInfo.getJdbcParameters()).containsEntry("disconnectOnExpiredPasswords", "true");
         });
         attachKubernetesState((SimpleK8SClientDouble) client);
     }
