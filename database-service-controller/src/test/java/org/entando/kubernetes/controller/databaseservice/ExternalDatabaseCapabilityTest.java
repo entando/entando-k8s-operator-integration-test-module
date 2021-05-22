@@ -30,11 +30,12 @@ import java.util.Map;
 import org.entando.kubernetes.controller.spi.client.SerializedEntandoResource;
 import org.entando.kubernetes.controller.spi.command.SerializationHelper;
 import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
+import org.entando.kubernetes.controller.spi.common.EntandoControllerException;
 import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.common.SecretUtils;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
-import org.entando.kubernetes.controller.spi.result.DatabaseServiceResult;
+import org.entando.kubernetes.controller.spi.result.DatabaseConnectionInfo;
 import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
 import org.entando.kubernetes.model.capability.CapabilityRequirement;
 import org.entando.kubernetes.model.capability.CapabilityRequirementBuilder;
@@ -131,7 +132,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             step("and to the previously configured hostname of the database service",
                     () -> assertThat(service.getSpec().getExternalName()).isEqualTo("pg.apps.serv.run"));
         });
-        final DatabaseServiceResult providedDatabase = new ProvidedDatabaseCapability(
+        final DatabaseConnectionInfo providedDatabase = new ProvidedDatabaseCapability(
                 client.capabilities().buildCapabilityProvisioningResult(providedCapability));
         step("And the provided Database connection info reflects the external service", () -> {
             Allure.attachment("DatabaseConnectionInfo", SerializationHelper.serialize(providedDatabase));
@@ -160,7 +161,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
     void shouldFailWhenAdminSecretAbsent() {
         step("Given I have configured not configured a secret with admin credentials to a remote Keycloak server");
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
-        step("Then an IllegalState exception is thrown by the CapabilityProvider", () -> {
+        step("Then an EntandoControllerException is thrown by the CapabilityProvider", () -> {
             final SerializedEntandoResource forResource = newResourceRequiringCapability();
             final CapabilityRequirement build = new CapabilityRequirementBuilder()
                     .withCapability(StandardCapability.DBMS)
@@ -173,7 +174,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .withAdminSecretName("my-existing-dbms-admin-secret")
                     .endExternallyProvidedService()
                     .build();
-            assertThrows(IllegalStateException.class,
+            assertThrows(EntandoControllerException.class,
                     () -> runControllerAgainst(forResource, build));
         });
         final ProvidedCapability providedCapability = client.entandoResources()
@@ -220,7 +221,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             attacheKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request a Database Capability that is externally provided to a non-existing admin secret");
-        step("Then an IllegalState exception is thrown by the CapabilityProvider", () -> {
+        step("Then an EntandoControllerException is thrown by the CapabilityProvider", () -> {
             final CapabilityRequirement capabilityRequirement = new CapabilityRequirementBuilder()
                     .withCapability(StandardCapability.DBMS)
                     .withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
@@ -231,7 +232,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .withAdminSecretName("my-existing-dbms-admin-secret")
                     .endExternallyProvidedService()
                     .build();
-            assertThrows(IllegalStateException.class,
+            assertThrows(EntandoControllerException.class,
                     () -> runControllerAgainst(forResource, capabilityRequirement));
         });
         final ProvidedCapability providedCapability = client.entandoResources()
@@ -276,7 +277,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             attacheKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
-        step("Then an IllegalState exception is thrown by the CapabilityProvider", () -> {
+        step("Then an EntandoControllerException is thrown by the CapabilityProvider", () -> {
             final CapabilityRequirement capabilityRequirement = new CapabilityRequirementBuilder()
                     .withCapability(StandardCapability.DBMS)
                     .withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
@@ -287,7 +288,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .withAdminSecretName(null)//NO ADMIN SECRET!!
                     .endExternallyProvidedService()
                     .build();
-            assertThrows(IllegalStateException.class, () -> runControllerAgainst(forResource, capabilityRequirement));
+            assertThrows(EntandoControllerException.class, () -> runControllerAgainst(forResource, capabilityRequirement));
         });
         final ProvidedCapability providedCapability = client.entandoResources()
                 .load(ProvidedCapability.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);

@@ -30,8 +30,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.entando.kubernetes.controller.spi.client.KubernetesClientForControllers;
-import org.entando.kubernetes.controller.spi.command.CommandStream;
-import org.entando.kubernetes.controller.spi.command.SerializingDeployCommand;
+import org.entando.kubernetes.controller.spi.command.DeploymentProcessor;
 import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
 import org.entando.kubernetes.controller.spi.common.EntandoControllerException;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
@@ -57,17 +56,18 @@ import picocli.CommandLine;
 public class EntandoDatabaseServiceController implements Runnable {
 
     private static final String SECRET_KIND = "Secret";
+    public static final int DATABASE_DEPLOYMENT_TIME = 180;
     private final KubernetesClientForControllers k8sClient;
-    private final SerializingDeployCommand serializingDeployCommand;
+    private final DeploymentProcessor deploymentProcessor;
     private static final Collection<Class<? extends EntandoCustomResource>> SUPPORTED_RESOURCE_KINDS = Arrays
             .asList(EntandoDatabaseService.class, ProvidedCapability.class);
     private EntandoDatabaseService entandoDatabaseService;
     private ProvidedCapability providedCapability;
 
     @Inject
-    public EntandoDatabaseServiceController(KubernetesClientForControllers k8sClient, CommandStream commandStream) {
+    public EntandoDatabaseServiceController(KubernetesClientForControllers k8sClient, DeploymentProcessor deploymentProcessor) {
         this.k8sClient = k8sClient;
-        this.serializingDeployCommand = new SerializingDeployCommand(k8sClient, commandStream);
+        this.deploymentProcessor = deploymentProcessor;
     }
 
     @Override
@@ -95,12 +95,13 @@ public class EntandoDatabaseServiceController implements Runnable {
                 validateExternalServiceRequirements(this.providedCapability);
             }
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
-            DatabaseDeploymentResult result = serializingDeployCommand.processDeployable(deployable);
+            DatabaseDeploymentResult result = deploymentProcessor.processDeployable(deployable, DATABASE_DEPLOYMENT_TIME);
             k8sClient.updateStatus(entandoDatabaseService, result.getStatus());
             k8sClient.updateStatus(providedCapability, result.getStatus());
             k8sClient.updatePhase(entandoDatabaseService, EntandoDeploymentPhase.SUCCESSFUL);
             k8sClient.updatePhase(providedCapability, EntandoDeploymentPhase.SUCCESSFUL);
         } catch (Exception e) {
+            e.printStackTrace();
             k8sClient.deploymentFailed(entandoDatabaseService, e);
             k8sClient.deploymentFailed(providedCapability, e);
             throw new CommandLine.ExecutionException(new CommandLine(this), e.getMessage());

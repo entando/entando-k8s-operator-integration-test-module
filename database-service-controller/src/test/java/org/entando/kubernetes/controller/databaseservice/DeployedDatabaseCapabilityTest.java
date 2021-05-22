@@ -23,7 +23,7 @@ import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.common.SecretUtils;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
-import org.entando.kubernetes.controller.spi.result.DatabaseServiceResult;
+import org.entando.kubernetes.controller.spi.result.DatabaseConnectionInfo;
 import org.entando.kubernetes.controller.support.client.doubles.SimpleK8SClientDouble;
 import org.entando.kubernetes.controller.support.common.EntandoOperatorConfigProperty;
 import org.entando.kubernetes.model.capability.CapabilityRequirementBuilder;
@@ -178,9 +178,8 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         });
 
         step("And the resulting DatabaseServiceResult reflects the correct information to connect to the deployed DBMS service", () -> {
-            final CapabilityProvider capabilityProvider = new CapabilityProvider(getClient().capabilities());
-            DatabaseServiceResult connectionInfo = new ProvidedDatabaseCapability(
-                    capabilityProvider.loadProvisioningResult(providedCapability));
+            DatabaseConnectionInfo connectionInfo = new ProvidedDatabaseCapability(
+                    getCapabilityProvider().loadProvisioningResult(providedCapability));
             Allure.attachment("DatabaseServiceResult", SerializationHelper.serialize(connectionInfo));
             assertThat(connectionInfo.getDatabaseName()).isEqualTo("default_dbms_in_namespace_db");
             assertThat(connectionInfo.getPort()).isEqualTo("5432");
@@ -190,6 +189,7 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         });
         attachKubernetesState((SimpleK8SClientDouble) client);
     }
+
 
     @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER + ":[" + ParameterizedTest.ARGUMENTS_WITH_NAMES_PLACEHOLDER + "]")
     @MethodSource("provideMysqlParameters")
@@ -303,9 +303,8 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         });
 
         step("And the resulting DatabaseServiceResult reflects the correct information to connect to the deployed DBMS service", () -> {
-            final CapabilityProvider capabilityProvider = new CapabilityProvider(getClient().capabilities());
-            DatabaseServiceResult connectionInfo = new ProvidedDatabaseCapability(
-                    capabilityProvider.loadProvisioningResult(providedCapability));
+            DatabaseConnectionInfo connectionInfo = new ProvidedDatabaseCapability(
+                    getCapabilityProvider().loadProvisioningResult(providedCapability));
             Allure.attachment("DatabaseServiceResult", SerializationHelper.serialize(connectionInfo));
             assertThat(connectionInfo.getDatabaseName()).isEqualTo("my_db");
             assertThat(connectionInfo.getPort()).isEqualTo("3306");

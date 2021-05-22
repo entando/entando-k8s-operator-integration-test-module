@@ -121,7 +121,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
     void shouldFailWhenAdminSecretAbsent() {
         step("Given I have not configured a secret with admin credentials to a remote database service");
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
-        step("Then an IllegalState exception is thrown by the CapabilityProvider", () ->
+        step("Then a CommandLine ExecutionException is thrown by the CapabilityProvider", () ->
                 assertThrows(CommandLine.ExecutionException.class,
                         () -> runControllerAgainst(new EntandoDatabaseServiceBuilder()
                                 .withNewMetadata()
@@ -179,7 +179,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
             attacheKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
-        step("Then an IllegalState exception is thrown by the CapabilityProvider", () ->
+        step("Then a CommandLine ExecutionException is thrown by the CapabilityProvider", () ->
                 assertThrows(CommandLine.ExecutionException.class,
                         () -> runControllerAgainst(new EntandoDatabaseServiceBuilder()
                                 .withNewMetadata()
@@ -235,7 +235,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
             attacheKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
-        step("Then an IllegalState exception is thrown by the CapabilityProvider", () ->
+        step("Then a CommandLine ExecutionException is thrown by the CapabilityProvider", () ->
                 assertThrows(CommandLine.ExecutionException.class,
                         () -> runControllerAgainst(new EntandoDatabaseServiceBuilder()
                                 .withNewMetadata()
@@ -291,7 +291,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
             attacheKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request an database Capability that is externally provided to a non-existing admin secret");
-        step("Then an IllegalState exception is thrown by the CapabilityProvider", () ->
+        step("Then a CommandLine ExecutionException is thrown by the CapabilityProvider", () ->
                 assertThrows(CommandLine.ExecutionException.class,
                         () -> runControllerAgainst(new EntandoDatabaseServiceBuilder()
                                 .withNewMetadata()
