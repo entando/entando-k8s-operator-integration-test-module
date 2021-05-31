@@ -1,9 +1,10 @@
 package org.entando.kubernetes.controller.databaseservice;
 
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import org.entando.kubernetes.controller.spi.capability.CapabilityProvider;
-import org.entando.kubernetes.controller.spi.capability.SerializingCapabilityProvider;
+import org.entando.kubernetes.controller.spi.client.KubernetesClientForControllers;
 import org.entando.kubernetes.controller.spi.command.DeploymentProcessor;
 import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfigProperty;
 import org.entando.kubernetes.controller.support.client.doubles.SimpleK8SClientDouble;
@@ -11,6 +12,7 @@ import org.entando.kubernetes.controller.support.common.EntandoOperatorConfigPro
 import org.entando.kubernetes.test.common.ControllerTestHelper;
 import org.entando.kubernetes.test.common.FluentTraversals;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 class DatabaseServiceControllerTestBase implements FluentTraversals, ControllerTestHelper {
 
@@ -24,18 +26,16 @@ class DatabaseServiceControllerTestBase implements FluentTraversals, ControllerT
         return client;
     }
 
-    public CapabilityProvider getCapabilityProvider() {
-        return new SerializingCapabilityProvider(client.entandoResources(), new AllureAttachingCommandStream(client, null));
-    }
-
     @Override
     public ScheduledExecutorService getScheduler() {
         return scheduledExecutorService;
     }
 
-    @Override
-    public Runnable createController(DeploymentProcessor deploymentProcessor) {
-        return new EntandoDatabaseServiceController(client.entandoResources(), deploymentProcessor);
+    @BeforeEach
+    void registerCrds() throws IOException {
+        registerCrd("crd/providedcapabilities.entando.org.crd.yaml");
+        registerCrd("crd/entandodatabaseservices.entando.org.crd.yaml");
+        registerCrd("testresources.test.org.crd.yaml");
     }
 
     @AfterEach
@@ -52,4 +52,9 @@ class DatabaseServiceControllerTestBase implements FluentTraversals, ControllerT
                 .remove(EntandoOperatorSpiConfigProperty.ENTANDO_K8S_OPERATOR_DEFAULT_NON_CLUSTERED_STORAGE_CLASS.getJvmSystemProperty());
     }
 
+    @Override
+    public Runnable createController(KubernetesClientForControllers kubernetesClientForControllers, DeploymentProcessor deploymentProcessor,
+            CapabilityProvider capabilityProvider) {
+        return new EntandoDatabaseServiceController(kubernetesClientForControllers, deploymentProcessor);
+    }
 }

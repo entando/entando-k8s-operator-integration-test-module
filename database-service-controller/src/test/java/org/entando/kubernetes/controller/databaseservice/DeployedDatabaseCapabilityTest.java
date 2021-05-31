@@ -13,7 +13,6 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import java.util.Map;
 import java.util.stream.Stream;
-import org.entando.kubernetes.controller.spi.capability.CapabilityProvider;
 import org.entando.kubernetes.controller.spi.command.SerializationHelper;
 import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
 import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
@@ -24,7 +23,6 @@ import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.common.SecretUtils;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
 import org.entando.kubernetes.controller.spi.result.DatabaseConnectionInfo;
-import org.entando.kubernetes.controller.support.client.doubles.SimpleK8SClientDouble;
 import org.entando.kubernetes.controller.support.common.EntandoOperatorConfigProperty;
 import org.entando.kubernetes.model.capability.CapabilityRequirementBuilder;
 import org.entando.kubernetes.model.capability.CapabilityScope;
@@ -79,7 +77,7 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the Operator runs in a Kubernetes environment the requires a filesystem user/group override for mounted volumes",
                 () -> attachEnvironmentVariable(EntandoOperatorConfigProperty.ENTANDO_REQUIRES_FILESYSTEM_GROUP_OVERRIDE, "true"));
         step("When I request an DBMS Capability with no additional parameters",
-                () -> runControllerAgainst(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
+                () -> runControllerAgainstCapabilityRequirement(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
                         .withCapability(StandardCapability.DBMS)
                         .withCapabilityRequirementScope(CapabilityScope.NAMESPACE)
                         .build()));
@@ -95,14 +93,14 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             step("and it is owned by the ProvidedCapability to ensure only changes from the ProvidedCapability will change the "
                             + "implementing Kubernetes resources",
                     () -> assertThat(ResourceUtils.customResourceOwns(providedCapability, entandoDatabaseService)));
-            attacheKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
+            attachKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
         });
         step("And a Kubernetes Deployment was created reflecting the requirements of the PostgreSQL image:" + expectedDbmsStrategy
                         .getOrganization() + "/" + expectedDbmsStrategy.getImageRepository(),
                 () -> {
                     final Deployment deployment = client.deployments()
                             .loadDeployment(entandoDatabaseService, NameUtils.standardDeployment(entandoDatabaseService));
-                    attacheKubernetesResource("Deployment", deployment);
+                    attachKubernetesResource("Deployment", deployment);
                     step("using the PostgreSQL Image " + expectedDbmsStrategy.getOrganization() + "/" + expectedDbmsStrategy
                                     .getImageRepository(),
                             () -> assertThat(thePrimaryContainerOn(deployment).getImage())
@@ -114,7 +112,7 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     step("Which is bound to a PersistentVolumeClain", () -> {
                         final PersistentVolumeClaim pvc = client.persistentVolumeClaims()
                                 .loadPersistentVolumeClaim(entandoDatabaseService, "default-dbms-in-namespace-db-pvc");
-                        attacheKubernetesResource("PersistentVolumeClaim", pvc);
+                        attachKubernetesResource("PersistentVolumeClaim", pvc);
                         assertThat(theVolumeNamed("default-dbms-in-namespace-db-volume").on(deployment).getPersistentVolumeClaim()
                                 .getClaimName()).isEqualTo(
                                 "default-dbms-in-namespace-db-pvc");
@@ -157,14 +155,14 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the admin secret specifies the standard super user 'postgres' as user and has a dynamically generated password", () -> {
             final Secret secret = client.secrets()
                     .loadSecret(entandoDatabaseService, NameUtils.standardAdminSecretName(entandoDatabaseService));
-            attacheKubernetesResource("Admin Secret", secret);
+            attachKubernetesResource("Admin Secret", secret);
             assertThat(theKey("username").on(secret)).isEqualTo("postgres");
             assertThat(theKey("password").on(secret)).isNotBlank();
         });
         step("And a Kubernetes Service was created:", () -> {
             final Service service = client.services()
                     .loadService(entandoDatabaseService, NameUtils.standardServiceName(entandoDatabaseService));
-            attacheKubernetesResource("Service", service);
+            attachKubernetesResource("Service", service);
             step("Exposing the port 5432 ",
                     () -> assertThat(service.getSpec().getPorts().get(0).getPort()).isEqualTo(5432));
             step("Targeting port 5432 in the Deployment",
@@ -187,9 +185,8 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .isEqualTo("default-dbms-in-namespace-service.my-namespace.svc.cluster.local");
             assertThat(connectionInfo.getVendor()).isEqualTo(DbmsVendorConfig.POSTGRESQL);
         });
-        attachKubernetesState((SimpleK8SClientDouble) client);
+        attachKubernetesState();
     }
-
 
     @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER + ":[" + ParameterizedTest.ARGUMENTS_WITH_NAMES_PLACEHOLDER + "]")
     @MethodSource("provideMysqlParameters")
@@ -206,7 +203,7 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                 () -> attachEnvironmentVariable(EntandoOperatorConfigProperty.ENTANDO_REQUIRES_FILESYSTEM_GROUP_OVERRIDE, "true"));
         final Map<String, String> selector = Map.of("my-label", "my-label-value");
         step("When I request an DBMS Capability with all additional parameters provided",
-                () -> runControllerAgainst(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
+                () -> runControllerAgainstCapabilityRequirement(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
                         .withCapability(StandardCapability.DBMS)
                         .withImplementation(StandardCapabilityImplementation.MYSQL)
                         .withCapabilityRequirementScope(CapabilityScope.LABELED)
@@ -230,14 +227,14 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             step("and is labeled with the labels requested in the CapabilityRequirement",
                     () -> assertThat(entandoDatabaseService.getMetadata().getLabels()).containsAllEntriesOf(selector));
 
-            attacheKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
+            attachKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
         });
         step("And a Kubernetes Deployment was created reflecting the requirements of the MySQL image:" + expectedDbmsStrategy
                         .getOrganization() + "/" + expectedDbmsStrategy.getImageRepository(),
                 () -> {
                     final Deployment deployment = client.deployments()
                             .loadDeployment(entandoDatabaseService, NameUtils.standardDeployment(entandoDatabaseService));
-                    attacheKubernetesResource("Deployment", deployment);
+                    attachKubernetesResource("Deployment", deployment);
                     step("using the MySQL Image " + expectedDbmsStrategy.getOrganization() + "/" + expectedDbmsStrategy
                                     .getImageRepository(),
                             () -> assertThat(thePrimaryContainerOn(deployment).getImage())
@@ -249,7 +246,7 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     step("Which is bound to a PersistentVolumeClain", () -> {
                         final PersistentVolumeClaim pvc = client.persistentVolumeClaims()
                                 .loadPersistentVolumeClaim(entandoDatabaseService, "default-dbms-in-namespace-db-pvc");
-                        attacheKubernetesResource("PersistentVolumeClaim", pvc);
+                        attachKubernetesResource("PersistentVolumeClaim", pvc);
                         assertThat(
                                 theVolumeNamed(providedCapability.getMetadata().getName() + "-db-volume").on(deployment)
                                         .getPersistentVolumeClaim()
@@ -282,14 +279,14 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the admin secret specifies the standard super user 'postgres' as user and has a dynamically generated password", () -> {
             final Secret secret = client.secrets()
                     .loadSecret(entandoDatabaseService, NameUtils.standardAdminSecretName(entandoDatabaseService));
-            attacheKubernetesResource("Admin Secret", secret);
+            attachKubernetesResource("Admin Secret", secret);
             assertThat(theKey("username").on(secret)).isEqualTo("root");
             assertThat(theKey("password").on(secret)).isNotBlank();
         });
         step("And a Kubernetes Service was created:", () -> {
             final Service service = client.services()
                     .loadService(entandoDatabaseService, NameUtils.standardServiceName(entandoDatabaseService));
-            attacheKubernetesResource("Service", service);
+            attachKubernetesResource("Service", service);
             step("Exposing the port 3306 ",
                     () -> assertThat(service.getSpec().getPorts().get(0).getPort()).isEqualTo(3306));
             step("Targeting port 3306 in the Deployment",
@@ -313,6 +310,6 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             assertThat(connectionInfo.getVendor()).isEqualTo(DbmsVendorConfig.MYSQL);
             assertThat(connectionInfo.getJdbcParameters()).containsEntry("disconnectOnExpiredPasswords", "true");
         });
-        attachKubernetesState((SimpleK8SClientDouble) client);
+        attachKubernetesState();
     }
 }

@@ -65,7 +65,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
     @Test
     @Description("Should link to external database service when all required fields are provided")
     void shouldLinkToExternalDatabaseService() {
-        step("Given I have configured a secret with admin credentials to a remote Keycloak server", () -> {
+        step("Given I have configured a secret with admin credentials to a remote database service", () -> {
             final Secret adminSecret = new SecretBuilder()
                     .withNewMetadata()
                     .withNamespace(MY_NAMESPACE)
@@ -75,10 +75,10 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .addToData(SecretUtils.PASSSWORD_KEY, "somepassword")
                     .build();
             getClient().secrets().createSecretIfAbsent(newResourceRequiringCapability(), adminSecret);
-            attacheKubernetesResource("Existing Admin Secret", adminSecret);
+            attachKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request an DBMS Capability  with its name and namespace explicitly specified, provisioned externally",
-                () -> runControllerAgainst(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
+                () -> runControllerAgainstCapabilityRequirement(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
                         .withCapability(StandardCapability.DBMS)
                         .withImplementation(StandardCapabilityImplementation.MYSQL)
                         .withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
@@ -98,7 +98,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         final EntandoDatabaseService entandoDatabaseService = client.entandoResources()
                 .load(EntandoDatabaseService.class, MY_NAMESPACE, SPECIFIED_DBMS);
         step("Then an EntandoDatabaseService was provisioned:", () -> {
-            attacheKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
+            attachKubernetesResource("EntandoDatabaseService", entandoDatabaseService);
             step("with the name explicitly specified", () -> {
                 assertThat(entandoDatabaseService.getMetadata().getName()).isEqualTo(SPECIFIED_DBMS);
                 assertThat(providedCapability.getMetadata().getName()).isEqualTo(SPECIFIED_DBMS);
@@ -123,7 +123,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And an 'ExternalName' Service  was provisioned:", () -> {
             final Service service = getClient().services()
                     .loadService(entandoDatabaseService, NameUtils.standardServiceName(entandoDatabaseService));
-            attacheKubernetesResource("Service", service);
+            attachKubernetesResource("Service", service);
             assertThat(service.getSpec().getType()).isEqualTo("ExternalName");
             step("mapped to the port 3307", () -> {
                 assertThat(service.getSpec().getPorts().get(0).getPort()).isEqualTo(3307);
@@ -159,7 +159,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
     @Test
     @Description("Should fail when the admin secret specified is absent in the deployment namespace")
     void shouldFailWhenAdminSecretAbsent() {
-        step("Given I have configured not configured a secret with admin credentials to a remote Keycloak server");
+        step("Given I have configured not configured a secret with admin credentials to a remote database service");
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
         step("Then an EntandoControllerException is thrown by the CapabilityProvider", () -> {
             final SerializedEntandoResource forResource = newResourceRequiringCapability();
@@ -175,7 +175,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .endExternallyProvidedService()
                     .build();
             assertThrows(EntandoControllerException.class,
-                    () -> runControllerAgainst(forResource, build));
+                    () -> runControllerAgainstCapabilityRequirement(forResource, build));
         });
         final ProvidedCapability providedCapability = client.entandoResources()
                 .load(ProvidedCapability.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);
@@ -184,8 +184,8 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the resulting status objects of both the ProvidedCapability and EntandoDatabaseService reflect the failure and the cause"
                         + " for the failure",
                 () -> {
-                    attacheKubernetesResource("EntandoDatabaseService.status", entandoDatabaseService.getStatus());
-                    attacheKubernetesResource("ProvidedCapability.status", providedCapability.getStatus());
+                    attachKubernetesResource("EntandoDatabaseService.status", entandoDatabaseService.getStatus());
+                    attachKubernetesResource("ProvidedCapability.status", providedCapability.getStatus());
                     step("The phase of the statuses of both the ProvidedCapability and EntandoDatabaseService is FAILED", () -> {
                         assertThat(entandoDatabaseService.getStatus().getPhase()).isEqualTo(EntandoDeploymentPhase.FAILED);
                         assertThat(providedCapability.getStatus().getPhase()).isEqualTo(EntandoDeploymentPhase.FAILED);
@@ -218,7 +218,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .addToData(SecretUtils.PASSSWORD_KEY, "somepassword")
                     .build();
             getClient().secrets().createSecretIfAbsent(forResource, adminSecret);
-            attacheKubernetesResource("Existing Admin Secret", adminSecret);
+            attachKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request a Database Capability that is externally provided to a non-existing admin secret");
         step("Then an EntandoControllerException is thrown by the CapabilityProvider", () -> {
@@ -233,7 +233,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .endExternallyProvidedService()
                     .build();
             assertThrows(EntandoControllerException.class,
-                    () -> runControllerAgainst(forResource, capabilityRequirement));
+                    () -> runControllerAgainstCapabilityRequirement(forResource, capabilityRequirement));
         });
         final ProvidedCapability providedCapability = client.entandoResources()
                 .load(ProvidedCapability.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);
@@ -242,8 +242,8 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the resulting status objects of both the ProvidedCapability and EntandoDatabaseService reflect the failure and the cause"
                         + " for the failure",
                 () -> {
-                    attacheKubernetesResource("EntandoDatabaseService.status", entandoDatabaseService.getStatus());
-                    attacheKubernetesResource("ProvidedCapability.status", providedCapability.getStatus());
+                    attachKubernetesResource("EntandoDatabaseService.status", entandoDatabaseService.getStatus());
+                    attachKubernetesResource("ProvidedCapability.status", providedCapability.getStatus());
                     step("The phase of the statuses of both the ProvidedCapability and EntandoDatabaseService is FAILED", () -> {
                         assertThat(entandoDatabaseService.getStatus().getPhase()).isEqualTo(EntandoDeploymentPhase.FAILED);
                         assertThat(providedCapability.getStatus().getPhase()).isEqualTo(EntandoDeploymentPhase.FAILED);
@@ -264,7 +264,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
     @Description("Should fail when no admin secret name is specified")
     void shouldFailWhenNoAdminSecretName() {
         final SerializedEntandoResource forResource = newResourceRequiringCapability();
-        step("Given I have configured a secret with admin credentials to a remote Keycloak server", () -> {
+        step("Given I have configured a secret with admin credentials to a remote database service", () -> {
             final Secret adminSecret = new SecretBuilder()
                     .withNewMetadata()
                     .withNamespace(MY_NAMESPACE)
@@ -274,7 +274,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .addToData(SecretUtils.PASSSWORD_KEY, "somepassword")
                     .build();
             getClient().secrets().createSecretIfAbsent(forResource, adminSecret);
-            attacheKubernetesResource("Existing Admin Secret", adminSecret);
+            attachKubernetesResource("Existing Admin Secret", adminSecret);
         });
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
         step("Then an EntandoControllerException is thrown by the CapabilityProvider", () -> {
@@ -288,7 +288,8 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                     .withAdminSecretName(null)//NO ADMIN SECRET!!
                     .endExternallyProvidedService()
                     .build();
-            assertThrows(EntandoControllerException.class, () -> runControllerAgainst(forResource, capabilityRequirement));
+            assertThrows(EntandoControllerException.class,
+                    () -> runControllerAgainstCapabilityRequirement(forResource, capabilityRequirement));
         });
         final ProvidedCapability providedCapability = client.entandoResources()
                 .load(ProvidedCapability.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);
@@ -297,8 +298,8 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the resulting status objects of both the ProvidedCapability and EntandoDatabaseService reflect the failure and the cause"
                         + " for the failure",
                 () -> {
-                    attacheKubernetesResource("EntandoDatabaseService.status", entandoDatabaseService.getStatus());
-                    attacheKubernetesResource("ProvidedCapability.status", providedCapability.getStatus());
+                    attachKubernetesResource("EntandoDatabaseService.status", entandoDatabaseService.getStatus());
+                    attachKubernetesResource("ProvidedCapability.status", providedCapability.getStatus());
                     step("The phase of the statuses of both the ProvidedCapability and EntandoDatabaseService is FAILED", () -> {
                         assertThat(entandoDatabaseService.getStatus().getPhase()).isEqualTo(EntandoDeploymentPhase.FAILED);
                         assertThat(providedCapability.getStatus().getPhase()).isEqualTo(EntandoDeploymentPhase.FAILED);

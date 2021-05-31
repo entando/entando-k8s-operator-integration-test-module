@@ -12,13 +12,13 @@ import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.container.ConfigurableResourceContainer;
 import org.entando.kubernetes.controller.spi.container.DockerImageInfo;
 import org.entando.kubernetes.controller.spi.container.HasHealthCommand;
-import org.entando.kubernetes.controller.spi.container.PersistentVolumeAware;
+import org.entando.kubernetes.controller.spi.container.PersistentVolumeAwareContainer;
 import org.entando.kubernetes.controller.spi.container.ServiceBackingContainer;
 import org.entando.kubernetes.model.common.EntandoResourceRequirements;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 
 public class DatabaseServiceContainer implements ConfigurableResourceContainer, ServiceBackingContainer,
-        PersistentVolumeAware, HasHealthCommand {
+        PersistentVolumeAwareContainer, HasHealthCommand {
 
     private final EntandoDatabaseService entandoDatabaseService;
     private final DbmsDockerVendorStrategy dbmsVendorDockerStrategy;
