@@ -94,7 +94,7 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                 .load(EntandoDatabaseService.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);
         step("Then a ProvidedCapability was made available:", () -> {
             step("using the DeployDirectly provisioningStrategy",
-                    () -> assertThat(providedCapability.getSpec().getScope()).contains(CapabilityScope.NAMESPACE));
+                    () -> assertThat(providedCapability.getSpec().getResolutionScopePreference()).contains(CapabilityScope.NAMESPACE));
             step("a PostgreSQL database",
                     () -> assertThat(providedCapability.getSpec().getImplementation())
                             .contains(StandardCapabilityImplementation.POSTGRESQL));

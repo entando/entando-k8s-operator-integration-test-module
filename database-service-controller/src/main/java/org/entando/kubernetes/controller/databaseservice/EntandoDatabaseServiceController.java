@@ -33,6 +33,7 @@ import org.entando.kubernetes.controller.spi.client.KubernetesClientForControlle
 import org.entando.kubernetes.controller.spi.command.DeploymentProcessor;
 import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
 import org.entando.kubernetes.controller.spi.common.EntandoControllerException;
+import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
 import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
@@ -72,6 +73,7 @@ public class EntandoDatabaseServiceController implements Runnable {
 
     @Override
     public void run() {
+        k8sClient.prepareConfig();
         EntandoCustomResource resourceToProcess = k8sClient.resolveCustomResourceToProcess(SUPPORTED_RESOURCE_KINDS);
         k8sClient.updatePhase(resourceToProcess, EntandoDeploymentPhase.STARTED);
         //No need to update the resource being synced to. It will be ignored by ControllerCoordinator
@@ -83,7 +85,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                 // ControllerCoordinator
                 this.entandoDatabaseService = (EntandoDatabaseService) resourceToProcess;
                 this.providedCapability = syncFromImplementingResourceToCapability(this.entandoDatabaseService);
-                this.k8sClient.createOrPatchEntandoResource(this.providedCapability);
+                this.providedCapability = this.k8sClient.createOrPatchEntandoResource(this.providedCapability);
                 validateExternalServiceRequirements(this.entandoDatabaseService);
             } else {
                 //This event originated from the capability requirement, and we need to keep the implementing CustomResource in sync
@@ -91,7 +93,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                 // ControllerCoordinator
                 this.providedCapability = (ProvidedCapability) resourceToProcess;
                 this.entandoDatabaseService = syncFromCapabilityToImplementingCustomResource(this.providedCapability);
-                this.k8sClient.createOrPatchEntandoResource(this.entandoDatabaseService);
+                this.entandoDatabaseService = this.k8sClient.createOrPatchEntandoResource(this.entandoDatabaseService);
                 validateExternalServiceRequirements(this.providedCapability);
             }
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
@@ -101,9 +103,8 @@ public class EntandoDatabaseServiceController implements Runnable {
             k8sClient.updatePhase(entandoDatabaseService, EntandoDeploymentPhase.SUCCESSFUL);
             k8sClient.updatePhase(providedCapability, EntandoDeploymentPhase.SUCCESSFUL);
         } catch (Exception e) {
-            e.printStackTrace();
-            k8sClient.deploymentFailed(entandoDatabaseService, e);
-            k8sClient.deploymentFailed(providedCapability, e);
+            k8sClient.deploymentFailed(entandoDatabaseService, e, NameUtils.MAIN_QUALIFIER);
+            k8sClient.deploymentFailed(providedCapability, e, NameUtils.MAIN_QUALIFIER);
             throw new CommandLine.ExecutionException(new CommandLine(this), e.getMessage());
         }
     }
@@ -134,7 +135,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                         .flatMap(ExternallyProvidedService::getPort).orElse(null))
                 .withTablespace(resolveParameterIfPresent(providedCapability, "tablespace"))
                 .withDatabaseName(resolveParameterIfPresent(providedCapability, "databaseName"))
-                .withProvidedCapabilityScope(providedCapability.getSpec().getScope().orElse(CapabilityScope.NAMESPACE))
+                .withProvidedCapabilityScope(determinePreferredScope(providedCapability))
                 .withJdbcParameters(ofNullable(providedCapability.getSpec().getCapabilityParameters()).orElse(Collections.emptyMap())
                         .entrySet().stream()
                         .filter(entry -> entry.getKey().startsWith(ProvidedDatabaseCapability.JDBC_PARAMETER_PREFIX))
@@ -147,6 +148,10 @@ public class EntandoDatabaseServiceController implements Runnable {
             entandoDatabaseServiceToSyncTo.getMetadata().getOwnerReferences().add(ResourceUtils.buildOwnerReference(providedCapability));
         }
         return entandoDatabaseServiceToSyncTo;
+    }
+
+    private CapabilityScope determinePreferredScope(ProvidedCapability providedCapability) {
+        return providedCapability.getSpec().getResolutionScopePreference().stream().findFirst().orElse(CapabilityScope.NAMESPACE);
     }
 
     private void validateExternalServiceRequirements(EntandoDatabaseService entandoKeycloakServer) {
@@ -231,8 +236,8 @@ public class EntandoDatabaseServiceController implements Runnable {
                         .valueOf(strategyFor(resourceToProcess).getVendorConfig().name()))
                 .withSelector(resourceToProcess.getSpec().getProvidedCapabilityScope().filter(CapabilityScope.LABELED::equals)
                         .map(s -> resourceToProcess.getMetadata().getLabels()).orElse(null))
-                .withCapabilityRequirementScope(resourceToProcess.getSpec().getProvidedCapabilityScope().orElse(CapabilityScope.NAMESPACE))
-                .withCapabilityParameters(parameters);
+                .withResolutionScopePreference(resourceToProcess.getSpec().getProvidedCapabilityScope().orElse(CapabilityScope.NAMESPACE))
+                .addAllToCapabilityParameters(parameters);
         if (resourceToProcess.getSpec().getCreateDeployment().orElse(false)) {
             specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY);
         } else {

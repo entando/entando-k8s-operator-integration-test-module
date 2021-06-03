@@ -82,14 +82,14 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                         .withCapability(StandardCapability.DBMS)
                         .withImplementation(StandardCapabilityImplementation.MYSQL)
                         .withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
-                        .withCapabilityRequirementScope(CapabilityScope.SPECIFIED)
+                        .withResolutionScopePreference(CapabilityScope.SPECIFIED)
                         .withNewExternallyProvidedService()
                         .withHost("pg.apps.serv.run")
                         .withPort(3307)
                         .withAdminSecretName("my-existing-dbms-admin-secret")
                         .endExternallyProvidedService()
                         .withSpecifiedCapability(new ResourceReference(MY_NAMESPACE, SPECIFIED_DBMS))
-                        .withCapabilityParameters(
+                        .addAllToCapabilityParameters(
                                 Map.of(ProvidedDatabaseCapability.DATABASE_NAME_PARAMETER, "my_db",
                                         ProvidedDatabaseCapability.JDBC_PARAMETER_PREFIX + "disconnectOnExpiredPasswords", "true"))
                         .build()));
@@ -166,7 +166,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             final CapabilityRequirement build = new CapabilityRequirementBuilder()
                     .withCapability(StandardCapability.DBMS)
                     .withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
-                    .withCapabilityRequirementScope(CapabilityScope.NAMESPACE)
+                    .withResolutionScopePreference(CapabilityScope.NAMESPACE)
                     .withNewExternallyProvidedService()
                     .withPath("/auth")
                     .withHost("kc.apps.serv.run")
@@ -225,7 +225,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             final CapabilityRequirement capabilityRequirement = new CapabilityRequirementBuilder()
                     .withCapability(StandardCapability.DBMS)
                     .withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
-                    .withCapabilityRequirementScope(CapabilityScope.NAMESPACE)
+                    .withResolutionScopePreference(CapabilityScope.NAMESPACE)
                     .withNewExternallyProvidedService()
                     .withHost(null)//NO HOST!!!
                     .withPort(5432)
@@ -281,7 +281,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             final CapabilityRequirement capabilityRequirement = new CapabilityRequirementBuilder()
                     .withCapability(StandardCapability.DBMS)
                     .withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)
-                    .withCapabilityRequirementScope(CapabilityScope.NAMESPACE)
+                    .withResolutionScopePreference(CapabilityScope.NAMESPACE)
                     .withNewExternallyProvidedService()
                     .withHost("pghost.com")
                     .withPort(5432)

@@ -45,8 +45,7 @@ public class DatabaseServiceContainer implements ConfigurableResourceContainer, 
 
     @Override
     public Optional<String> getStorageClass() {
-        return Optional.ofNullable(this.entandoDatabaseService.getSpec().getStorageClass().orElse(
-                EntandoOperatorSpiConfig.getDefaultNonClusteredStorageClass().orElse(null)));
+        return this.entandoDatabaseService.getSpec().getStorageClass().or(EntandoOperatorSpiConfig::getDefaultNonClusteredStorageClass);
     }
 
     @Override

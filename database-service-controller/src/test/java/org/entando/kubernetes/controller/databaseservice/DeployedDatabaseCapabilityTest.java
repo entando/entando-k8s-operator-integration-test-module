@@ -79,7 +79,7 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("When I request an DBMS Capability with no additional parameters",
                 () -> runControllerAgainstCapabilityRequirement(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
                         .withCapability(StandardCapability.DBMS)
-                        .withCapabilityRequirementScope(CapabilityScope.NAMESPACE)
+                        .withResolutionScopePreference(CapabilityScope.NAMESPACE)
                         .build()));
         final ProvidedCapability providedCapability = client.entandoResources()
                 .load(ProvidedCapability.class, MY_NAMESPACE, DEFAULT_DBMS_IN_NAMESPACE);
@@ -206,9 +206,9 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
                 () -> runControllerAgainstCapabilityRequirement(newResourceRequiringCapability(), new CapabilityRequirementBuilder()
                         .withCapability(StandardCapability.DBMS)
                         .withImplementation(StandardCapabilityImplementation.MYSQL)
-                        .withCapabilityRequirementScope(CapabilityScope.LABELED)
+                        .withResolutionScopePreference(CapabilityScope.LABELED)
                         .withSelector(selector)
-                        .withCapabilityParameters(Map.of(ProvidedDatabaseCapability.DATABASE_NAME_PARAMETER, "my_db",
+                        .addAllToCapabilityParameters(Map.of(ProvidedDatabaseCapability.DATABASE_NAME_PARAMETER, "my_db",
                                 ProvidedDatabaseCapability.JDBC_PARAMETER_PREFIX + "disconnectOnExpiredPasswords", "true"))
                         .build()));
         final ProvidedCapability providedCapability = client.capabilities().providedCapabilityByLabels(selector).get();
