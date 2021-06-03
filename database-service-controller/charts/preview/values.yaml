@@ -1,4 +1,4 @@
-supportOpenshift: true
+qsupportOpenshift: true
 preview:
   image:
     repository:
