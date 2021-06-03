@@ -617,7 +617,7 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
             <properties>
                 <skipPreDeploymentTests>false</skipPreDeploymentTests>
                 <allure-maven.resultsDirectory>${project.build.directory}/allure-results</allure-maven.resultsDirectory>
-                <allure-maven.reportDirectory>${project.build.directory}/site</allure-maven.reportDirectory>
+                <allure-maven.reportDirectory>${project.build.directory}/site/allure-reports</allure-maven.reportDirectory>
             </properties>
             <build>
                 <plugins>
