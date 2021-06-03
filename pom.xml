@@ -393,12 +393,48 @@
                         </classpathDependencyExcludes>
                         <argLine>${argLine} -Dfile.encoding=UTF-8 -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"</argLine>
                         <systemPropertyVariables>
-                            <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                            <allure.results.directory>${allure-maven.resultsDirectory}</allure.results.directory>
                             <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
                             <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
                             <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
                         </systemPropertyVariables>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjweaver</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <configuration>
+                        <argLine>-Dfile.encoding=UTF-8 -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"</argLine>
+                        <testFailureIgnore>${ignoreAllFailures}</testFailureIgnore>
+                        <skip>${skipPostDeploymentTests}</skip>
+                        <groups>${postDeploymentTestGroups}</groups>
+                        <includes>
+                            <include>**/*Test.java</include>
+                        </includes>
+                        <systemPropertyVariables>
+                            <allure.results.directory>${allure-maven.resultsDirectory}</allure.results.directory>
+                            <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+                            <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
+                            <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
+                        </systemPropertyVariables>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>run-tests</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                     <dependencies>
                         <dependency>
                             <groupId>org.aspectj</groupId>
@@ -433,7 +469,8 @@
                     <version>2.10.0</version>
                     <configuration>
                         <reportVersion>${allure.version}</reportVersion>
-                        <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
+                        <resultsDirectory>${allure-maven.resultsDirectory}</resultsDirectory>
+                        <reportDirectory>${allure-maven.reportDirectory}</reportDirectory>
                     </configuration>
                     <executions>
                         <execution>
@@ -472,8 +509,11 @@
                         <testFailureIgnore>${ignoreAllFailures}</testFailureIgnore>
                         <skip>${skipPostDeploymentTests}</skip>
                         <groups>${postDeploymentTestGroups}</groups>
+                        <classpathDependencyExcludes>
+                            <classpathDependencyExclude>org.jboss.slf4j:slf4j-jboss-logmanager</classpathDependencyExclude>
+                        </classpathDependencyExcludes>
                         <includes>
-                            <include>**/*IntegrationTest.java,**/*IntegratedTest.java,**/*IT.java</include>
+                            <include>**/*Test.java</include>
                         </includes>
                     </configuration>
                     <executions>
@@ -602,6 +642,8 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
             <id>pre-deployment-verification</id>
             <properties>
                 <skipPreDeploymentTests>false</skipPreDeploymentTests>
+                <allure-maven.resultsDirectory>${project.build.directory}/allure-results</allure-maven.resultsDirectory>
+                <allure-maven.reportDirectory>${project.build.directory}/site</allure-maven.reportDirectory>
             </properties>
             <build>
                 <plugins>
@@ -640,6 +682,33 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!--
+            This profile is only executed once all Docker images have been built, and are ready for deployment
+            to Kubernetes. The assumption here is that there will be some form of inter-process communication with
+            the code that has been deployed to Kubernetes, exposed using Ingresses and/or Routes. Standard
+            connectivity with Kubernetes will be provided by means of the entando.default.routing.suffix
+            system property. No code coverage will be done here.
+            -->
+            <id>post-deployment-verification</id>
+            <properties>
+                <skipPostDeploymentTests>false</skipPostDeploymentTests>
+                <allure-maven.resultsDirectory>${project.build.directory}/allure-smoke-results</allure-maven.resultsDirectory>
+                <allure-maven.reportDirectory>${project.build.directory}/site/allure-smoke-reports</allure-maven.reportDirectory>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>io.qameta.allure</groupId>
+                        <artifactId>allure-maven</artifactId>
                     </plugin>
                 </plugins>
             </build>
