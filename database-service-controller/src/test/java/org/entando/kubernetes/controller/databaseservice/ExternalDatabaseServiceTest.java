@@ -42,7 +42,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import picocli.CommandLine;
 
 @ExtendWith(MockitoExtension.class)
-@Tags({@Tag("component"), @Tag("in-process"), @Tag("allure")})
+@Tags({@Tag("component"), @Tag("in-process"), @Tag("inner-hexagon")})
 @Feature(
         "As a controller developer, I would like deploy an EntandoDatabaseService that merely references an externally provisioned "
                 + "database "

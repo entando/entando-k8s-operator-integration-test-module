@@ -42,7 +42,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@Tags({@Tag("component"), @Tag("in-process"), @Tag("allure")})
+@Tags({@Tag("component"), @Tag("in-process"), @Tag("inner-hexagon")})
 @Feature("As a controller developer, I would like request a DBMS Capability to be deployed on demand so that I don't need to concern "
         + "myself with the details o deploying a DBMS server")
 @Issue("ENG-2284")

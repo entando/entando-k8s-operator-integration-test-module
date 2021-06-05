@@ -47,7 +47,6 @@ import org.entando.kubernetes.model.capability.StandardCapability;
 import org.entando.kubernetes.model.capability.StandardCapabilityImplementation;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoCustomResource;
-import org.entando.kubernetes.model.common.EntandoDeploymentPhase;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceSpec;
@@ -75,7 +74,7 @@ public class EntandoDatabaseServiceController implements Runnable {
     public void run() {
         k8sClient.prepareConfig();
         EntandoCustomResource resourceToProcess = k8sClient.resolveCustomResourceToProcess(SUPPORTED_RESOURCE_KINDS);
-        k8sClient.updatePhase(resourceToProcess, EntandoDeploymentPhase.STARTED);
+        k8sClient.deploymentStarted(resourceToProcess);
         //No need to update the resource being synced to. It will be ignored by ControllerCoordinator
         try {
             if (resourceToProcess instanceof EntandoDatabaseService) {
@@ -98,15 +97,16 @@ public class EntandoDatabaseServiceController implements Runnable {
             }
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
             DatabaseDeploymentResult result = deploymentProcessor.processDeployable(deployable, DATABASE_DEPLOYMENT_TIME);
-            k8sClient.updateStatus(entandoDatabaseService, result.getStatus());
-            k8sClient.updateStatus(providedCapability, result.getStatus());
-            k8sClient.updatePhase(entandoDatabaseService, EntandoDeploymentPhase.SUCCESSFUL);
-            k8sClient.updatePhase(providedCapability, EntandoDeploymentPhase.SUCCESSFUL);
+            providedCapability = k8sClient.updateStatus(providedCapability, result.getStatus());
+            entandoDatabaseService = k8sClient.deploymentEnded(entandoDatabaseService);
+            providedCapability = k8sClient.deploymentEnded(providedCapability);
         } catch (Exception e) {
-            k8sClient.deploymentFailed(entandoDatabaseService, e, NameUtils.MAIN_QUALIFIER);
-            k8sClient.deploymentFailed(providedCapability, e, NameUtils.MAIN_QUALIFIER);
-            throw new CommandLine.ExecutionException(new CommandLine(this), e.getMessage());
+            entandoDatabaseService = k8sClient.deploymentFailed(entandoDatabaseService, e, NameUtils.MAIN_QUALIFIER);
+            providedCapability = k8sClient.deploymentFailed(providedCapability, e, NameUtils.MAIN_QUALIFIER);
         }
+        entandoDatabaseService.getStatus().findFailedServerStatus().ifPresent(ss -> {
+            throw new CommandLine.ExecutionException(new CommandLine(this), ss.getEntandoControllerFailure().getDetailMessage());
+        });
     }
 
     private EntandoDatabaseService syncFromCapabilityToImplementingCustomResource(ProvidedCapability providedCapability) {

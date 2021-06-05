@@ -42,7 +42,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@Tags({@Tag("component"), @Tag("in-process"), @Tag("allure")})
+@Tags({@Tag("component"), @Tag("in-process"), @Tag("inner-hexagon")})
 @Feature("As a deployer, I would like to deploy an EntandoDatabaseService directly so that I have more granular control over the "
         + "configuration settings")
 @Issue("ENG-2284")
