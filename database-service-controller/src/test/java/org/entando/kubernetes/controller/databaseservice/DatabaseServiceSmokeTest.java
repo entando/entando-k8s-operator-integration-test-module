@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Secret;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.LocalPortForward;
 import io.fabric8.kubernetes.client.Watcher.Action;
@@ -14,7 +13,6 @@ import io.qameta.allure.Feature;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Map;
 import org.entando.kubernetes.controller.spi.common.LabelNames;
 import org.entando.kubernetes.controller.spi.common.NameUtils;
@@ -22,6 +20,7 @@ import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.common.SecretUtils;
 import org.entando.kubernetes.controller.support.client.impl.DefaultSimpleK8SClient;
 import org.entando.kubernetes.controller.support.client.impl.EntandoOperatorTestConfig;
+import org.entando.kubernetes.controller.support.client.impl.SupportProducer;
 import org.entando.kubernetes.controller.support.client.impl.integrationtesthelpers.FluentIntegrationTesting;
 import org.entando.kubernetes.controller.support.client.impl.integrationtesthelpers.TestFixturePreparation;
 import org.entando.kubernetes.model.common.DbmsVendor;
@@ -43,8 +42,8 @@ class DatabaseServiceSmokeTest implements FluentIntegrationTesting {
 
     @Test
     @Description("Should deploy PostgreSQL successfully")
-    void testDeployment() throws SQLException {
-        KubernetesClient client = new DefaultKubernetesClient();
+    void testDeployment() {
+        KubernetesClient client = new SupportProducer().getKubernetesClient();
         final DefaultSimpleK8SClient simpleClient = new DefaultSimpleK8SClient(client);
         step("Given I have a clean namespace", () -> {
             TestFixturePreparation.prepareTestFixture(client, deleteAll(EntandoDatabaseService.class).fromNamespace(MY_NAMESPACE));

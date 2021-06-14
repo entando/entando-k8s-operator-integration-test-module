@@ -47,6 +47,7 @@ import org.entando.kubernetes.model.capability.StandardCapability;
 import org.entando.kubernetes.model.capability.StandardCapabilityImplementation;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoCustomResource;
+import org.entando.kubernetes.model.common.ResourceReference;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceSpec;
@@ -97,6 +98,8 @@ public class EntandoDatabaseServiceController implements Runnable {
             }
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
             DatabaseDeploymentResult result = deploymentProcessor.processDeployable(deployable, DATABASE_DEPLOYMENT_TIME);
+            result.getStatus().setProvidedCapability(new ResourceReference(this.providedCapability.getMetadata().getNamespace(),
+                    this.providedCapability.getMetadata().getName()));
             providedCapability = k8sClient.updateStatus(providedCapability, result.getStatus());
             entandoDatabaseService = k8sClient.deploymentEnded(entandoDatabaseService);
             providedCapability = k8sClient.deploymentEnded(providedCapability);
