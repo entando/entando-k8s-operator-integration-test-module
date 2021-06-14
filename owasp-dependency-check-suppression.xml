@@ -61,7 +61,17 @@
         Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
         server is updated.
       ]]></notes>
-        <gav regex="true">org\.jboss\.resteasy:resteasy-.*:3\.15\.0\.Final</gav>
-        <cve>CVE-2021-20289</cve>
+        <gav>io.quarkus.arc:arc:1.13.7.Final</gav>
+        <cve>CVE-2021-21295</cve>
+        <cve>CVE-2021-21290</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
+        server is updated.
+      ]]></notes>
+        <gav regex="true">io\.quarkus:quarkus-.*:1\.13\.7\.Final</gav>
+        <cve>CVE-2021-21295</cve>
+        <cve>CVE-2021-21290</cve>
     </suppress>
 </suppressions>
