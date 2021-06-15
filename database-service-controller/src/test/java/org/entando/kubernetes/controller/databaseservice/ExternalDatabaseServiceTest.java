@@ -24,6 +24,7 @@ import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
+import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.common.SecretUtils;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
@@ -151,12 +152,12 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     });
                     step("And the statuses of  both the ProvidedCapability and EntandoDatabaseService reflect the correct error message",
                             () -> {
-                                assertThat(entandoDatabaseService.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(entandoDatabaseService.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please ensure that a secret with the name 'my-existing-dbms-admin-secret' exists in the requested"
                                                 + " namespace");
-                                assertThat(providedCapability.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please ensure that a secret with the name 'my-existing-dbms-admin-secret' exists in the requested"
                                                 + " namespace");
                             });
@@ -209,11 +210,11 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     });
                     step("And the statuses of  both the ProvidedCapability and EntandoDatabaseService reflect the correct error message",
                             () -> {
-                                assertThat(entandoDatabaseService.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(entandoDatabaseService.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please provide the hostname of the database service you intend to connect to");
-                                assertThat(providedCapability.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please provide the hostname of the database service you intend to connect to");
                             });
                 });
@@ -265,11 +266,11 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     });
                     step("And the statuses of  both the ProvidedCapability and EntandoDatabaseService reflect the correct error message",
                             () -> {
-                                assertThat(entandoDatabaseService.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(entandoDatabaseService.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please provide the name of the database on the database service you intend to connect to");
-                                assertThat(providedCapability.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please provide the name of the database on the database service you intend to connect to");
                             });
                 });
@@ -321,14 +322,14 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     });
                     step("And the statuses of  both the ProvidedCapability and EntandoDatabaseService reflect the correct error message",
                             () -> {
-                                assertThat(entandoDatabaseService.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(entandoDatabaseService.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please provide the name of the secret containing the admin credentials for the database service "
                                                 + "you "
                                                 + "intend to "
                                                 + "connect to");
-                                assertThat(providedCapability.getStatus().findCurrentServerStatus().get().getEntandoControllerFailure()
-                                        .getDetailMessage()).contains(
+                                assertThat(providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get().getEntandoControllerFailure()
+                                        .get().getDetailMessage()).contains(
                                         "Please provide the name of the secret containing the admin credentials for the database service "
                                                 + "you "
                                                 + "intend to "

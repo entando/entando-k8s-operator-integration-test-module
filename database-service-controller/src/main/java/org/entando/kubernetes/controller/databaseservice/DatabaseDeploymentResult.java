@@ -23,7 +23,7 @@ import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
 import org.entando.kubernetes.controller.spi.result.AbstractServiceResult;
 import org.entando.kubernetes.controller.spi.result.ServiceDeploymentResult;
-import org.entando.kubernetes.model.common.AbstractServerStatus;
+import org.entando.kubernetes.model.common.ServerStatus;
 
 //TODO move to org.entando.kubernetes.controller.support
 public class DatabaseDeploymentResult extends AbstractServiceResult implements ServiceDeploymentResult<DatabaseDeploymentResult> {
@@ -33,7 +33,7 @@ public class DatabaseDeploymentResult extends AbstractServiceResult implements S
     private final String databaseName;
     private final String databaseSecretName;
     private final Pod pod;
-    private AbstractServerStatus status;
+    private ServerStatus status;
 
     public DatabaseDeploymentResult(Service service, DbmsVendorConfig vendor, String databaseName, String databaseSecretName, Pod pod) {
         super(service);
@@ -44,7 +44,7 @@ public class DatabaseDeploymentResult extends AbstractServiceResult implements S
     }
 
     @Override
-    public DatabaseDeploymentResult withStatus(AbstractServerStatus status) {
+    public DatabaseDeploymentResult withStatus(ServerStatus status) {
         this.status = status;
         this.status.setAdminSecretName(databaseSecretName);
         this.status.putDerivedDeploymentParameter(ProvidedDatabaseCapability.DATABASE_NAME_PARAMETER, databaseName);
@@ -52,7 +52,7 @@ public class DatabaseDeploymentResult extends AbstractServiceResult implements S
         return this;
     }
 
-    public AbstractServerStatus getStatus() {
+    public ServerStatus getStatus() {
         return status;
     }
 

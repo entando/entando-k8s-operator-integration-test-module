@@ -20,6 +20,7 @@ import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 public class DatabaseServiceContainer implements ConfigurableResourceContainer, ServiceBackingContainer,
         PersistentVolumeAwareContainer, HasHealthCommand {
 
+    public static final int MAX_STARTUP_TIME = 90;
     private final EntandoDatabaseService entandoDatabaseService;
     private final DbmsDockerVendorStrategy dbmsVendorDockerStrategy;
     private final DatabaseVariableInitializer variableInitializer;
@@ -50,7 +51,7 @@ public class DatabaseServiceContainer implements ConfigurableResourceContainer, 
 
     @Override
     public Optional<Integer> getMaximumStartupTimeSeconds() {
-        return Optional.of(90);
+        return Optional.of(MAX_STARTUP_TIME);
     }
 
     @Override

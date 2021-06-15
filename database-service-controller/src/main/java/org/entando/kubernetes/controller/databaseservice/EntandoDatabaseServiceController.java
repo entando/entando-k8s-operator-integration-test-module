@@ -33,6 +33,7 @@ import org.entando.kubernetes.controller.spi.client.KubernetesClientForControlle
 import org.entando.kubernetes.controller.spi.command.DeploymentProcessor;
 import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
 import org.entando.kubernetes.controller.spi.common.EntandoControllerException;
+import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfig;
 import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.container.ProvidedDatabaseCapability;
@@ -47,7 +48,7 @@ import org.entando.kubernetes.model.capability.StandardCapability;
 import org.entando.kubernetes.model.capability.StandardCapabilityImplementation;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoCustomResource;
-import org.entando.kubernetes.model.common.ResourceReference;
+import org.entando.kubernetes.model.common.ServerStatus;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceSpec;
@@ -57,7 +58,7 @@ import picocli.CommandLine;
 public class EntandoDatabaseServiceController implements Runnable {
 
     private static final String SECRET_KIND = "Secret";
-    public static final int DATABASE_DEPLOYMENT_TIME = 180;
+    public static final int DATABASE_DEPLOYMENT_TIME = EntandoOperatorSpiConfig.getPodCompletionTimeoutSeconds();
     private final KubernetesClientForControllers k8sClient;
     private final DeploymentProcessor deploymentProcessor;
     private static final Collection<Class<? extends EntandoCustomResource>> SUPPORTED_RESOURCE_KINDS = Arrays
@@ -98,17 +99,16 @@ public class EntandoDatabaseServiceController implements Runnable {
             }
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
             DatabaseDeploymentResult result = deploymentProcessor.processDeployable(deployable, DATABASE_DEPLOYMENT_TIME);
-            result.getStatus().setProvidedCapability(new ResourceReference(this.providedCapability.getMetadata().getNamespace(),
-                    this.providedCapability.getMetadata().getName()));
-            providedCapability = k8sClient.updateStatus(providedCapability, result.getStatus());
+            providedCapability = k8sClient.updateStatus(providedCapability,
+                    result.getStatus().withOriginatingCustomResource(providedCapability));
             entandoDatabaseService = k8sClient.deploymentEnded(entandoDatabaseService);
             providedCapability = k8sClient.deploymentEnded(providedCapability);
         } catch (Exception e) {
             entandoDatabaseService = k8sClient.deploymentFailed(entandoDatabaseService, e, NameUtils.MAIN_QUALIFIER);
             providedCapability = k8sClient.deploymentFailed(providedCapability, e, NameUtils.MAIN_QUALIFIER);
         }
-        entandoDatabaseService.getStatus().findFailedServerStatus().ifPresent(ss -> {
-            throw new CommandLine.ExecutionException(new CommandLine(this), ss.getEntandoControllerFailure().getDetailMessage());
+        entandoDatabaseService.getStatus().findFailedServerStatus().flatMap(ServerStatus::getEntandoControllerFailure).ifPresent(f -> {
+            throw new CommandLine.ExecutionException(new CommandLine(this), f.getDetailMessage());
         });
     }
 
