@@ -178,7 +178,8 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the resulting DatabaseServiceResult reflects the correct information to connect to the deployed DBMS service", () -> {
             DatabaseConnectionInfo connectionInfo = new ProvidedDatabaseCapability(
                     getClient().entandoResources()
-                            .loadCapabilityProvisioningResult(providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get()));
+                            .loadCapabilityProvisioningResult(
+                                    providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get()));
             Allure.attachment("DatabaseServiceResult", SerializationHelper.serialize(connectionInfo));
             assertThat(connectionInfo.getDatabaseName()).isEqualTo("default_dbms_in_namespace_db");
             assertThat(connectionInfo.getPort()).isEqualTo("5432");
@@ -303,7 +304,8 @@ class DeployedDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
         step("And the resulting DatabaseServiceResult reflects the correct information to connect to the deployed DBMS service", () -> {
             DatabaseConnectionInfo connectionInfo = new ProvidedDatabaseCapability(
                     getClient().entandoResources()
-                            .loadCapabilityProvisioningResult(providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get()));
+                            .loadCapabilityProvisioningResult(
+                                    providedCapability.getStatus().getServerStatus(NameUtils.MAIN_QUALIFIER).get()));
             Allure.attachment("DatabaseServiceResult", SerializationHelper.serialize(connectionInfo));
             assertThat(connectionInfo.getDatabaseName()).isEqualTo("my_db");
             assertThat(connectionInfo.getPort()).isEqualTo("3306");
