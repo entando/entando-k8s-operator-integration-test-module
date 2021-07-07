@@ -18,8 +18,8 @@ package org.entando.kubernetes.model.externaldatabase;
 
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoFluent;
-import org.entando.kubernetes.model.EntandoIngressingDeploymentBaseFluent;
+import org.entando.kubernetes.model.common.EntandoFluent;
+import org.entando.kubernetes.model.common.EntandoIngressingDeploymentBaseFluent;
 
 public class EntandoDatabaseServiceFluent<F extends EntandoDatabaseServiceFluent<F>>
         extends EntandoFluent<F>

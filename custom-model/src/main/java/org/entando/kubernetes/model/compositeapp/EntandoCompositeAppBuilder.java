@@ -21,6 +21,14 @@ import io.fabric8.kubernetes.api.builder.Builder;
 public class EntandoCompositeAppBuilder extends EntandoCompositeAppFluent<EntandoCompositeAppBuilder> implements
         Builder<EntandoCompositeApp> {
 
+    public EntandoCompositeAppBuilder(EntandoCompositeApp entandoCompositeApp) {
+        super(entandoCompositeApp.getSpec(), entandoCompositeApp.getMetadata());
+    }
+
+    public EntandoCompositeAppBuilder() {
+
+    }
+
     @Override
     public EntandoCompositeApp build() {
         return new EntandoCompositeApp(super.metadata.build(), super.spec.build());

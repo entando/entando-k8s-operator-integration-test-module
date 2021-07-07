@@ -16,7 +16,7 @@
 
 package org.entando.kubernetes.model.keycloakserver;
 
-import org.entando.kubernetes.model.NestedIngressingDeploymentSpecFluent;
+import org.entando.kubernetes.model.common.NestedIngressingDeploymentSpecFluent;
 
 public class NestedEntandoKeycloakServerSpecFluent<F extends EntandoKeycloakServerFluent<F>>
         extends EntandoKeycloakServerSpecFluent<NestedEntandoKeycloakServerSpecFluent<F>>

@@ -18,53 +18,34 @@ package org.entando.kubernetes.model.interprocesstest;
 
 import static org.entando.kubernetes.model.plugin.PluginSecurityLevel.STRICT;
 
-import io.fabric8.kubernetes.client.CustomResourceList;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.quarkus.runtime.StartupEvent;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.entando.kubernetes.model.DbServerStatus;
-import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.DoneableEntandoCustomResource;
-import org.entando.kubernetes.model.EntandoControllerFailure;
-import org.entando.kubernetes.model.EntandoCustomResource;
-import org.entando.kubernetes.model.EntandoDeploymentPhase;
-import org.entando.kubernetes.model.JeeServer;
-import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
-import org.entando.kubernetes.model.app.EntandoAppList;
-import org.entando.kubernetes.model.app.EntandoAppOperationFactory;
-import org.entando.kubernetes.model.externaldatabase.DoneableEntandoDatabaseService;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoControllerFailureBuilder;
+import org.entando.kubernetes.model.common.EntandoCustomResource;
+import org.entando.kubernetes.model.common.EntandoDeploymentPhase;
+import org.entando.kubernetes.model.common.JeeServer;
+import org.entando.kubernetes.model.common.ServerStatus;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
-import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceList;
-import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceOperationFactory;
-import org.entando.kubernetes.model.infrastructure.DoneableEntandoClusterInfrastructure;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructure;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureBuilder;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureList;
-import org.entando.kubernetes.model.infrastructure.EntandoClusterInfrastructureOperationFactory;
-import org.entando.kubernetes.model.keycloakserver.DoneableEntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServer;
 import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerBuilder;
-import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerList;
-import org.entando.kubernetes.model.keycloakserver.EntandoKeycloakServerOperationFactory;
-import org.entando.kubernetes.model.link.DoneableEntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLink;
 import org.entando.kubernetes.model.link.EntandoAppPluginLinkBuilder;
-import org.entando.kubernetes.model.link.EntandoAppPluginLinkList;
-import org.entando.kubernetes.model.link.EntandoAppPluginLinkOperationFactory;
-import org.entando.kubernetes.model.plugin.DoneableEntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
-import org.entando.kubernetes.model.plugin.EntandoPluginList;
-import org.entando.kubernetes.model.plugin.EntandoPluginOperationFactory;
 
 /**
  * This bean is intended solely to test our custom resources in Quarkus/Graalvm. It is deactivated by default. To activated it for testing
@@ -123,15 +104,13 @@ class DummyBean {
 
     public void onStartup(/*@Observes*/ StartupEvent event) {
         try {
-            deleteAll(externalDatabases());
-            deleteAll(keycloakServers());
-            deleteAll(entandoInfrastructure());
-            deleteAll(entandoApps());
-            deleteAll(entandoPlugins());
-            deleteAll(entandoAppPluginLinks());
+            deleteAll(getClient().customResources(EntandoDatabaseService.class));
+            deleteAll(getClient().customResources(EntandoKeycloakServer.class));
+            deleteAll(getClient().customResources(EntandoApp.class));
+            deleteAll(getClient().customResources(EntandoPlugin.class));
+            deleteAll(getClient().customResources(EntandoAppPluginLink.class));
             testCreateEntandoDatabaseService();
             testCreateEntandoKeycloakServer();
-            testCreateEntandoClusterInfrastructure();
             testCreateEntandoApp();
             testCreateEntandoPlugin();
             testCreateEntandoAppPluginLink();
@@ -142,10 +121,7 @@ class DummyBean {
         }
     }
 
-    private <R extends EntandoCustomResource,
-            L extends CustomResourceList<R>,
-            D extends DoneableEntandoCustomResource<R, D>> void deleteAll(
-            CustomResourceOperationsImpl<R, L, D> op) {
+    private <R extends EntandoCustomResource> void deleteAll(MixedOperation<R, KubernetesResourceList<R>, Resource<R>> op) {
         try {
             op.inNamespace(MY_NAMESPACE).delete();
         } catch (KubernetesClientException e) {
@@ -183,13 +159,13 @@ class DummyBean {
                 .withRealm(MY_KEYCLOAK_REALM)
                 .withPublicClientId(MY_PUBLIC_CLIENT)
                 .endKeycloakToUse()
-                .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        entandoPlugins().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        getClient().namespaces().createOrReplace(new NamespaceBuilder().withNewMetadata().withName(MY_NAMESPACE).endMetadata().build());
+        getClient().customResources(EntandoPlugin.class).inNamespace(MY_NAMESPACE).create(externalDatabase);
         //When
-        EntandoPluginList list = entandoPlugins().inNamespace(MY_NAMESPACE).list();
+        KubernetesResourceList<EntandoPlugin> list = getClient().customResources(EntandoPlugin.class)
+                .inNamespace(MY_NAMESPACE).list();
         EntandoPlugin actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
@@ -210,7 +186,6 @@ class DummyBean {
         assertThat(actual.getSpec().getIngressPath(), is(INGRESS_PATH));
         assertThat(actual.getSpec().getHealthCheckPath(), is(ACTUATOR_HEALTH));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getStatus() != null, is(true));
     }
@@ -234,13 +209,13 @@ class DummyBean {
                 .withRealm(MY_KEYCLOAK_REALM)
                 .withPublicClientId(MY_PUBLIC_CLIENT)
                 .endKeycloakToUse()
-                .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
+        getClient().namespaces().createOrReplace(new NamespaceBuilder().withNewMetadata().withName(MY_NAMESPACE).endMetadata().build());
+        getClient().customResources(EntandoApp.class).inNamespace(MY_NAMESPACE).create(entandoApp);
         //When
-        EntandoAppList list = entandoApps().inNamespace(MY_NAMESPACE).list();
+        KubernetesResourceList<EntandoApp> list = getClient().customResources(EntandoApp.class).inNamespace(MY_NAMESPACE)
+                .list();
         EntandoApp actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
@@ -254,18 +229,19 @@ class DummyBean {
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
 
         //Test statuses
-        DbServerStatus db = new DbServerStatus("db");
-        db.setEntandoControllerFailure(new EntandoControllerFailure("app", MY_APP, "Failed", "Failedmiserably"));
-        entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit().done();
-        actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).fromServer().get();
-        DbServerStatus db1 = actual.getStatus().forDbQualifiedBy("db").get();
-        assertThat(db1.getEntandoControllerFailure().getMessage(), "Failed");
-        assertThat(db1.getEntandoControllerFailure().getDetailMessage(), "Failedmiserably");
-        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
+        ServerStatus db = new ServerStatus("db");
+        db.setEntandoControllerFailure(
+                new EntandoControllerFailureBuilder().withFailedObjectKind("app").withFailedObjectName(MY_APP).withMessage("Failed")
+                        .withDetailMessage("Failedmiserably").build());
+        actual = getClient().customResources(EntandoApp.class).inNamespace(MY_NAMESPACE).withName(MY_APP).fromServer()
+                .get();
+        ServerStatus db1 = actual.getStatus().getServerStatus("db").get();
+        assertThat(db1.getEntandoControllerFailure().get().getMessage(), "Failed");
+        assertThat(db1.getEntandoControllerFailure().get().getDetailMessage(), "Failedmiserably");
+        assertThat(actual.getStatus().getPhase(), is(EntandoDeploymentPhase.STARTED));
     }
 
     public void testCreateEntandoKeycloakServer() {
@@ -283,10 +259,12 @@ class DummyBean {
                 .withTlsSecretName(MY_TLS_SECRET)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        keycloakServers().inNamespace(MY_NAMESPACE).create(keycloakServer);
+        getClient().namespaces().createOrReplace(new NamespaceBuilder().withNewMetadata().withName(MY_NAMESPACE).endMetadata().build());
+        getClient().customResources(EntandoKeycloakServer.class).inNamespace(MY_NAMESPACE)
+                .create(keycloakServer);
         //When
-        EntandoKeycloakServerList list = keycloakServers().inNamespace(MY_NAMESPACE).list();
+        KubernetesResourceList<EntandoKeycloakServer> list = getClient().customResources(EntandoKeycloakServer.class)
+                .inNamespace(MY_NAMESPACE).list();
         EntandoKeycloakServer actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
@@ -296,44 +274,6 @@ class DummyBean {
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().isDefault(), is(true));
         assertThat(actual.getMetadata().getName(), is(MY_KEYCLOAK));
-    }
-
-    public void testCreateEntandoClusterInfrastructure() {
-        //Given
-        EntandoClusterInfrastructure externalDatabase = new EntandoClusterInfrastructureBuilder()
-                .withNewMetadata().withName(MY_ENTANDO_CLUSTER_INFRASTRUCTURE)
-                .withNamespace(MY_NAMESPACE)
-                .endMetadata()
-                .withNewSpec()
-                .withDbms(DbmsVendor.MYSQL)
-                .withReplicas(5)
-                .withIngressHostName(MYHOST_COM)
-                .withTlsSecretName(MY_TLS_SECRET)
-                .withNewKeycloakToUse()
-                .withNamespace(MY_KEYCLOAK_NAME_SPACE)
-                .withName(MY_KEYCLOAK_NAME)
-                .withRealm(MY_KEYCLOAK_REALM)
-                .withPublicClientId(MY_PUBLIC_CLIENT)
-                .endKeycloakToUse()
-                .withDefault(true)
-                .endSpec()
-                .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        entandoInfrastructure().inNamespace(MY_NAMESPACE).create(externalDatabase);
-        //When
-        EntandoClusterInfrastructureList list = entandoInfrastructure().inNamespace(MY_NAMESPACE).list();
-        EntandoClusterInfrastructure actual = list.getItems().get(0);
-        //Then
-        assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getName(), is(MY_KEYCLOAK_NAME));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getNamespace().get(), is(MY_KEYCLOAK_NAME_SPACE));
-        assertThat(actual.getSpec().getKeycloakToUse().get().getRealm(), is(MY_KEYCLOAK_REALM));
-        assertThat(actual.getSpec().getIngressHostName().get(), is(MYHOST_COM));
-        assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
-        assertThat(actual.getSpec().isDefault(), is(true));
-        assertThat(actual.getTlsSecretName().get(), is(MY_TLS_SECRET));
-        assertThat(actual.getMetadata().getName(), is(MY_ENTANDO_CLUSTER_INFRASTRUCTURE));
     }
 
     public void testCreateEntandoAppPluginLink() {
@@ -347,10 +287,12 @@ class DummyBean {
                 .withEntandoPlugin(MY_PLUGIN_NAMEPSACE, MY_PLUGIN)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_APP_NAMESPACE).endMetadata().done();
-        entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).create(entandoAppPluginLink);
+        getClient().namespaces().createOrReplace(new NamespaceBuilder().withNewMetadata().withName(MY_NAMESPACE).endMetadata().build());
+        getClient().customResources(EntandoAppPluginLink.class).inNamespace(MY_APP_NAMESPACE)
+                .create(entandoAppPluginLink);
         //When
-        EntandoAppPluginLinkList list = entandoAppPluginLinks().inNamespace(MY_APP_NAMESPACE).list();
+        KubernetesResourceList<EntandoAppPluginLink> list = getClient().customResources(EntandoAppPluginLink.class)
+                .inNamespace(MY_APP_NAMESPACE).list();
         EntandoAppPluginLink actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getEntandoAppName(), is(MY_APP));
@@ -374,10 +316,12 @@ class DummyBean {
                 .withDbms(DbmsVendor.ORACLE)
                 .endSpec()
                 .build();
-        getClient().namespaces().createOrReplaceWithNew().withNewMetadata().withName(MY_NAMESPACE).endMetadata().done();
-        externalDatabases().inNamespace(MY_NAMESPACE).create(externalDatabase);
+        getClient().namespaces().createOrReplace(new NamespaceBuilder().withNewMetadata().withName(MY_NAMESPACE).endMetadata().build());
+        getClient().customResources(EntandoDatabaseService.class).inNamespace(MY_NAMESPACE)
+                .create(externalDatabase);
         //When
-        EntandoDatabaseServiceList list = externalDatabases().inNamespace(MY_NAMESPACE).list();
+        KubernetesResourceList<EntandoDatabaseService> list = getClient().customResources(EntandoDatabaseService.class)
+                .inNamespace(MY_NAMESPACE).list();
         EntandoDatabaseService actual = list.getItems().get(0);
         //Then
         assertThat(actual.getSpec().getDatabaseName(), is(MY_DB));
@@ -388,35 +332,8 @@ class DummyBean {
         assertThat(actual.getMetadata().getName(), is(MY_EXTERNAL_DATABASE));
     }
 
-    private CustomResourceOperationsImpl<EntandoDatabaseService, EntandoDatabaseServiceList,
-            DoneableEntandoDatabaseService> externalDatabases() {
-        return EntandoDatabaseServiceOperationFactory.produceAllEntandoDatabaseServices(getClient());
-    }
-
-    private CustomResourceOperationsImpl<EntandoAppPluginLink, EntandoAppPluginLinkList,
-            DoneableEntandoAppPluginLink> entandoAppPluginLinks() {
-        return EntandoAppPluginLinkOperationFactory.produceAllEntandoAppPluginLinks(getClient());
-    }
-
     public KubernetesClient getClient() {
         return kubernetesClient;
-    }
-
-    CustomResourceOperationsImpl<EntandoPlugin, EntandoPluginList, DoneableEntandoPlugin> entandoPlugins() {
-        return EntandoPluginOperationFactory.produceAllEntandoPlugins(getClient());
-    }
-
-    CustomResourceOperationsImpl<EntandoApp, EntandoAppList, DoneableEntandoApp> entandoApps() {
-        return EntandoAppOperationFactory.produceAllEntandoApps(getClient());
-    }
-
-    CustomResourceOperationsImpl<EntandoKeycloakServer, EntandoKeycloakServerList, DoneableEntandoKeycloakServer> keycloakServers() {
-        return EntandoKeycloakServerOperationFactory.produceAllEntandoKeycloakServers(getClient());
-    }
-
-    CustomResourceOperationsImpl<EntandoClusterInfrastructure, EntandoClusterInfrastructureList,
-            DoneableEntandoClusterInfrastructure> entandoInfrastructure() {
-        return EntandoClusterInfrastructureOperationFactory.produceAllEntandoClusterInfrastructures(getClient());
     }
 
     private void assertThat(Object actual, Object expected) {

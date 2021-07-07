@@ -24,10 +24,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.model.annotation.Group;
+import io.fabric8.kubernetes.model.annotation.Version;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.entando.kubernetes.model.EntandoBaseCustomResource;
-import org.entando.kubernetes.model.EntandoCustomResourceStatus;
-import org.entando.kubernetes.model.SpecHasIngress;
+import org.entando.kubernetes.model.common.EntandoBaseCustomResource;
+import org.entando.kubernetes.model.common.EntandoCustomResourceStatus;
+import org.entando.kubernetes.model.common.SpecHasIngress;
 
 @JsonSerialize
 @JsonDeserialize
@@ -36,7 +38,9 @@ import org.entando.kubernetes.model.SpecHasIngress;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoPlugin extends EntandoBaseCustomResource<EntandoPluginSpec> implements SpecHasIngress {
+@Group("entando.org")
+@Version("v1")
+public class EntandoPlugin extends EntandoBaseCustomResource<EntandoPluginSpec, EntandoCustomResourceStatus> implements SpecHasIngress {
 
     public static final String CRD_NAME = "entandoplugins.entando.org";
 

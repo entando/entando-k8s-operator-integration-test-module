@@ -16,13 +16,14 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-import static org.entando.kubernetes.model.Coalescence.coalesce;
+import static org.entando.kubernetes.model.common.Coalescence.coalesce;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpecFluent;
-import org.entando.kubernetes.model.EntandoIngressingDeploymentSpecBaseFluent;
+import org.entando.kubernetes.model.capability.CapabilityScope;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoDeploymentSpecFluent;
+import org.entando.kubernetes.model.common.EntandoIngressingDeploymentSpecBaseFluent;
 
 public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabaseServiceSpecFluent<F>>
         extends EntandoDeploymentSpecFluent<F>
@@ -36,17 +37,19 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
     private Map<String, String> jdbcParameters;
     private String tablespace;
     private Boolean createDeployment;
+    private CapabilityScope providedCapabilityScope;
 
     protected EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
         super(spec);
         this.databaseName = spec.getDatabaseName().orElse(null);
-        this.dbms = spec.getDbms();
+        this.dbms = spec.getDbms().orElse(null);
         this.host = spec.getHost().orElse(null);
         this.port = spec.getPort().orElse(null);
         this.secretName = spec.getSecretName().orElse(null);
         this.tablespace = spec.getTablespace().orElse(null);
         this.createDeployment = spec.getCreateDeployment().orElse(null);
         this.jdbcParameters = coalesce(spec.getJdbcParameters(), this.jdbcParameters);
+        this.providedCapabilityScope = spec.getProvidedCapabilityScope().orElse(null);
     }
 
     protected EntandoDatabaseServiceSpecFluent() {
@@ -67,7 +70,9 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
                 serviceAccountToUse,
                 environmentVariables,
                 resourceRequirements,
-                storageClass);
+                storageClass,
+                providedCapabilityScope
+        );
     }
 
     public F withDatabaseName(String databaseName) {
@@ -102,6 +107,11 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
 
     public F withJdbcParameters(Map<String, String> jdbcParameters) {
         this.jdbcParameters = new ConcurrentHashMap<>(jdbcParameters);
+        return thisAsF();
+    }
+
+    public F withProvidedCapabilityScope(CapabilityScope providedCapabilityScope) {
+        this.providedCapabilityScope = providedCapabilityScope;
         return thisAsF();
     }
 

@@ -16,28 +16,20 @@
 
 package org.entando.kubernetes.model.plugin;
 
-import static java.util.Optional.ofNullable;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.Locale;
+import org.entando.kubernetes.model.common.NamedEnum;
 
 @RegisterForReflection
-public enum PluginSecurityLevel {
+public enum PluginSecurityLevel implements NamedEnum {
     STRICT, LENIENT;
 
     @JsonCreator
     public static PluginSecurityLevel forName(String name) {
-        try {
-            return ofNullable(name).map(PluginSecurityLevel::resolve).orElse(null);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
+        return NamedEnum.resolve(values(), name);
 
-    private static PluginSecurityLevel resolve(String s) {
-        return PluginSecurityLevel.valueOf(s.toUpperCase(Locale.getDefault()));
     }
 
     @JsonValue

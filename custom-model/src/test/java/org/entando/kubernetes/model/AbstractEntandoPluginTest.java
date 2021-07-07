@@ -22,15 +22,18 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.fabric8.kubernetes.api.model.EnvVar;
-import io.fabric8.kubernetes.client.CustomResourceList;
-import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import java.util.Arrays;
 import java.util.Collections;
-import org.entando.kubernetes.model.plugin.DoneableEntandoPlugin;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoDeploymentPhase;
+import org.entando.kubernetes.model.common.ExpectedRole;
+import org.entando.kubernetes.model.common.Permission;
+import org.entando.kubernetes.model.common.ServerStatus;
 import org.entando.kubernetes.model.plugin.EntandoPlugin;
 import org.entando.kubernetes.model.plugin.EntandoPluginBuilder;
-import org.entando.kubernetes.model.plugin.ExpectedRole;
-import org.entando.kubernetes.model.plugin.Permission;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -58,11 +61,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
     private static final String PARAMETER_NAME = "env";
     private static final String PARAMETER_VALUE = "B";
     private static final String MY_PUBLIC_CLIENT = "my-public-client";
-    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoPlugins() {
-        registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(entandoPlugins(), MY_NAMESPACE);
     }
 
@@ -93,11 +94,9 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withRealm(MY_KEYCLOAK_REALM)
                 .withPublicClientId(MY_PUBLIC_CLIENT)
                 .endKeycloakToUse()
-                .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
                 .build();
-        entandoPlugins().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoPlugin.getMetadata()).withSpec(entandoPlugin.getSpec())
-                .done();
+        entandoPlugins().inNamespace(MY_NAMESPACE).create(entandoPlugin);
         //When
         EntandoPlugin actual = entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).get();
         //Then
@@ -119,7 +118,6 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getIngressPath(), is(INGRESS_PATH));
         assertThat(actual.getSpec().getHealthCheckPath(), is(ACTUATOR_HEALTH));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
         assertThat(actual.getStatus(), is(notNullValue()));
     }
@@ -157,12 +155,12 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withRealm("somerealm")
                 .withPublicClientId("some-public-client")
                 .endKeycloakToUse()
-                .withClusterInfrastructureToUse(null, "another-cluster-infrastructure")
                 .endSpec()
                 .build();
         //When
-        entandoPlugins().inNamespace(MY_NAMESPACE).create(entandoPlugin);
-        EntandoPlugin actual = entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).edit()
+        final EntandoPluginBuilder toEdit = new EntandoPluginBuilder(
+                entandoPlugins().inNamespace(MY_NAMESPACE).create(entandoPlugin));
+        EntandoPlugin actual = entandoPlugins().inNamespace(MY_NAMESPACE).withName(MY_PLUGIN).patch(toEdit
                 .editMetadata().addToLabels("my-label", "my-value")
                 .endMetadata()
                 .editSpec()
@@ -183,13 +181,12 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
                 .withRealm(MY_KEYCLOAK_REALM)
                 .withPublicClientId(MY_PUBLIC_CLIENT)
                 .endKeycloakToUse()
-                .withClusterInfrastructureToUse(null, MY_CLUSTER_INFRASTRUCTURE)
                 .endSpec()
-                .done();
-        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
-        actual.getStatus().putServerStatus(new WebServerStatus("some-other-qualifier"));
-        actual.getStatus().putServerStatus(new WebServerStatus("some-qualifier"));
-        actual.getStatus().putServerStatus(new DbServerStatus("another-qualifier"));
+                .build());
+        actual.getStatus().putServerStatus(new ServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new ServerStatus("some-other-qualifier"));
+        actual.getStatus().putServerStatus(new ServerStatus("some-qualifier"));
+        actual.getStatus().putServerStatus(new ServerStatus("another-qualifier"));
         actual.getStatus().updateDeploymentPhase(EntandoDeploymentPhase.STARTED, 5L);
         actual = entandoPlugins().inNamespace(actual.getMetadata().getNamespace()).updateStatus(actual);
 
@@ -210,17 +207,16 @@ public abstract class AbstractEntandoPluginTest implements CustomResourceTestUti
         assertThat(actual.getSpec().getSecurityLevel().get(), is(STRICT));
         assertThat(findParameter(actual.getSpec(), PARAMETER_NAME).get().getValue(), is(PARAMETER_VALUE));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
-        assertThat(actual.getSpec().getClusterInfrastructureToUse().get().getName(), is(MY_CLUSTER_INFRASTRUCTURE));
         assertThat(actual.getMetadata().getName(), is(MY_PLUGIN));
-        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-qualifier").isPresent());
-        assertThat("the status reflects", actual.getStatus().forServerQualifiedBy("some-other-qualifier").isPresent());
-        assertThat("the status reflects", actual.getStatus().forDbQualifiedBy("another-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().getServerStatus("some-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().getServerStatus("some-other-qualifier").isPresent());
+        assertThat("the status reflects", actual.getStatus().getServerStatus("another-qualifier").isPresent());
         assertThat(actual.getStatus().getObservedGeneration(), is(5L));
-        assertThat(actual.getStatus().getEntandoDeploymentPhase(), is(EntandoDeploymentPhase.STARTED));
+        assertThat(actual.getStatus().getPhase(), is(EntandoDeploymentPhase.STARTED));
     }
 
-    protected CustomResourceOperationsImpl<EntandoPlugin, CustomResourceList<EntandoPlugin>, DoneableEntandoPlugin> entandoPlugins() {
-        return registry.getOperations(EntandoPlugin.class);
+    protected MixedOperation<EntandoPlugin, KubernetesResourceList<EntandoPlugin>, Resource<EntandoPlugin>> entandoPlugins() {
+        return getClient().customResources(EntandoPlugin.class);
     }
 
 }

@@ -18,10 +18,9 @@ package org.entando.kubernetes.model.keycloakserver;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.fabric8.zjsonpatch.internal.guava.Strings;
-import java.util.Locale;
+import org.entando.kubernetes.model.common.NamedEnum;
 
-public enum StandardKeycloakImage {
+public enum StandardKeycloakImage implements NamedEnum {
     KEYCLOAK,
     REDHAT_SSO;
 
@@ -32,10 +31,7 @@ public enum StandardKeycloakImage {
 
     @JsonCreator
     public StandardKeycloakImage fromValue(String value) {
-        if (Strings.isNullOrEmpty(value)) {
-            return null;
-        }
-        return valueOf(value.toUpperCase(Locale.getDefault()).replace("-", "_"));
+        return NamedEnum.resolve(values(), value);
     }
 
 }

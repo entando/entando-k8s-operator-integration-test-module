@@ -19,11 +19,11 @@ package org.entando.kubernetes.model;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import io.fabric8.kubernetes.client.CustomResourceList;
-import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import java.util.Arrays;
 import java.util.Collections;
-import org.entando.kubernetes.model.debundle.DoneableEntandoDeBundle;
 import org.entando.kubernetes.model.debundle.EntandoDeBundle;
 import org.entando.kubernetes.model.debundle.EntandoDeBundleBuilder;
 import org.entando.kubernetes.model.debundle.EntandoDeBundleTagBuilder;
@@ -45,11 +45,9 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
     public static final String MY_TARBALL = "http://npm.com/mytarball.tgz";
     public static final String MY_THUMBNAIL = "Jyt6tAV2CLeDid2LiT34tA";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
-    private EntandoResourceOperationsRegistry registry;
 
     @BeforeEach
     public void deleteEntandoDeBundles() {
-        this.registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(entandoDeBundles(), MY_NAMESPACE);
     }
 
@@ -77,8 +75,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
                 .endTag()
                 .endSpec()
                 .build();
-        entandoDeBundles().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoDeBundle.getMetadata())
-                .withSpec(entandoDeBundle.getSpec()).done();
+        entandoDeBundles().inNamespace(MY_NAMESPACE).create(entandoDeBundle);
         //When
         EntandoDeBundle actual = entandoDeBundles().inNamespace(MY_NAMESPACE).withName(MY_BUNDLE).get();
 
@@ -123,7 +120,9 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
                 .build();
         //When
         //We are not using the mock server here because of a known bug
-        EntandoDeBundle actual = editEntandoDeBundle(entandoApp)
+        final EntandoDeBundleBuilder toEdit = new EntandoDeBundleBuilder(
+                entandoDeBundles().inNamespace(MY_NAMESPACE).create(entandoApp));
+        EntandoDeBundle actual = entandoDeBundles().inNamespace(MY_NAMESPACE).withName(MY_BUNDLE).patch(toEdit
                 .editMetadata()
                 .endMetadata()
                 .editSpec()
@@ -142,7 +141,7 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
                         .withVersion(MY_VERSION)
                         .build()))
                 .endSpec()
-                .done();
+                .build());
         //Then
         assertThat(actual.getSpec().getDetails().getName(), is(MY_BUNDLE));
         assertThat(actual.getSpec().getDetails().getDescription(), is(MY_DESCRIPTION));
@@ -157,14 +156,8 @@ public abstract class AbstractEntandoDeBundleTest implements CustomResourceTestU
         assertThat(actual.getMetadata().getName(), is(MY_BUNDLE));
     }
 
-    protected DoneableEntandoDeBundle editEntandoDeBundle(EntandoDeBundle entandoApp) {
-        entandoDeBundles().inNamespace(MY_NAMESPACE).create(entandoApp);
-        return entandoDeBundles().inNamespace(MY_NAMESPACE).withName(MY_BUNDLE).edit();
-    }
-
-    protected CustomResourceOperationsImpl<EntandoDeBundle, CustomResourceList<EntandoDeBundle>,
-            DoneableEntandoDeBundle> entandoDeBundles() {
-        return registry.getOperations(EntandoDeBundle.class);
+    protected MixedOperation<EntandoDeBundle, KubernetesResourceList<EntandoDeBundle>, Resource<EntandoDeBundle>> entandoDeBundles() {
+        return getClient().customResources(EntandoDeBundle.class);
     }
 
 }

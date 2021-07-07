@@ -16,7 +16,7 @@
 
 package org.entando.kubernetes.model.debundle;
 
-import static org.entando.kubernetes.model.Coalescence.coalesce;
+import static org.entando.kubernetes.model.common.Coalescence.coalesce;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
