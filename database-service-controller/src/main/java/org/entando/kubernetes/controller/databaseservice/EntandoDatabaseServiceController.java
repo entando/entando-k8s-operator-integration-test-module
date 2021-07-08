@@ -97,6 +97,9 @@ public class EntandoDatabaseServiceController implements Runnable {
                 this.entandoDatabaseService = syncFromCapabilityToImplementingCustomResource(this.providedCapability);
                 this.entandoDatabaseService = this.k8sClient.createOrPatchEntandoResource(this.entandoDatabaseService);
                 validateExternalServiceRequirements(this.providedCapability);
+                if (ResourceUtils.addCapabilityLabels(this.providedCapability)) {
+                    this.providedCapability = this.k8sClient.createOrPatchEntandoResource(this.providedCapability);
+                }
             }
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
             DatabaseDeploymentResult result = deploymentProcessor.processDeployable(deployable, DATABASE_DEPLOYMENT_TIME);
@@ -264,6 +267,7 @@ public class EntandoDatabaseServiceController implements Runnable {
             ofNullable(capabilityToSyncTo.getMetadata().getAnnotations())
                     .ifPresent(m -> m.remove(CapabilityProvider.ORIGIN_UUID_ANNOTATION_NAME));
         }
+        ResourceUtils.addCapabilityLabels(capabilityToSyncTo);
         return capabilityToSyncTo;
     }
 
