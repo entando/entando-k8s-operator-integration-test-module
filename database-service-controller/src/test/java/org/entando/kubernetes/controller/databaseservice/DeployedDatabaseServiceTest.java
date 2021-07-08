@@ -18,6 +18,7 @@ import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
 import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
 import org.entando.kubernetes.controller.spi.common.EntandoOperatorComplianceMode;
 import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfigProperty;
+import org.entando.kubernetes.controller.spi.common.LabelNames;
 import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.common.ResourceUtils;
 import org.entando.kubernetes.controller.spi.common.SecretUtils;
@@ -177,9 +178,9 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     () -> assertThat(service.getSpec().getPorts().get(0).getTargetPort().getIntVal()).isEqualTo(5432));
             step("And with a label selector matching the labels of the Pod Template on the  Deployment",
                     () -> assertThat(service.getSpec().getSelector()).containsAllEntriesOf(
-                            Map.of("EntandoResourceKind", "EntandoDatabaseService", "EntandoDatabaseService",
+                            Map.of(LabelNames.RESOURCE_KIND.getName(), "EntandoDatabaseService", "EntandoDatabaseService",
                                     entandoDatabaseService.getMetadata().getName(),
-                                    "deployment", entandoDatabaseService.getMetadata().getName())
+                                    LabelNames.DEPLOYMENT.getName(), entandoDatabaseService.getMetadata().getName())
                     ));
         });
 
@@ -313,9 +314,9 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     () -> assertThat(service.getSpec().getPorts().get(0).getTargetPort().getIntVal()).isEqualTo(3306));
             step("And with a label selector matching the labels of the Pod Template on the  Deployment",
                     () -> assertThat(service.getSpec().getSelector()).containsAllEntriesOf(
-                            Map.of("EntandoResourceKind", "EntandoDatabaseService", "EntandoDatabaseService",
+                            Map.of(LabelNames.RESOURCE_KIND.getName(), "EntandoDatabaseService", "EntandoDatabaseService",
                                     entandoDatabaseService.getMetadata().getName(),
-                                    "deployment", entandoDatabaseService.getMetadata().getName())
+                                    LabelNames.DEPLOYMENT.getName(), entandoDatabaseService.getMetadata().getName())
                     ));
         });
 
