@@ -77,7 +77,6 @@ public class EntandoDatabaseServiceController implements Runnable {
     public void run() {
         k8sClient.prepareConfig();
         EntandoCustomResource resourceToProcess = k8sClient.resolveCustomResourceToProcess(SUPPORTED_RESOURCE_KINDS);
-        k8sClient.deploymentStarted(resourceToProcess);
         //No need to update the resource being synced to. It will be ignored by ControllerCoordinator
         try {
             if (resourceToProcess instanceof EntandoDatabaseService) {
@@ -88,6 +87,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                 this.entandoDatabaseService = (EntandoDatabaseService) resourceToProcess;
                 this.providedCapability = syncFromImplementingResourceToCapability(this.entandoDatabaseService);
                 this.providedCapability = this.k8sClient.createOrPatchEntandoResource(this.providedCapability);
+                k8sClient.deploymentStarted(resourceToProcess);
                 validateExternalServiceRequirements(this.entandoDatabaseService);
             } else {
                 //This event originated from the capability requirement, and we need to keep the implementing CustomResource in sync
@@ -101,6 +101,8 @@ public class EntandoDatabaseServiceController implements Runnable {
                     this.providedCapability = this.k8sClient.createOrPatchEntandoResource(this.providedCapability);
                 }
             }
+            this.providedCapability = this.k8sClient.deploymentStarted(this.providedCapability);
+            this.entandoDatabaseService = this.k8sClient.deploymentStarted(this.entandoDatabaseService);
             DatabaseServiceDeployable deployable = new DatabaseServiceDeployable(entandoDatabaseService);
             DatabaseDeploymentResult result = deploymentProcessor.processDeployable(deployable, DATABASE_DEPLOYMENT_TIME);
             providedCapability = k8sClient.updateStatus(providedCapability,
