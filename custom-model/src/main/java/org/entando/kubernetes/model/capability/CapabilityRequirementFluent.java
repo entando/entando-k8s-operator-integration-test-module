@@ -16,6 +16,9 @@
 
 package org.entando.kubernetes.model.capability;
 
+import static java.util.Optional.ofNullable;
+
+import com.google.common.base.Strings;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -98,18 +101,24 @@ public class CapabilityRequirementFluent<N extends CapabilityRequirementFluent<N
     }
 
     public N withPreferredTlsSecretName(String preferredTlsSecretName) {
-        getCapabilityParameters().put(CapabilityRequirement.PREFERRED_TLS_SECRET_NAME, preferredTlsSecretName);
+        return putParam(CapabilityRequirement.PREFERRED_TLS_SECRET_NAME, preferredTlsSecretName);
+    }
+
+    private N putParam(String paramName, String paramValue) {
+        if (Strings.isNullOrEmpty(paramValue)) {
+            getCapabilityParameters().remove(paramName);
+        } else {
+            getCapabilityParameters().put(paramName, paramValue);
+        }
         return thisAsN();
     }
 
     public N withPreferredIngressHostName(String preferredHostName) {
-        getCapabilityParameters().put(CapabilityRequirement.PREFERRED_INGRESS_HOST_NAME, preferredHostName);
-        return thisAsN();
+        return putParam(CapabilityRequirement.PREFERRED_INGRESS_HOST_NAME, preferredHostName);
     }
 
     public N withPreferredDbms(DbmsVendor dbms) {
-        getCapabilityParameters().put(CapabilityRequirement.PREFERRED_DBMS, dbms.toValue());
-        return thisAsN();
+        return putParam(CapabilityRequirement.PREFERRED_DBMS, ofNullable(dbms).map(DbmsVendor::toValue).orElse(null));
     }
 
     @SuppressWarnings("unchecked")
