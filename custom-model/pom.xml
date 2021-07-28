@@ -63,6 +63,7 @@
         <tag>HEAD</tag>
     </scm>
     <properties>
+<!--        comment -->
         <github.organization>entando-k8s</github.organization>
         <sonar.projectKey>${github.organization}_${project.artifactId}</sonar.projectKey>
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
