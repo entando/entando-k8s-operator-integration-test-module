@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
 import org.entando.kubernetes.model.capability.CapabilityScope;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoDeploymentSpec;
@@ -53,6 +54,7 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
     private String secretName;
     private Boolean createDeployment;
     private Map<String, String> jdbcParameters;
+    private CapabilityProvisioningStrategy provisioningStrategy;
     private CapabilityScope providedCapabilityScope;
 
     public EntandoDatabaseServiceSpec() {
@@ -74,7 +76,8 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("storageClass") String storageClass,
-            @JsonProperty("providedCapabilityScope") CapabilityScope providedCapabilityScope) {
+            @JsonProperty("providedCapabilityScope") CapabilityScope providedCapabilityScope,
+            @JsonProperty("provisioningStrategy") CapabilityProvisioningStrategy provisioningStrategy) {
         super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements, storageClass);
         this.dbms = dbms;
         this.host = host;
@@ -85,6 +88,7 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
         this.createDeployment = createDeployment;
         this.jdbcParameters = jdbcParameters;
         this.providedCapabilityScope = providedCapabilityScope;
+        this.provisioningStrategy = provisioningStrategy;
     }
 
     public Optional<CapabilityScope> getProvidedCapabilityScope() {
@@ -121,5 +125,9 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
 
     public Optional<Boolean> getCreateDeployment() {
         return Optional.ofNullable(this.createDeployment);
+    }
+
+    public Optional<CapabilityProvisioningStrategy> getProvisioningStrategy() {
+        return Optional.ofNullable(provisioningStrategy);
     }
 }

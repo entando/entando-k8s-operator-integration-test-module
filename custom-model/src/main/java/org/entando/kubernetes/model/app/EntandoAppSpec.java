@@ -50,6 +50,7 @@ public class EntandoAppSpec extends KeycloakAwareSpec {
     private String customServerImage;
     private String ingressPath;
     private String ecrGitSshSecretName;
+    private String entandoRuntimeVersion;
 
     public EntandoAppSpec() {
         super();
@@ -71,13 +72,19 @@ public class EntandoAppSpec extends KeycloakAwareSpec {
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName,
-            @JsonProperty("storageClass") String storageClass) {
+            @JsonProperty("storageClass") String storageClass,
+            @JsonProperty("entandoRuntimeVersion") String entandoRuntimeVersion) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
                 keycloakToUse, storageClass);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
         this.ecrGitSshSecretName = ecrGitSshSecretName;
+        this.entandoRuntimeVersion = entandoRuntimeVersion;
+    }
+
+    public Optional<String> getEntandoRuntimeVersion() {
+        return Optional.ofNullable(entandoRuntimeVersion);
     }
 
     public Optional<String> getEcrGitSshSecretName() {

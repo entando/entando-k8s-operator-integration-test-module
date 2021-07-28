@@ -22,8 +22,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.fabric8.kubernetes.api.model.Quantity;
+import io.fabric8.kubernetes.api.model.ResourceRequirements;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 
 @JsonInclude(Include.NON_NULL)
@@ -31,7 +34,7 @@ import java.util.Optional;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoResourceRequirements implements Serializable {
+public class EntandoResourceRequirements extends ResourceRequirements implements Serializable {
 
     private String storageRequest;
     private String storageLimit;
@@ -50,7 +53,10 @@ public class EntandoResourceRequirements implements Serializable {
             @JsonProperty("memoryLimit") String memoryLimit,
             @JsonProperty("cpuRequest") String cpuRequest,
             @JsonProperty("cpuLimit") String cpuLimit,
-            @JsonProperty("fileUploadLimit") String fileUploadLimit) {
+            @JsonProperty("fileUploadLimit") String fileUploadLimit,
+            @JsonProperty("limits") Map<String, Quantity> limits,
+            @JsonProperty("requests") Map<String, Quantity> requests) {
+        super(limits, requests);
         this.storageRequest = storageRequest;
         this.storageLimit = storageLimit;
         this.memoryRequest = memoryRequest;
@@ -61,30 +67,38 @@ public class EntandoResourceRequirements implements Serializable {
     }
 
     public Optional<String> getStorageRequest() {
-        return Optional.ofNullable(storageRequest);
+        return Optional.ofNullable(storageRequest).or(() -> getRequest("storage"));
     }
 
     public Optional<String> getStorageLimit() {
-        return Optional.ofNullable(storageLimit);
+        return Optional.ofNullable(storageLimit).or(() -> getLimit("storage"));
     }
 
     public Optional<String> getMemoryRequest() {
-        return Optional.ofNullable(memoryRequest);
+        return Optional.ofNullable(memoryRequest).or(() -> getRequest("memory"));
     }
 
     public Optional<String> getMemoryLimit() {
-        return Optional.ofNullable(memoryLimit);
+        return Optional.ofNullable(memoryLimit).or(() -> getLimit("memory"));
     }
 
     public Optional<String> getCpuRequest() {
-        return Optional.ofNullable(cpuRequest);
+        return Optional.ofNullable(cpuRequest).or(() -> getRequest("cpu"));
     }
 
     public Optional<String> getCpuLimit() {
-        return Optional.ofNullable(cpuLimit);
+        return Optional.ofNullable(cpuLimit).or(() -> getLimit("cpu"));
     }
 
     public Optional<String> getFileUploadLimit() {
-        return Optional.ofNullable(fileUploadLimit);
+        return Optional.ofNullable(fileUploadLimit).or(() -> getLimit("fileUpload"));
+    }
+
+    private Optional<String> getRequest(String name) {
+        return Optional.ofNullable(getRequests().get(name)).map(Quantity::toString);
+    }
+
+    private Optional<String> getLimit(String name) {
+        return Optional.ofNullable(getLimits().get(name)).map(Quantity::toString);
     }
 }

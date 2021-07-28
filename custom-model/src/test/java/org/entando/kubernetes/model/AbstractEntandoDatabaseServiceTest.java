@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Collections;
+import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
 import org.entando.kubernetes.model.capability.CapabilityScope;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoDeploymentPhase;
@@ -68,6 +69,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
                 .withDbms(DbmsVendor.ORACLE)
                 .withCreateDeployment(true)
                 .withProvidedCapabilityScope(CapabilityScope.CLUSTER)
+                .withProvisioningStrategy(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY)
                 .endSpec()
                 .build();
         getClient().customResources(EntandoDatabaseService.class).inNamespace(MY_NAMESPACE).create(externalDatabase);
@@ -80,6 +82,7 @@ public abstract class AbstractEntandoDatabaseServiceTest implements CustomResour
         assertThat(actual.getSpec().getPort().get(), is(PORT_1521));
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.ORACLE));
         assertThat(actual.getSpec().getCreateDeployment().get(), is(true));
+        assertThat(actual.getSpec().getProvisioningStrategy().get(), is(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY));
         assertThat(actual.getSpec().getTablespace().get(), is(MY_TABLESPACE));
         assertThat(actual.getSpec().getSecretName().get(), is(MY_DB_SECRET));
         assertThat(actual.getSpec().getStorageClass().get(), is(MY_STORAGE_CLASS));

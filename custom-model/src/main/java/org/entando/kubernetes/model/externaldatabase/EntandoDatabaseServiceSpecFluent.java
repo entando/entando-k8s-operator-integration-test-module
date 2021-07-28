@@ -20,7 +20,9 @@ import static org.entando.kubernetes.model.common.Coalescence.coalesce;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
 import org.entando.kubernetes.model.capability.CapabilityScope;
+import org.entando.kubernetes.model.capability.NestedCapabilityRequirementFluent;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoDeploymentSpecFluent;
 import org.entando.kubernetes.model.common.EntandoIngressingDeploymentSpecBaseFluent;
@@ -38,6 +40,7 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
     private String tablespace;
     private Boolean createDeployment;
     private CapabilityScope providedCapabilityScope;
+    private CapabilityProvisioningStrategy provisioningStrategy;
 
     protected EntandoDatabaseServiceSpecFluent(EntandoDatabaseServiceSpec spec) {
         super(spec);
@@ -50,6 +53,7 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
         this.createDeployment = spec.getCreateDeployment().orElse(null);
         this.jdbcParameters = coalesce(spec.getJdbcParameters(), this.jdbcParameters);
         this.providedCapabilityScope = spec.getProvidedCapabilityScope().orElse(null);
+        this.provisioningStrategy = spec.getProvisioningStrategy().orElse(null);
     }
 
     protected EntandoDatabaseServiceSpecFluent() {
@@ -71,7 +75,8 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
                 environmentVariables,
                 resourceRequirements,
                 storageClass,
-                providedCapabilityScope
+                providedCapabilityScope,
+                provisioningStrategy
         );
     }
 
@@ -138,4 +143,8 @@ public abstract class EntandoDatabaseServiceSpecFluent<F extends EntandoDatabase
         return thisAsF();
     }
 
+    public F withProvisioningStrategy(CapabilityProvisioningStrategy provisioningStrategy) {
+        this.provisioningStrategy = provisioningStrategy;
+        return thisAsF();
+    }
 }

@@ -16,7 +16,10 @@
 
 package org.entando.kubernetes.model.common;
 
-public abstract class EntandoResourceRequirementsFluent<N extends EntandoResourceRequirementsFluent> {
+import io.fabric8.kubernetes.api.model.ResourceRequirementsFluentImpl;
+
+public abstract class EntandoResourceRequirementsFluent<N extends EntandoResourceRequirementsFluent<N>>
+        extends ResourceRequirementsFluentImpl<N> {
 
     private String storageRequest;
     private String storageLimit;
@@ -27,6 +30,7 @@ public abstract class EntandoResourceRequirementsFluent<N extends EntandoResourc
     private String fileUploadLimit;
 
     protected EntandoResourceRequirementsFluent(EntandoResourceRequirements resourceRequirements) {
+        super(resourceRequirements);
         this.storageRequest = resourceRequirements.getStorageRequest().orElse(null);
         this.storageLimit = resourceRequirements.getStorageLimit().orElse(null);
         this.memoryRequest = resourceRequirements.getMemoryRequest().orElse(null);
@@ -77,7 +81,7 @@ public abstract class EntandoResourceRequirementsFluent<N extends EntandoResourc
 
     public EntandoResourceRequirements build() {
         return new EntandoResourceRequirements(storageRequest, storageLimit, memoryRequest, memoryLimit, cpuRequest, cpuLimit,
-                fileUploadLimit);
+                fileUploadLimit, super.getLimits(), super.getRequests());
     }
 
     @SuppressWarnings("unchecked")

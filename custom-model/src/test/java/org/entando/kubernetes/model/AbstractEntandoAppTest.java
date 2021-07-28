@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.is;
 
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import java.util.Collections;
@@ -78,6 +79,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withDbms(DbmsVendor.MYSQL)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withStandardServerImage(JeeServer.WILDFLY)
+                .withEntandoRuntimeVersion("6.3")
                 .withReplicas(MY_REPLICAS)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
@@ -114,6 +116,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getIngressPath().get(), is(MY_INGRESS_PATH));
         assertThat(actual.getSpec().getStandardServerImage().get(), is(JeeServer.WILDFLY));
+        assertThat(actual.getSpec().getEntandoRuntimeVersion().get(), is("6.3"));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
@@ -145,6 +148,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withDbms(DbmsVendor.POSTGRESQL)
                 .withCustomServerImage("asdfasdf/asdf:2")
                 .withStandardServerImage(JeeServer.WILDFLY)
+                .withEntandoRuntimeVersion("4.3")
                 .withReplicas(4)
                 .withTlsSecretName("another-tls-secret")
                 .withIngressHostName("anotheringress.com")
@@ -181,6 +185,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withReplicas(5)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
+                .withEntandoRuntimeVersion("6.3")
                 .editKeycloakToUse()
                 .withNamespace(MY_KEYCLOAK_NAME_SPACE)
                 .withName(MY_KEYCLOAK_NAME)
@@ -189,13 +194,19 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .endKeycloakToUse()
                 .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
                 .editResourceRequirements()
-                .withCpuLimit(CPU_LIMIT)
-                .withCpuRequest(CPU_REQUEST)
+                .withCpuLimit(null)
+                .addToLimits("cpu", Quantity.parse(CPU_LIMIT))
+                .withCpuRequest(null)
+                .addToRequests("cpu", Quantity.parse(CPU_REQUEST))
                 .withFileUploadLimit(FILE_UPLOAD_LIMIT)
-                .withMemoryLimit(MEMORY_LIMIT)
-                .withMemoryRequest(MEMORY_REQUEST)
-                .withStorageLimit(STORAGE_LIMIT)
-                .withStorageRequest(STORAGE_REQUEST)
+                .withMemoryLimit(null)
+                .addToLimits("memory", Quantity.parse(MEMORY_LIMIT))
+                .withMemoryRequest(null)
+                .addToRequests("memory", Quantity.parse(MEMORY_REQUEST))
+                .withStorageLimit(null)
+                .addToLimits("storage", Quantity.parse(STORAGE_LIMIT))
+                .withStorageRequest(null)
+                .addToRequests("storage", Quantity.parse(STORAGE_REQUEST))
                 .endResourceRequirements()
                 .withServiceAccountToUse(MY_SERVICE_ACCOUNT)
                 .withEnvironmentVariables(Collections.singletonList(new EnvVar(PARAM_NAME, PARAM_VALUE, null)))
@@ -210,6 +221,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
     private void verifySpec(EntandoApp actual) {
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
+        assertThat(actual.getSpec().getEntandoRuntimeVersion().get(), is("6.3"));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getStandardServerImage().isPresent(), is(false));//overridden by customServerImage
         assertThat(actual.getSpec().getCustomServerImage().get(), is(MY_CUSTOM_SERVER_IMAGE));
