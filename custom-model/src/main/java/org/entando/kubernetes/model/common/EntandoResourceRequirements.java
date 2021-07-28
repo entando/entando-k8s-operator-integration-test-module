@@ -16,6 +16,8 @@
 
 package org.entando.kubernetes.model.common;
 
+import static java.util.Optional.ofNullable;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -67,38 +69,38 @@ public class EntandoResourceRequirements extends ResourceRequirements implements
     }
 
     public Optional<String> getStorageRequest() {
-        return Optional.ofNullable(storageRequest).or(() -> getRequest("storage"));
+        return getRequest("storage").or(() -> ofNullable(storageRequest));
     }
 
     public Optional<String> getStorageLimit() {
-        return Optional.ofNullable(storageLimit).or(() -> getLimit("storage"));
+        return getLimit("storage").or(() -> ofNullable(storageLimit));
     }
 
     public Optional<String> getMemoryRequest() {
-        return Optional.ofNullable(memoryRequest).or(() -> getRequest("memory"));
+        return getRequest("memory").or(() -> ofNullable(memoryRequest));
     }
 
     public Optional<String> getMemoryLimit() {
-        return Optional.ofNullable(memoryLimit).or(() -> getLimit("memory"));
+        return getLimit("memory").or(() -> ofNullable(memoryLimit));
     }
 
     public Optional<String> getCpuRequest() {
-        return Optional.ofNullable(cpuRequest).or(() -> getRequest("cpu"));
+        return getRequest("cpu").or(() -> ofNullable(cpuRequest));
     }
 
     public Optional<String> getCpuLimit() {
-        return Optional.ofNullable(cpuLimit).or(() -> getLimit("cpu"));
+        return getLimit("cpu").or(() -> ofNullable(cpuLimit));
     }
 
     public Optional<String> getFileUploadLimit() {
-        return Optional.ofNullable(fileUploadLimit).or(() -> getLimit("fileUpload"));
+        return getLimit("fileUpload").or(() -> ofNullable(fileUploadLimit));
     }
 
     private Optional<String> getRequest(String name) {
-        return Optional.ofNullable(getRequests().get(name)).map(Quantity::toString);
+        return ofNullable(getRequests()).flatMap(m -> ofNullable(m.get(name))).map(Quantity::toString);
     }
 
     private Optional<String> getLimit(String name) {
-        return Optional.ofNullable(getLimits().get(name)).map(Quantity::toString);
+        return ofNullable(getLimits()).flatMap(m -> ofNullable(m.get(name))).map(Quantity::toString);
     }
 }
