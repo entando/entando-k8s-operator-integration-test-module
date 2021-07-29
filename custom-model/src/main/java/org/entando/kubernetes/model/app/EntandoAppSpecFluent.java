@@ -25,7 +25,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
     protected String customServerImage;
     protected String ingressPath;
     private String ecrGitSshSecretName;
-    private String entandoRuntimeVersion;
+    private String entandoAppVersion;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
@@ -33,15 +33,15 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
         this.customServerImage = spec.getCustomServerImage().orElse(null);
         this.ingressPath = spec.getIngressPath().orElse(null);
         this.ecrGitSshSecretName = spec.getEcrGitSshSecretName().orElse(null);
-        this.entandoRuntimeVersion = spec.getEntandoRuntimeVersion().orElse(null);
+        this.entandoAppVersion = spec.getEntandoAppVersion().orElse(null);
     }
 
     public EntandoAppSpecFluent() {
 
     }
 
-    public N withEntandoRuntimeVersion(String entandoRuntimeVersion) {
-        this.entandoRuntimeVersion = entandoRuntimeVersion;
+    public N withEntandoAppVersion(String entandoAppVersion) {
+        this.entandoAppVersion = entandoAppVersion;
         return thisAsF();
     }
 
@@ -71,7 +71,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.tlsSecretName, this.keycloakToUse,
                 this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
-                this.ecrGitSshSecretName, this.storageClass, this.entandoRuntimeVersion);
+                this.ecrGitSshSecretName, this.storageClass, this.entandoAppVersion);
     }
 
 }

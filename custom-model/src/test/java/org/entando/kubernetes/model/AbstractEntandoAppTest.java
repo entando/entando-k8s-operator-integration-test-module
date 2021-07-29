@@ -79,7 +79,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withDbms(DbmsVendor.MYSQL)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withStandardServerImage(JeeServer.WILDFLY)
-                .withEntandoRuntimeVersion("6.3")
+                .withEntandoAppVersion("6.3")
                 .withReplicas(MY_REPLICAS)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
@@ -116,7 +116,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getIngressPath().get(), is(MY_INGRESS_PATH));
         assertThat(actual.getSpec().getStandardServerImage().get(), is(JeeServer.WILDFLY));
-        assertThat(actual.getSpec().getEntandoRuntimeVersion().get(), is("6.3"));
+        assertThat(actual.getSpec().getEntandoAppVersion().get(), is("6.3"));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
@@ -148,7 +148,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withDbms(DbmsVendor.POSTGRESQL)
                 .withCustomServerImage("asdfasdf/asdf:2")
                 .withStandardServerImage(JeeServer.WILDFLY)
-                .withEntandoRuntimeVersion("4.3")
+                .withEntandoAppVersion("4.3")
                 .withReplicas(4)
                 .withTlsSecretName("another-tls-secret")
                 .withIngressHostName("anotheringress.com")
@@ -185,7 +185,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withReplicas(5)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
-                .withEntandoRuntimeVersion("6.3")
+                .withEntandoAppVersion("6.3")
                 .editKeycloakToUse()
                 .withNamespace(MY_KEYCLOAK_NAME_SPACE)
                 .withName(MY_KEYCLOAK_NAME)
@@ -221,7 +221,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
     private void verifySpec(EntandoApp actual) {
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
-        assertThat(actual.getSpec().getEntandoRuntimeVersion().get(), is("6.3"));
+        assertThat(actual.getSpec().getEntandoAppVersion().get(), is("6.3"));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getStandardServerImage().isPresent(), is(false));//overridden by customServerImage
         assertThat(actual.getSpec().getCustomServerImage().get(), is(MY_CUSTOM_SERVER_IMAGE));
