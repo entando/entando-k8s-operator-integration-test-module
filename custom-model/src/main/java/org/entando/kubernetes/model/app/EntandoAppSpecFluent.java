@@ -16,6 +16,11 @@
 
 package org.entando.kubernetes.model.app;
 
+import static java.util.Optional.ofNullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import org.entando.kubernetes.model.common.JeeServer;
 import org.entando.kubernetes.model.common.KeycloakAwareSpecFluent;
 
@@ -26,6 +31,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
     protected String ingressPath;
     private String ecrGitSshSecretName;
     private String entandoAppVersion;
+    private List<String> componentRegistryNamespaces;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
@@ -34,10 +40,27 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
         this.ingressPath = spec.getIngressPath().orElse(null);
         this.ecrGitSshSecretName = spec.getEcrGitSshSecretName().orElse(null);
         this.entandoAppVersion = spec.getEntandoAppVersion().orElse(null);
+        this.componentRegistryNamespaces = spec.getComponentRegistryNamespaces();
     }
 
     public EntandoAppSpecFluent() {
 
+    }
+
+    public N withToComponentRegistryNamespaces(List<String> componentRegistryNamespaces) {
+        this.componentRegistryNamespaces = null;
+        return addToComponentRegistryNamespaces(componentRegistryNamespaces);
+    }
+
+    public N addToComponentRegistryNamespaces(List<String> componentRegistryNamespaces) {
+        ofNullable(componentRegistryNamespaces).ifPresent(s -> s.forEach(this::addToComponentRegistryNamespaces));
+        return thisAsF();
+    }
+
+    public N addToComponentRegistryNamespaces(String componentRegistryNamespaces) {
+        this.componentRegistryNamespaces = Objects.requireNonNullElseGet(this.componentRegistryNamespaces, ArrayList::new);
+        ofNullable(componentRegistryNamespaces).ifPresent(this.componentRegistryNamespaces::add);
+        return thisAsF();
     }
 
     public N withEntandoAppVersion(String entandoAppVersion) {
@@ -71,7 +94,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.tlsSecretName, this.keycloakToUse,
                 this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
-                this.ecrGitSshSecretName, this.storageClass, this.entandoAppVersion);
+                this.ecrGitSshSecretName, this.storageClass, this.entandoAppVersion, this.componentRegistryNamespaces);
     }
 
 }

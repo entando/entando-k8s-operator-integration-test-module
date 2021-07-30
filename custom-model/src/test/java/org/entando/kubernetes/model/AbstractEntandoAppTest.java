@@ -62,6 +62,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     public static final String STORAGE_REQUEST = "0.2Gi";
     private static final String MY_GIT_SECRET_NAME = "my-git-secret-name";
     public static final String MY_PUBLIC_CLIENT = "my-public-client";
+    public static final String COMPONENT_REPOSITORY_NAMESPACES = "ecr1";
 
     @BeforeEach
     public void deleteEntandoApps() {
@@ -81,6 +82,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withStandardServerImage(JeeServer.WILDFLY)
                 .withEntandoAppVersion("6.3")
                 .withReplicas(MY_REPLICAS)
+                .addToComponentRegistryNamespaces(COMPONENT_REPOSITORY_NAMESPACES)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
                 .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
@@ -121,6 +123,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
         assertThat(actual.getSpec().getEcrGitSshSecretName().get(), is(MY_GIT_SECRET_NAME));
+        assertThat(actual.getSpec().getComponentRegistryNamespaces().get(0), is(COMPONENT_REPOSITORY_NAMESPACES));
         verifyResourceRequirements(actual);
         assertThat(findParameter(actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
@@ -149,6 +152,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withCustomServerImage("asdfasdf/asdf:2")
                 .withStandardServerImage(JeeServer.WILDFLY)
                 .withEntandoAppVersion("4.3")
+                .addToComponentRegistryNamespaces("asdfadsfsdaf")
                 .withReplicas(4)
                 .withTlsSecretName("another-tls-secret")
                 .withIngressHostName("anotheringress.com")
@@ -192,7 +196,9 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withRealm(MY_KEYCLOAK_REALM)
                 .withPublicClientId(MY_PUBLIC_CLIENT)
                 .endKeycloakToUse()
+                .withToComponentRegistryNamespaces(Collections.singletonList(COMPONENT_REPOSITORY_NAMESPACES))
                 .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
+
                 .editResourceRequirements()
                 .withCpuLimit(null)
                 .addToLimits("cpu", Quantity.parse(CPU_LIMIT))
@@ -220,6 +226,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     }
 
     private void verifySpec(EntandoApp actual) {
+        assertThat(actual.getSpec().getComponentRegistryNamespaces().get(0), is(COMPONENT_REPOSITORY_NAMESPACES));
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
         assertThat(actual.getSpec().getEntandoAppVersion().get(), is("6.3"));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
