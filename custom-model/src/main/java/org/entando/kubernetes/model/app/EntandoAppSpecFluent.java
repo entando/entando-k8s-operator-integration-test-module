@@ -31,7 +31,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
     protected String ingressPath;
     private String ecrGitSshSecretName;
     private String entandoAppVersion;
-    private List<String> componentRegistryNamespaces;
+    private List<String> componentRepositoryNamespaces;
 
     public EntandoAppSpecFluent(EntandoAppSpec spec) {
         super(spec);
@@ -40,26 +40,26 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
         this.ingressPath = spec.getIngressPath().orElse(null);
         this.ecrGitSshSecretName = spec.getEcrGitSshSecretName().orElse(null);
         this.entandoAppVersion = spec.getEntandoAppVersion().orElse(null);
-        this.componentRegistryNamespaces = spec.getComponentRegistryNamespaces();
+        this.componentRepositoryNamespaces = spec.getComponentRepositoryNamespaces();
     }
 
     public EntandoAppSpecFluent() {
 
     }
 
-    public N withToComponentRegistryNamespaces(List<String> componentRegistryNamespaces) {
-        this.componentRegistryNamespaces = null;
-        return addToComponentRegistryNamespaces(componentRegistryNamespaces);
+    public N withToComponentRepositoryNamespaces(List<String> componentRepositoryNamespaces) {
+        this.componentRepositoryNamespaces = null;
+        return addToComponentRepositoryNamespaces(componentRepositoryNamespaces);
     }
 
-    public N addToComponentRegistryNamespaces(List<String> componentRegistryNamespaces) {
-        ofNullable(componentRegistryNamespaces).ifPresent(s -> s.forEach(this::addToComponentRegistryNamespaces));
+    public N addToComponentRepositoryNamespaces(List<String> componentRepositoryNamespaces) {
+        ofNullable(componentRepositoryNamespaces).ifPresent(s -> s.forEach(this::addToComponentRepositoryNamespaces));
         return thisAsF();
     }
 
-    public N addToComponentRegistryNamespaces(String componentRegistryNamespaces) {
-        this.componentRegistryNamespaces = Objects.requireNonNullElseGet(this.componentRegistryNamespaces, ArrayList::new);
-        ofNullable(componentRegistryNamespaces).ifPresent(this.componentRegistryNamespaces::add);
+    public N addToComponentRepositoryNamespaces(String componentRepositoryNamespaces) {
+        this.componentRepositoryNamespaces = Objects.requireNonNullElseGet(this.componentRepositoryNamespaces, ArrayList::new);
+        ofNullable(componentRepositoryNamespaces).ifPresent(this.componentRepositoryNamespaces::add);
         return thisAsF();
     }
 
@@ -94,7 +94,7 @@ public class EntandoAppSpecFluent<N extends EntandoAppSpecFluent<N>> extends Key
         return new EntandoAppSpec(this.standardServerImage, this.customServerImage, this.dbms, this.ingressHostName, this.ingressPath,
                 this.replicas, this.tlsSecretName, this.keycloakToUse,
                 this.serviceAccountToUse, this.environmentVariables, this.resourceRequirements,
-                this.ecrGitSshSecretName, this.storageClass, this.entandoAppVersion, this.componentRegistryNamespaces);
+                this.ecrGitSshSecretName, this.storageClass, this.entandoAppVersion, this.componentRepositoryNamespaces);
     }
 
 }
