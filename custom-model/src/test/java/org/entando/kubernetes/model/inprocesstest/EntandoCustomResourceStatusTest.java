@@ -48,8 +48,8 @@ class EntandoCustomResourceStatusTest {
         serverStatus.putPodPhase("pod1", "Running");
         serverStatus.putPersistentVolumeClaimPhase("pvc1", "Bound");
         serverStatus.withOriginatingCustomResource(
-                        new EntandoKeycloakServer(new ObjectMetaBuilder().withNamespace("my-namespace").withName("my-capability").build()
-                                , null))
+                        new EntandoKeycloakServer(
+                                new ObjectMetaBuilder().withNamespace("my-namespace").withName("my-capability").build(), null))
                 .withOriginatingControllerPod("controller-namespace", "my-pod")
                 .addToWebContexts("server", "/my-path")
                 .withSsoRealm("my-realm")
