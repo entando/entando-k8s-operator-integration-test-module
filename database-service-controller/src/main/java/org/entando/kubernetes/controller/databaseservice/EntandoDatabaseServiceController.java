@@ -163,28 +163,29 @@ public class EntandoDatabaseServiceController implements Runnable {
         return providedCapability.getSpec().getResolutionScopePreference().stream().findFirst().orElse(CapabilityScope.NAMESPACE);
     }
 
-    private void validateExternalServiceRequirements(EntandoDatabaseService entandoKeycloakServer) {
-        if (!entandoKeycloakServer.getSpec().getCreateDeployment().orElse(false)) {
-            if (entandoKeycloakServer.getSpec().getHost().isEmpty()) {
+    private void validateExternalServiceRequirements(EntandoDatabaseService entandoDatabaseService) {
+        if (!EntandoDatabaseServiceHelper.deployDirectly(entandoDatabaseService)) {
+            if (entandoDatabaseService.getSpec().getHost().isEmpty()) {
                 throw new EntandoControllerException(
                         "Please provide the hostname of the database service you intend to connect to using the "
                                 + "EntandoDatabaseService.spec.host property.");
             }
-            if (strategyFor(entandoKeycloakServer).getVendorConfig() != DbmsVendorConfig.MYSQL
-                    && entandoKeycloakServer.getSpec().getDatabaseName().isEmpty()) {
+            if (strategyFor(entandoDatabaseService).getVendorConfig() != DbmsVendorConfig.MYSQL
+                    && entandoDatabaseService.getSpec().getDatabaseName().isEmpty()) {
                 throw new EntandoControllerException(
                         "Please provide the name of the database on the database service you intend to connect to using the "
                                 + "EntandoDatabaseService.spec.databaseName property.");
             }
-            String adminSecretName = entandoKeycloakServer.getSpec().getSecretName()
+            String adminSecretName = entandoDatabaseService.getSpec().getSecretName()
                     .orElseThrow(() -> new EntandoControllerException(
                             "Please provide the name of the secret containing the admin credentials for the database service you intend "
                                     + "to connect to using the EntandoDatabaseService.spec.secretName property."));
-            if (ofNullable(k8sClient.loadStandardResource(SECRET_KIND, entandoKeycloakServer.getMetadata().getNamespace(), adminSecretName))
+            if (ofNullable(
+                    k8sClient.loadStandardResource(SECRET_KIND, entandoDatabaseService.getMetadata().getNamespace(), adminSecretName))
                     .isEmpty()) {
                 throw new EntandoControllerException(format(
                         "Please ensure that a secret with the name '%s' exists in the requested namespace %s", adminSecretName,
-                        entandoKeycloakServer.getMetadata().getName()));
+                        entandoDatabaseService.getMetadata().getName()));
             }
         }
     }
@@ -247,7 +248,7 @@ public class EntandoDatabaseServiceController implements Runnable {
                         .map(s -> resourceToProcess.getMetadata().getLabels()).orElse(null))
                 .withResolutionScopePreference(resourceToProcess.getSpec().getProvidedCapabilityScope().orElse(CapabilityScope.NAMESPACE))
                 .addAllToCapabilityParameters(parameters);
-        if (resourceToProcess.getSpec().getCreateDeployment().orElse(false)) {
+        if (EntandoDatabaseServiceHelper.deployDirectly(resourceToProcess)) {
             specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.DEPLOY_DIRECTLY);
         } else {
             specBuilder = specBuilder.withProvisioningStrategy(CapabilityProvisioningStrategy.USE_EXTERNAL)

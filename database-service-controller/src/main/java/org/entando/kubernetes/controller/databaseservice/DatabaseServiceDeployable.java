@@ -42,7 +42,7 @@ public class DatabaseServiceDeployable implements Deployable<DatabaseDeploymentR
 
     @Override
     public Optional<ExternalService> getExternalService() {
-        if (newEntandoDatabaseService.getSpec().getCreateDeployment().orElse(false)) {
+        if (EntandoDatabaseServiceHelper.deployDirectly(newEntandoDatabaseService)) {
             return Optional.empty();
         } else {
             return Optional.of(new ExternalDatabaseService(newEntandoDatabaseService));
