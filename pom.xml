@@ -6,7 +6,7 @@
         <groupId>org.entando</groupId>
         <artifactId>entando-maven-root</artifactId>
         <!--keep it here for now. we will be moving there soon-->
-        <version>6.3.5</version>
+        <version>6.4.0</version>
         <relativePath/>
     </parent>
     <groupId>org.entando</groupId>
