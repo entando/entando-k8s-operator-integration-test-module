@@ -30,8 +30,9 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoBaseCustomResource;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoBaseCustomResource;
+import org.entando.kubernetes.model.common.EntandoCustomResourceStatus;
 
 @JsonSerialize
 @JsonDeserialize()
@@ -44,7 +45,7 @@ import org.entando.kubernetes.model.EntandoBaseCustomResource;
 @SuppressWarnings("java:S1452")
 public class EntandoCompositeAppSpec implements Serializable {
 
-    private List<EntandoBaseCustomResource<? extends Serializable>> components;
+    private List<EntandoBaseCustomResource<? extends Serializable, EntandoCustomResourceStatus>> components;
     private String ingressHostNameOverride;
     private DbmsVendor dbmsOverride;
     private String tlsSecretNameOverride;
@@ -55,7 +56,7 @@ public class EntandoCompositeAppSpec implements Serializable {
 
     @JsonCreator
     public EntandoCompositeAppSpec(
-            @JsonProperty("components") List<EntandoBaseCustomResource<? extends Serializable>> components,
+            @JsonProperty("components") List<EntandoBaseCustomResource<? extends Serializable, EntandoCustomResourceStatus>> components,
             @JsonProperty("ingressHostNameOverride") String ingressHostNameOverride,
             @JsonProperty("dbmsOverride") DbmsVendor dbmsOverride,
             @JsonProperty("tlsSecretNameOverride") String tlsSecretNameOverride) {
@@ -65,7 +66,7 @@ public class EntandoCompositeAppSpec implements Serializable {
         this.tlsSecretNameOverride = tlsSecretNameOverride;
     }
 
-    public List<EntandoBaseCustomResource<? extends Serializable>> getComponents() {
+    public List<EntandoBaseCustomResource<? extends Serializable, EntandoCustomResourceStatus>> getComponents() {
         return this.components == null ? Collections.emptyList() : this.components;
     }
 

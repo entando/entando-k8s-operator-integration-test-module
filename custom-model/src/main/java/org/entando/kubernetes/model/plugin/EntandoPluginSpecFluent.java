@@ -18,9 +18,11 @@ package org.entando.kubernetes.model.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.entando.kubernetes.model.ClusterInfrastructureAwareSpecFluent;
+import org.entando.kubernetes.model.common.ExpectedRole;
+import org.entando.kubernetes.model.common.KeycloakAwareSpecFluent;
+import org.entando.kubernetes.model.common.Permission;
 
-public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent<N>> extends ClusterInfrastructureAwareSpecFluent<N> {
+public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent<N>> extends KeycloakAwareSpecFluent<N> {
 
     protected final List<String> connectionConfigNames;
     protected final List<ExpectedRole> roles;
@@ -119,7 +121,7 @@ public class EntandoPluginSpecFluent<N extends EntandoPluginSpecFluent<N>> exten
         return new EntandoPluginSpec(image, dbms, replicas, ingressPath, keycloakToUse,
                 healthCheckPath, securityLevel, tlsSecretName, ingressHostName, roles, permissions,
                 serviceAccountToUse, environmentVariables, connectionConfigNames,
-                clusterInfrastructureToUse, companionContainers, resourceRequirements, storageClass);
+                companionContainers, resourceRequirements, storageClass);
     }
 
 }

@@ -16,7 +16,7 @@
 
 package org.entando.kubernetes.model.externaldatabase;
 
-import org.entando.kubernetes.model.NestedIngressingDeploymentSpecFluent;
+import org.entando.kubernetes.model.common.NestedIngressingDeploymentSpecFluent;
 
 public class NestedEntandoDatabaseServiceFluent<F extends EntandoDatabaseServiceFluent<F>>
         extends EntandoDatabaseServiceSpecFluent<NestedEntandoDatabaseServiceFluent<F>>

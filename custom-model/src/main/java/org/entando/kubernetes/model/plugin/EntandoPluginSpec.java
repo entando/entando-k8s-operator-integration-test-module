@@ -17,7 +17,7 @@
 package org.entando.kubernetes.model.plugin;
 
 import static java.util.Optional.ofNullable;
-import static org.entando.kubernetes.model.Coalescence.coalesce;
+import static org.entando.kubernetes.model.common.Coalescence.coalesce;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -33,11 +33,12 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.entando.kubernetes.model.ClusterInfrastructureAwareSpec;
-import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoResourceRequirements;
-import org.entando.kubernetes.model.KeycloakToUse;
-import org.entando.kubernetes.model.ResourceReference;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoResourceRequirements;
+import org.entando.kubernetes.model.common.ExpectedRole;
+import org.entando.kubernetes.model.common.KeycloakAwareSpec;
+import org.entando.kubernetes.model.common.KeycloakToUse;
+import org.entando.kubernetes.model.common.Permission;
 
 @JsonSerialize
 @JsonDeserialize
@@ -46,7 +47,7 @@ import org.entando.kubernetes.model.ResourceReference;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoPluginSpec extends ClusterInfrastructureAwareSpec {
+public class EntandoPluginSpec extends KeycloakAwareSpec {
 
     private String image;
     private PluginSecurityLevel securityLevel;
@@ -81,13 +82,12 @@ public class EntandoPluginSpec extends ClusterInfrastructureAwareSpec {
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("connectionConfigNames") List<String> connectionConfigNames,
-            @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
             @JsonProperty("companionContainers") List<String> companionContainers,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("storageClass") String storageClass
     ) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
-                keycloakToUse, clusterInfrastructureToUse, storageClass);
+                keycloakToUse, storageClass);
         this.image = image;
         this.ingressPath = ingressPath;
         this.keycloakToUse = keycloakToUse;

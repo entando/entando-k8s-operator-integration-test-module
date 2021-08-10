@@ -42,6 +42,10 @@ public class EntandoCustomResourceReferenceSpec implements Serializable {
     private String targetNamespace;
     private String targetName;
 
+    public EntandoCustomResourceReferenceSpec() {
+        //for serialization
+    }
+
     @JsonCreator
     public EntandoCustomResourceReferenceSpec(@JsonProperty("targetKind") String targetKind,
             @JsonProperty("targetNamespace") String targetNamespace,

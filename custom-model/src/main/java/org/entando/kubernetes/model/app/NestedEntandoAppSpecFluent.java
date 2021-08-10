@@ -16,7 +16,7 @@
 
 package org.entando.kubernetes.model.app;
 
-import org.entando.kubernetes.model.NestedIngressingDeploymentSpecFluent;
+import org.entando.kubernetes.model.common.NestedIngressingDeploymentSpecFluent;
 
 //This will be compliant again once we remove EntandoClusterInfrastructure
 @SuppressWarnings("java:S110")

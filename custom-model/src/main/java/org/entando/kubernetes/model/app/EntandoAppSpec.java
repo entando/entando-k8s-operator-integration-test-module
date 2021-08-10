@@ -31,13 +31,11 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 import java.util.Optional;
-import org.entando.kubernetes.model.ClusterInfrastructureAwareSpec;
-import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoResourceRequirements;
-import org.entando.kubernetes.model.JeeServer;
-import org.entando.kubernetes.model.KeycloakToUse;
-import org.entando.kubernetes.model.ResourceReference;
-import org.entando.kubernetes.model.gitspec.GitSpec;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoResourceRequirements;
+import org.entando.kubernetes.model.common.JeeServer;
+import org.entando.kubernetes.model.common.KeycloakAwareSpec;
+import org.entando.kubernetes.model.common.KeycloakToUse;
 
 @JsonSerialize
 @JsonDeserialize()
@@ -46,13 +44,14 @@ import org.entando.kubernetes.model.gitspec.GitSpec;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EntandoAppSpec extends ClusterInfrastructureAwareSpec {
+public class EntandoAppSpec extends KeycloakAwareSpec {
 
     private JeeServer standardServerImage;
     private String customServerImage;
     private String ingressPath;
-    private GitSpec backupGitSpec;
     private String ecrGitSshSecretName;
+    private String entandoAppVersion;
+    private List<String> componentRepositoryNamespaces;
 
     public EntandoAppSpec() {
         super();
@@ -70,20 +69,30 @@ public class EntandoAppSpec extends ClusterInfrastructureAwareSpec {
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("tlsSecretName") String tlsSecretName,
             @JsonProperty("keycloakToUse") KeycloakToUse keycloakToUse,
-            @JsonProperty("clusterInfrastructureToUse") ResourceReference clusterInfrastructureToUse,
-            @JsonProperty("backupGitSpec") GitSpec backupGitSpec,
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
             @JsonProperty("ecrGitSshSecretName") String ecrGitSshSecretName,
-            @JsonProperty("storageClass") String storageClass) {
+            @JsonProperty("storageClass") String storageClass,
+            @JsonProperty("entandoAppVersion") String entandoAppVersion,
+            @JsonProperty("componentRepositoryNamespaces") List<String> componentRepositoryNamespaces
+    ) {
         super(ingressHostName, tlsSecretName, replicas, dbms, serviceAccountToUse, environmentVariables, resourceRequirements,
-                keycloakToUse, clusterInfrastructureToUse, storageClass);
+                keycloakToUse, storageClass);
         this.standardServerImage = standardServerImage;
         this.customServerImage = customServerImage;
         this.ingressPath = ingressPath;
-        this.backupGitSpec = backupGitSpec;
         this.ecrGitSshSecretName = ecrGitSshSecretName;
+        this.entandoAppVersion = entandoAppVersion;
+        this.componentRepositoryNamespaces = componentRepositoryNamespaces;
+    }
+
+    public List<String> getComponentRepositoryNamespaces() {
+        return componentRepositoryNamespaces;
+    }
+
+    public Optional<String> getEntandoAppVersion() {
+        return Optional.ofNullable(entandoAppVersion);
     }
 
     public Optional<String> getEcrGitSshSecretName() {
@@ -100,10 +109,6 @@ public class EntandoAppSpec extends ClusterInfrastructureAwareSpec {
 
     public Optional<String> getCustomServerImage() {
         return ofNullable(customServerImage);
-    }
-
-    public Optional<GitSpec> getBackupGitSpec() {
-        return ofNullable(backupGitSpec);
     }
 
 }

@@ -31,9 +31,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.entando.kubernetes.model.DbmsVendor;
-import org.entando.kubernetes.model.EntandoDeploymentSpec;
-import org.entando.kubernetes.model.EntandoResourceRequirements;
+import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
+import org.entando.kubernetes.model.capability.CapabilityScope;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoDeploymentSpec;
+import org.entando.kubernetes.model.common.EntandoResourceRequirements;
 
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize
@@ -52,6 +54,8 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
     private String secretName;
     private Boolean createDeployment;
     private Map<String, String> jdbcParameters;
+    private CapabilityProvisioningStrategy provisioningStrategy;
+    private CapabilityScope providedCapabilityScope;
 
     public EntandoDatabaseServiceSpec() {
 
@@ -71,7 +75,9 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
             @JsonProperty("serviceAccountToUse") String serviceAccountToUse,
             @JsonProperty("environmentVariables") List<EnvVar> environmentVariables,
             @JsonProperty("resourceRequirements") EntandoResourceRequirements resourceRequirements,
-            @JsonProperty("storageClass") String storageClass) {
+            @JsonProperty("storageClass") String storageClass,
+            @JsonProperty("providedCapabilityScope") CapabilityScope providedCapabilityScope,
+            @JsonProperty("provisioningStrategy") CapabilityProvisioningStrategy provisioningStrategy) {
         super(replicas, serviceAccountToUse, environmentVariables, resourceRequirements, storageClass);
         this.dbms = dbms;
         this.host = host;
@@ -81,10 +87,16 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
         this.databaseName = databaseName;
         this.createDeployment = createDeployment;
         this.jdbcParameters = jdbcParameters;
+        this.providedCapabilityScope = providedCapabilityScope;
+        this.provisioningStrategy = provisioningStrategy;
     }
 
-    public DbmsVendor getDbms() {
-        return dbms;
+    public Optional<CapabilityScope> getProvidedCapabilityScope() {
+        return Optional.ofNullable(providedCapabilityScope);
+    }
+
+    public Optional<DbmsVendor> getDbms() {
+        return Optional.ofNullable(dbms);
     }
 
     public Optional<String> getHost() {
@@ -113,5 +125,9 @@ public class EntandoDatabaseServiceSpec extends EntandoDeploymentSpec {
 
     public Optional<Boolean> getCreateDeployment() {
         return Optional.ofNullable(this.createDeployment);
+    }
+
+    public Optional<CapabilityProvisioningStrategy> getProvisioningStrategy() {
+        return Optional.ofNullable(provisioningStrategy);
     }
 }

@@ -19,8 +19,8 @@ package org.entando.kubernetes.model.keycloakserver;
 import io.fabric8.kubernetes.api.builder.Fluent;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import org.entando.kubernetes.model.EntandoFluent;
-import org.entando.kubernetes.model.EntandoIngressingDeploymentBaseFluent;
+import org.entando.kubernetes.model.common.EntandoFluent;
+import org.entando.kubernetes.model.common.EntandoIngressingDeploymentBaseFluent;
 
 public class EntandoKeycloakServerFluent<F extends EntandoKeycloakServerFluent<F>>
         extends EntandoFluent<F>

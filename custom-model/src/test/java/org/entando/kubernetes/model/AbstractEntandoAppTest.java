@@ -20,13 +20,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import io.fabric8.kubernetes.api.model.EnvVar;
-import io.fabric8.kubernetes.client.CustomResourceList;
-import io.fabric8.kubernetes.client.dsl.internal.CustomResourceOperationsImpl;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.api.model.Quantity;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import java.util.Collections;
-import org.entando.kubernetes.model.app.DoneableEntandoApp;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
-import org.entando.kubernetes.model.gitspec.GitResponsibility;
+import org.entando.kubernetes.model.common.DbmsVendor;
+import org.entando.kubernetes.model.common.EntandoDeploymentPhase;
+import org.entando.kubernetes.model.common.JeeServer;
+import org.entando.kubernetes.model.common.ResourceReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,18 +39,13 @@ import org.junit.jupiter.api.Test;
 public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
 
     public static final String MY_CUSTOM_SERVER_IMAGE = "somenamespace/someimage:3.2.2";
-    public static final String MY_CLUSTER_INFRASTRUCTURE = "my-cluster-infrastructure";
-    public static final String MY_CLUSTER_INFRASTRUCTURE_NAMESPACE = "my-cluster-infrastructure-namespace";
     private static final String MY_KEYCLOAK_NAME = "my-keycloak-name";
     private static final String MY_KEYCLOAK_REALM = "my-keycloak-realm";
     private static final String MY_KEYCLOAK_NAME_SPACE = "my-keycloak-namespace";
     public static final String PARAM_VALUE = "my-value";
     public static final String PARAM_NAME = "MY_PARAM";
-    public static final String MY_GIT_SECRET = "my-git-secret";
-    public static final String MY_BACKUP_GIT_REPO = "https://github.com/entando/doesnoexist.git";
     protected static final String MY_APP = "my-app";
     protected static final String MY_NAMESPACE = TestConfig.calculateNameSpace("my-namespace");
-    private static final String ENTANDO_IMAGE_VERSION = "6.1.0-SNAPSHOT";
     private static final String MYINGRESS_COM = "myingress.com";
     private static final String MY_INGRESS_PATH = "/my-ingress-path";
     private static final String MY_VALUE = "my-value";
@@ -63,11 +62,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
     public static final String STORAGE_REQUEST = "0.2Gi";
     private static final String MY_GIT_SECRET_NAME = "my-git-secret-name";
     public static final String MY_PUBLIC_CLIENT = "my-public-client";
-    private EntandoResourceOperationsRegistry registry;
+    public static final String COMPONENT_REPOSITORY_NAMESPACES = "ecr1";
 
     @BeforeEach
     public void deleteEntandoApps() {
-        this.registry = new EntandoResourceOperationsRegistry(getClient());
         prepareNamespace(entandoApps(), MY_NAMESPACE);
     }
 
@@ -82,18 +80,13 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withDbms(DbmsVendor.MYSQL)
                 .withCustomServerImage(MY_CUSTOM_SERVER_IMAGE)
                 .withStandardServerImage(JeeServer.WILDFLY)
+                .withEntandoAppVersion("6.3")
                 .withReplicas(MY_REPLICAS)
+                .addToComponentRepositoryNamespaces(COMPONENT_REPOSITORY_NAMESPACES)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
                 .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
-                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE, MY_CLUSTER_INFRASTRUCTURE)
                 .withIngressPath(MY_INGRESS_PATH)
-                .withNewBackupGitSpec()
-                .withRepository(MY_BACKUP_GIT_REPO)
-                .withSecretName(MY_GIT_SECRET)
-                .withResponsibility(GitResponsibility.PUSH)
-                .withTargertRef("master")
-                .endBackupGitSpec()
                 .withNewResourceRequirements()
                 .withCpuLimit(CPU_LIMIT)
                 .withCpuRequest(CPU_REQUEST)
@@ -114,7 +107,7 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .endSpec()
                 .build();
 
-        entandoApps().inNamespace(MY_NAMESPACE).createNew().withMetadata(entandoApp.getMetadata()).withSpec(entandoApp.getSpec()).done();
+        entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
         //When
         EntandoApp actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).get();
         //Then
@@ -125,23 +118,15 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getIngressPath().get(), is(MY_INGRESS_PATH));
         assertThat(actual.getSpec().getStandardServerImage().get(), is(JeeServer.WILDFLY));
+        assertThat(actual.getSpec().getEntandoAppVersion().get(), is("6.3"));
         assertThat(actual.getSpec().getReplicas().get(), is(5));
         assertThat(actual.getSpec().getTlsSecretName().get(), is(MY_TLS_SECRET));
         assertThat(actual.getSpec().getCustomServerImage().isPresent(), is(false));//because it was overridden by a standard image
-        verifyClusterInfrastructureToUse(actual.getSpec().getClusterInfrastructureToUse().get(), MY_CLUSTER_INFRASTRUCTURE,
-                MY_CLUSTER_INFRASTRUCTURE_NAMESPACE);
-        verifyBackupGitSpec(actual);
         assertThat(actual.getSpec().getEcrGitSshSecretName().get(), is(MY_GIT_SECRET_NAME));
+        assertThat(actual.getSpec().getComponentRepositoryNamespaces().get(0), is(COMPONENT_REPOSITORY_NAMESPACES));
         verifyResourceRequirements(actual);
         assertThat(findParameter(actual.getSpec(), PARAM_NAME).get().getValue(), is(PARAM_VALUE));
         assertThat(actual.getMetadata().getName(), is(MY_APP));
-    }
-
-    private void verifyBackupGitSpec(EntandoApp actual) {
-        assertThat(actual.getSpec().getBackupGitSpec().get().getRepository(), is(MY_BACKUP_GIT_REPO));
-        assertThat(actual.getSpec().getBackupGitSpec().get().getSecretName().get(), is(MY_GIT_SECRET));
-        assertThat(actual.getSpec().getBackupGitSpec().get().getResponsibility(), is(GitResponsibility.PUSH));
-        assertThat(actual.getSpec().getBackupGitSpec().get().getTargetRef().get(), is("master"));
     }
 
     private void verifyResourceRequirements(EntandoApp actual) {
@@ -166,6 +151,8 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withDbms(DbmsVendor.POSTGRESQL)
                 .withCustomServerImage("asdfasdf/asdf:2")
                 .withStandardServerImage(JeeServer.WILDFLY)
+                .withEntandoAppVersion("4.3")
+                .addToComponentRepositoryNamespaces("asdfadsfsdaf")
                 .withReplicas(4)
                 .withTlsSecretName("another-tls-secret")
                 .withIngressHostName("anotheringress.com")
@@ -176,13 +163,6 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withPublicClientId("some-public-client")
                 .endKeycloakToUse()
                 .addToEnvironmentVariables("anotherparam", "123123")
-                .withClusterInfrastructureToUse("thingy-namespace", "some-cluster-infrastructure")
-                .withNewBackupGitSpec()
-                .withRepository("somerip.git")
-                .withSecretName("some-secert")
-                .withResponsibility(GitResponsibility.PULL)
-                .withTargertRef("pr1")
-                .endBackupGitSpec()
                 .withEcrGitSshSecretname("somesecret-that-doesnt-exst")
                 .withNewResourceRequirements()
                 .withCpuLimit("123")
@@ -196,9 +176,10 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withServiceAccountToUse("someserviceacount")
                 .endSpec()
                 .build();
+        final EntandoAppBuilder toEdit = new EntandoAppBuilder(entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp));
         //When
         //We are not using the mock server here because of a known bug
-        EntandoApp actual = editEntandoApp(entandoApp)
+        EntandoApp actual = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).patch(toEdit
                 .editMetadata().addToLabels(MY_LABEL, MY_VALUE)
                 .endMetadata()
                 .editSpec()
@@ -208,45 +189,46 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
                 .withReplicas(5)
                 .withTlsSecretName(MY_TLS_SECRET)
                 .withIngressHostName(MYINGRESS_COM)
+                .withEntandoAppVersion("6.3")
                 .editKeycloakToUse()
                 .withNamespace(MY_KEYCLOAK_NAME_SPACE)
                 .withName(MY_KEYCLOAK_NAME)
                 .withRealm(MY_KEYCLOAK_REALM)
                 .withPublicClientId(MY_PUBLIC_CLIENT)
                 .endKeycloakToUse()
-                .withClusterInfrastructureToUse(MY_CLUSTER_INFRASTRUCTURE_NAMESPACE, MY_CLUSTER_INFRASTRUCTURE)
-                .editBackupGitSpec()
-                .withRepository(MY_BACKUP_GIT_REPO)
-                .withSecretName(MY_GIT_SECRET)
-                .withResponsibility(GitResponsibility.PUSH)
-                .withTargertRef("master")
-                .endBackupGitSpec()
+                .withToComponentRepositoryNamespaces(Collections.singletonList(COMPONENT_REPOSITORY_NAMESPACES))
                 .withEcrGitSshSecretname(MY_GIT_SECRET_NAME)
+
                 .editResourceRequirements()
-                .withCpuLimit(CPU_LIMIT)
-                .withCpuRequest(CPU_REQUEST)
+                .withCpuLimit(null)
+                .addToLimits("cpu", Quantity.parse(CPU_LIMIT))
+                .withCpuRequest(null)
+                .addToRequests("cpu", Quantity.parse(CPU_REQUEST))
                 .withFileUploadLimit(FILE_UPLOAD_LIMIT)
-                .withMemoryLimit(MEMORY_LIMIT)
-                .withMemoryRequest(MEMORY_REQUEST)
-                .withStorageLimit(STORAGE_LIMIT)
-                .withStorageRequest(STORAGE_REQUEST)
+                .withMemoryLimit(null)
+                .addToLimits("memory", Quantity.parse(MEMORY_LIMIT))
+                .withMemoryRequest(null)
+                .addToRequests("memory", Quantity.parse(MEMORY_REQUEST))
+                .withStorageLimit(null)
+                .addToLimits("storage", Quantity.parse(STORAGE_LIMIT))
+                .withStorageRequest(null)
+                .addToRequests("storage", Quantity.parse(STORAGE_REQUEST))
                 .endResourceRequirements()
                 .withServiceAccountToUse(MY_SERVICE_ACCOUNT)
                 .withEnvironmentVariables(Collections.singletonList(new EnvVar(PARAM_NAME, PARAM_VALUE, null)))
                 .endSpec()
-                .done();
+                .build());
         //Then
         verifySpec(actual);
         verifyKeycloakToUSer(actual);
-        verifyClusterInfrastructureToUse(actual.getSpec().getClusterInfrastructureToUse().get(), MY_CLUSTER_INFRASTRUCTURE,
-                MY_CLUSTER_INFRASTRUCTURE_NAMESPACE);
-        verifyBackupGitSpec(actual);
         verifyResourceRequirements(actual);
         assertThat(actual.getMetadata().getLabels().get(MY_LABEL), is(MY_VALUE));
     }
 
     private void verifySpec(EntandoApp actual) {
+        assertThat(actual.getSpec().getComponentRepositoryNamespaces().get(0), is(COMPONENT_REPOSITORY_NAMESPACES));
         assertThat(actual.getSpec().getDbms().get(), is(DbmsVendor.MYSQL));
+        assertThat(actual.getSpec().getEntandoAppVersion().get(), is("6.3"));
         assertThat(actual.getSpec().getIngressHostName().get(), is(MYINGRESS_COM));
         assertThat(actual.getSpec().getStandardServerImage().isPresent(), is(false));//overridden by customServerImage
         assertThat(actual.getSpec().getCustomServerImage().get(), is(MY_CUSTOM_SERVER_IMAGE));
@@ -268,15 +250,8 @@ public abstract class AbstractEntandoAppTest implements CustomResourceTestUtil {
         assertThat(actual.getSpec().getKeycloakToUse().get().getRealm().get(), is(MY_KEYCLOAK_REALM));
     }
 
-    protected DoneableEntandoApp editEntandoApp(EntandoApp entandoApp) {
-        entandoApp.setApiVersion("entando.org/v1");
-        entandoApps().inNamespace(MY_NAMESPACE).create(entandoApp);
-        EntandoApp entandoApp1 = entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).get();
-        return entandoApps().inNamespace(MY_NAMESPACE).withName(MY_APP).edit();
-    }
-
-    protected CustomResourceOperationsImpl<EntandoApp, CustomResourceList<EntandoApp>, DoneableEntandoApp> entandoApps() {
-        return registry.getOperations(EntandoApp.class);
+    protected MixedOperation<EntandoApp, KubernetesResourceList<EntandoApp>, Resource<EntandoApp>> entandoApps() {
+        return getClient().customResources(EntandoApp.class);
     }
 
 }
