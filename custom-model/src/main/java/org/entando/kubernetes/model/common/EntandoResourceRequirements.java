@@ -20,6 +20,7 @@ import static java.util.Optional.ofNullable;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -36,6 +37,8 @@ import java.util.Optional;
         setterVisibility = Visibility.NONE)
 @RegisterForReflection
 @JsonIgnoreProperties(ignoreUnknown = true)
+//The equals method is inherited and should never be used
+@SuppressWarnings("java:S2160")
 public class EntandoResourceRequirements extends ResourceRequirements implements Serializable {
 
     private String storageRequest;
@@ -49,6 +52,7 @@ public class EntandoResourceRequirements extends ResourceRequirements implements
     public EntandoResourceRequirements() {
     }
 
+    @JsonCreator
     public EntandoResourceRequirements(@JsonProperty("storageRequest") String storageRequest,
             @JsonProperty("storageLimit") String storageLimit,
             @JsonProperty("memoryRequest") String memoryRequest,

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.model.capability.CapabilityProvisioningStrategy;
 import org.entando.kubernetes.model.capability.CapabilityScope;
-import org.entando.kubernetes.model.capability.NestedCapabilityRequirementFluent;
 import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.common.EntandoDeploymentSpecFluent;
 import org.entando.kubernetes.model.common.EntandoIngressingDeploymentSpecBaseFluent;

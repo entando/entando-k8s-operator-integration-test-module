@@ -45,7 +45,7 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ServerStatus implements Serializable {
 
-    private final String type = "WebServerStatus";//for backward compatibility
+    private final String type;
     private String qualifier;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ", timezone = "GMT")
     private Date started = new Date();
@@ -69,13 +69,16 @@ public class ServerStatus implements Serializable {
 
     protected ServerStatus() {
         //For json deserialization only. Qualifier is requried
+        this.type = "WebServerStatus";//for backward compatibility
     }
 
     public ServerStatus(String qualifier) {
+        this();
         this.qualifier = qualifier;
     }
 
     public ServerStatus(String newQualifier, ServerStatus original) {
+        this(newQualifier);
         this.qualifier = newQualifier;
         this.started = original.started;
         this.originatingCustomResource = original.originatingCustomResource;

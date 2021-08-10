@@ -87,6 +87,8 @@ public abstract class EntandoDeploymentSpecFluent<F extends EntandoDeploymentSpe
         return (F) this;
     }
 
+    //The equals method is inherited and should never be used
+    @SuppressWarnings("java:S2160")
     public class EntandoResourceRequirementsNested extends
             EntandoResourceRequirementsFluent<EntandoResourceRequirementsNested> {
 

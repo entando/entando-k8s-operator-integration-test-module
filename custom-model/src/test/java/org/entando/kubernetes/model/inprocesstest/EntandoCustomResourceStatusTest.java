@@ -86,7 +86,7 @@ class EntandoCustomResourceStatusTest {
         Path sample = SampleWriter.writeSample(Paths.get("target"), keycloakServer);
         EntandoKeycloakServer actual = SampleWriter.readSample(sample, EntandoKeycloakServer.class);
         assertThat(actual.getStatus().getServerStatus("db").get().getDeploymentName().get(), is("my-deployment"));
-        ServerStatus actualFinalStatus = actual.getStatus().getServerStatus("web").get();
+        ServerStatus actualFinalStatus = new ServerStatus("web", actual.getStatus().getServerStatus("web").get());
         assertThat(actualFinalStatus.getQualifier(), is("web"));
         assertTrue(actualFinalStatus.getFinished().isPresent());
         assertThat(actualFinalStatus.getServiceName().get(), is("my-service"));
@@ -103,6 +103,10 @@ class EntandoCustomResourceStatusTest {
         assertThat(actualFinalStatus.getEntandoControllerFailure().get().getFailedObjectKind(), is("Ingress"));
         assertThat(actualFinalStatus.getEntandoControllerFailure().get().getFailedObjectName(), is("MyIngress"));
         assertThat(actualFinalStatus.getEntandoControllerFailure().get().getMessage(), is("Ingress Failed"));
+        assertThat(actualFinalStatus.getOriginatingControllerPod().getNamespace().get(),
+                is("controller-namespace"));
+        assertThat(actualFinalStatus.getOriginatingControllerPod().getName(),
+                is("my-pod"));
         assertThat(actualFinalStatus.getOriginatingCustomResource().getNamespace().get(),
                 is("my-namespace"));
         assertThat(actualFinalStatus.getOriginatingCustomResource().getName(),

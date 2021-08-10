@@ -18,6 +18,8 @@ package org.entando.kubernetes.model.common;
 
 import io.fabric8.kubernetes.api.model.ResourceRequirementsFluentImpl;
 
+//The equals method is inherited and should never be used
+@SuppressWarnings("java:S2160")
 public abstract class EntandoResourceRequirementsFluent<N extends EntandoResourceRequirementsFluent<N>>
         extends ResourceRequirementsFluentImpl<N> {
 

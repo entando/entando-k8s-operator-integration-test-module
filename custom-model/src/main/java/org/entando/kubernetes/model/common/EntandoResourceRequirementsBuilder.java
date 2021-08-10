@@ -16,6 +16,8 @@
 
 package org.entando.kubernetes.model.common;
 
+//The equals method is inherited and should never be used
+@SuppressWarnings("java:S2160")
 public class EntandoResourceRequirementsBuilder extends EntandoResourceRequirementsFluent<EntandoResourceRequirementsBuilder> {
 
     public EntandoResourceRequirementsBuilder(EntandoResourceRequirements resourceRequirements) {
