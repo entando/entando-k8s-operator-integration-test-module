@@ -64,7 +64,7 @@
             https://raw.githubusercontent.com/entando-k8s/${project.parent.artifactId}/v${project.parent.version}/owasp-dependency-check-suppression.xml
         </owaspSuppressionFileLocation>
         <!--dependencies -->
-        <resteasy.version>3.15.0.Final</resteasy.version>
+        <resteasy.version>3.15.1.Final</resteasy.version>
         <keycloak.version>9.0.3</keycloak.version>
         <quarkus.version>1.13.7.Final</quarkus.version>
         <jackson.version>2.12.0</jackson.version>

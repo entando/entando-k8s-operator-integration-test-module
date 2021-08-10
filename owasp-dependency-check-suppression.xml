@@ -54,12 +54,14 @@
         <cve>CVE-2020-1694</cve>
         <cve>CVE-2021-20202</cve>
         <cve>CVE-2021-20222</cve>
+        <cve>CVE-2020-27826</cve>
+        <cve>CVE-2021-20195</cve>
+        <cve>CVE-2021-3637</cve>
     </suppress>
 
     <suppress>
         <notes><![CDATA[
-        Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
-        server is updated.
+        Not much we can do about this one except implementing Quarkus 2 which will require significant effort.
       ]]></notes>
         <gav>io.quarkus.arc:arc:1.13.7.Final</gav>
         <cve>CVE-2021-21295</cve>
@@ -67,11 +69,19 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
-        Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
-        server is updated.
+        Not much we can do about this one except implementing Quarkus 2 which will require significant effort.
       ]]></notes>
         <gav regex="true">io\.quarkus:quarkus-.*:1\.13\.7\.Final</gav>
         <cve>CVE-2021-21295</cve>
         <cve>CVE-2021-21290</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Not much we can do about this one except for wait for Keycloak 8. We can only update the client if the
+        server is updated.
+      ]]></notes>
+        <gav regex="true">org\.jboss\.resteasy:resteasy-.*:3\.15\.1\.Final</gav>
+        <cve>CVE-2021-20289</cve>
+        <cve>CVE-2021-20293</cve>
     </suppress>
 </suppressions>
