@@ -1,21 +1,36 @@
 package org.entando.kubernetes.controller.databaseservice;
 
+import static java.util.Optional.ofNullable;
+
+import io.fabric8.kubernetes.api.model.EnvVar;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.entando.kubernetes.controller.spi.common.DbmsDockerVendorStrategy;
+import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfig;
+import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.controller.spi.container.ConfigurableResourceContainer;
-import org.entando.kubernetes.controller.spi.database.DatabaseContainer;
-import org.entando.kubernetes.controller.spi.database.DatabaseVariableInitializer;
-import org.entando.kubernetes.model.EntandoResourceRequirements;
+import org.entando.kubernetes.controller.spi.container.DockerImageInfo;
+import org.entando.kubernetes.controller.spi.container.HasHealthCommand;
+import org.entando.kubernetes.controller.spi.container.PersistentVolumeAwareContainer;
+import org.entando.kubernetes.controller.spi.container.ServiceBackingContainer;
+import org.entando.kubernetes.model.common.EntandoResourceRequirements;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 
-public class DatabaseServiceContainer extends DatabaseContainer implements ConfigurableResourceContainer {
+public class DatabaseServiceContainer implements ConfigurableResourceContainer, ServiceBackingContainer,
+        PersistentVolumeAwareContainer, HasHealthCommand {
 
+    public static final int MAX_STARTUP_TIME = 90;
     private final EntandoDatabaseService entandoDatabaseService;
+    private final DbmsDockerVendorStrategy dbmsVendorDockerStrategy;
+    private final DatabaseVariableInitializer variableInitializer;
+    private final Integer portOverride;
 
     public DatabaseServiceContainer(EntandoDatabaseService entandoDatabaseService, DatabaseVariableInitializer variableInitializer,
             DbmsDockerVendorStrategy dbmsVendor, Integer portOverride) {
-        super(variableInitializer, dbmsVendor, portOverride);
+        this.variableInitializer = variableInitializer;
+        this.dbmsVendorDockerStrategy = dbmsVendor;
+        this.portOverride = portOverride;
         this.entandoDatabaseService = entandoDatabaseService;
     }
 
@@ -31,7 +46,49 @@ public class DatabaseServiceContainer extends DatabaseContainer implements Confi
 
     @Override
     public Optional<String> getStorageClass() {
-        return Optional.ofNullable(this.entandoDatabaseService.getSpec().getStorageClass().orElse(super.getStorageClass().orElse(null)));
+        return this.entandoDatabaseService.getSpec().getStorageClass().or(EntandoOperatorSpiConfig::getDefaultNonClusteredStorageClass);
+    }
+
+    @Override
+    public Optional<Integer> getMaximumStartupTimeSeconds() {
+        return Optional.of(MAX_STARTUP_TIME);
+    }
+
+    @Override
+    public DockerImageInfo getDockerImageInfo() {
+        return new DockerImageInfo(dbmsVendorDockerStrategy);
+    }
+
+    @Override
+    public String getNameQualifier() {
+        return NameUtils.DB_NAME_QUALIFIER;
+    }
+
+    @Override
+    public int getPrimaryPort() {
+        return ofNullable(portOverride).orElse(dbmsVendorDockerStrategy.getPort());
+    }
+
+    @Override
+    public int getMemoryLimitMebibytes() {
+        return dbmsVendorDockerStrategy.getDefaultMemoryLimitMebibytes();
+    }
+
+    @Override
+    public String getVolumeMountPath() {
+        return dbmsVendorDockerStrategy.getVolumeMountPath();
+    }
+
+    @Override
+    public String getHealthCheckCommand() {
+        return dbmsVendorDockerStrategy.getHealthCheck();
+    }
+
+    @Override
+    public List<EnvVar> getEnvironmentVariables() {
+        List<EnvVar> vars = new ArrayList<>();
+        variableInitializer.addEnvironmentVariables(vars);
+        return vars;
     }
 }
 
