@@ -58,7 +58,13 @@
         <cve>CVE-2021-20195</cve>
         <cve>CVE-2021-3637</cve>
     </suppress>
-
+    <suppress>
+        <notes><![CDATA[
+        will fall away once we upgrade to Qaurkus 2.x
+      ]]></notes>
+        <gav>jakarta.el:jakarta.el-api:3.0.3</gav>
+        <cve>CVE-2021-28170</cve>
+    </suppress>
     <suppress>
         <notes><![CDATA[
         Not much we can do about this one except implementing Quarkus 2 which will require significant effort.
