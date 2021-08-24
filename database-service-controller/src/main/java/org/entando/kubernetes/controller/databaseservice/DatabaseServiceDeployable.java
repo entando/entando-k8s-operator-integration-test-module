@@ -32,14 +32,14 @@ public class DatabaseServiceDeployable implements Deployable<DatabaseDeploymentR
     public DatabaseServiceDeployable(EntandoDatabaseService newEntandoDatabaseService) {
         this.dbmsVendor = strategyFor(newEntandoDatabaseService);
         this.customResource = newEntandoDatabaseService;
-        if(EntandoDatabaseServiceHelper.deployDirectly(newEntandoDatabaseService)) {
+        if (EntandoDatabaseServiceHelper.deployDirectly(newEntandoDatabaseService)) {
             this.containers = Collections
                     .singletonList(new DatabaseServiceContainer(newEntandoDatabaseService,
                             buildVariableInitializer(strategyFor(newEntandoDatabaseService)),
                             strategyFor(newEntandoDatabaseService),
                             getPortOverride(newEntandoDatabaseService)));
-        }else{
-            this.containers=Collections.emptyList();
+        } else {
+            this.containers = Collections.emptyList();
         }
         this.newEntandoDatabaseService = newEntandoDatabaseService;
     }

@@ -116,6 +116,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
             assertThat(providedDatabaseService.getAdminSecretName()).isEqualTo("my-existing-dbms-admin-secret");
         });
     }
+
     @Test
     @Description("Should link to external Oracle service when all required fields are provided")
     void shouldLinkToExternalOracleService() {
@@ -181,9 +182,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
 
     @Test
     @Description("Should fail when the admin secret specified is absent in the deployment namespace")
-    void shouldFailWhenAdminSecretAbsent(
-
-    ) {
+    void shouldFailWhenAdminSecretAbsent() {
         step("Given I have not configured a secret with admin credentials to a remote database service");
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
         step("Then a CommandLine ExecutionException is thrown by the CapabilityProvider", () ->
