@@ -116,10 +116,74 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
             assertThat(providedDatabaseService.getAdminSecretName()).isEqualTo("my-existing-dbms-admin-secret");
         });
     }
+    @Test
+    @Description("Should link to external Oracle service when all required fields are provided")
+    void shouldLinkToExternalOracleService() {
+        step("Given I have configured a secret with admin credentials to a remote database service", () -> {
+            final Secret adminSecret = new SecretBuilder()
+                    .withNewMetadata()
+                    .withNamespace(MY_NAMESPACE)
+                    .withName("my-existing-dbms-admin-secret")
+                    .endMetadata()
+                    .addToData(SecretUtils.USERNAME_KEY, "someuser")
+                    .addToData(SecretUtils.PASSSWORD_KEY, "somepassword")
+                    .build();
+            getClient().secrets().createSecretIfAbsent(newResourceRequiringCapability(), adminSecret);
+            attachKubernetesResource("Existing Admin Secret", adminSecret);
+        });
+        step("When I request an DBMS Capability  with its name and namespace explicitly specified, provisioned externally",
+                () -> runControllerAgainstCustomResource(new EntandoDatabaseServiceBuilder()
+                        .withNewMetadata()
+                        .withName(MY_EXTERNAL_DBMS)
+                        .withNamespace(MY_NAMESPACE)
+                        .endMetadata()
+                        .editSpec()
+                        .withCreateDeployment(false)
+                        .withDatabaseName("my_db")
+                        .withDbms(DbmsVendor.ORACLE)
+                        .withDatabaseName("my_db")
+                        .withHost("oracle.apps.serv.run")
+                        .withSecretName("my-existing-dbms-admin-secret")
+                        .endSpec()
+                        .build()));
+        final ProvidedCapability providedCapability = client.entandoResources()
+                .load(ProvidedCapability.class, MY_NAMESPACE, MY_EXTERNAL_DBMS);
+        final EntandoDatabaseService entandoDatabaseService = client.entandoResources()
+                .load(EntandoDatabaseService.class, MY_NAMESPACE, MY_EXTERNAL_DBMS);
+        step("Then ProvidedCapability was made available:", () -> {
+            attachKubernetesResource("EntandoDatabaseService", providedCapability);
+            step("using the 'Use External' provisioningStrategy",
+                    () -> assertThat(providedCapability.getSpec().getProvisioningStrategy()).contains(
+                            CapabilityProvisioningStrategy.USE_EXTERNAL));
+            step("and it is owned by the EntandoDatabaseService to ensure only changes from the EntandoDatabaseService will change the "
+                            + "implementing Kubernetes resources",
+                    () -> assertThat(ResourceUtils.customResourceOwns(entandoDatabaseService, providedCapability)));
+            step("and its the specified externally provisioned service object reflects the connection info provided in the "
+                            + "CapabilityRequirement",
+                    () -> {
+                        assertThat(providedCapability.getSpec().getExternallyProvisionedService().get().getHost())
+                                .isEqualTo("oracle.apps.serv.run");
+                        assertThat(providedCapability.getSpec().getExternallyProvisionedService().get().getPort()).contains(1521);
+                        assertThat(providedCapability.getSpec().getExternallyProvisionedService().get().getAdminSecretName())
+                                .isEqualTo("my-existing-dbms-admin-secret");
+                    });
+        });
+        final ProvidedDatabaseCapability providedDatabaseService = new ProvidedDatabaseCapability(
+                client.capabilities().buildCapabilityProvisioningResult(providedCapability));
+        step("And the provided DatabaseService connection info reflects the external service", () -> {
+            assertThat(providedDatabaseService.getPort()).isEqualTo("1521");
+            assertThat(providedDatabaseService.getInternalServiceHostname())
+                    .isEqualTo("my-external-dbms-service.my-namespace.svc.cluster.local");
+            assertThat(providedDatabaseService.getDatabaseName()).isEqualTo("my_db");
+            assertThat(providedDatabaseService.getAdminSecretName()).isEqualTo("my-existing-dbms-admin-secret");
+        });
+    }
 
     @Test
     @Description("Should fail when the admin secret specified is absent in the deployment namespace")
-    void shouldFailWhenAdminSecretAbsent() {
+    void shouldFailWhenAdminSecretAbsent(
+
+    ) {
         step("Given I have not configured a secret with admin credentials to a remote database service");
         step("When I request an DBMS Capability that is externally provided to a non-existing admin secret");
         step("Then a CommandLine ExecutionException is thrown by the CapabilityProvider", () ->
