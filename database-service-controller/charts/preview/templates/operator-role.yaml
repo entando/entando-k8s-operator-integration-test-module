@@ -43,6 +43,8 @@ rules:
       - customresourcedefinitions
     verbs:
       - get
+      - list
+      - watch
   - apiGroups:
       - "extensions"
       - "networking.k8s.io"
