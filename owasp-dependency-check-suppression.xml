@@ -31,6 +31,7 @@
         <cve>CVE-2019-11250</cve>
         <cve>CVE-2020-8557</cve>
         <cve>CVE-2020-8570</cve>
+        <cve>CVE-2021-25738</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
@@ -72,6 +73,12 @@
         <gav>io.quarkus.arc:arc:1.13.7.Final</gav>
         <cve>CVE-2021-21295</cve>
         <cve>CVE-2021-21290</cve>
+        <cve>CVE-2021-3642</cve>
+        <cve>CVE-2021-28170</cve>
+        <cve>CVE-2021-29429</cve>
+        <cve>CVE-2021-29428</cve>
+        <cve>CVE-2021-29427</cve>
+        <cve>CVE-2021-37714</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
@@ -80,6 +87,12 @@
         <gav regex="true">io\.quarkus:quarkus-.*:1\.13\.7\.Final</gav>
         <cve>CVE-2021-21295</cve>
         <cve>CVE-2021-21290</cve>
+        <cve>CVE-2021-3642</cve>
+        <cve>CVE-2021-28170</cve>
+        <cve>CVE-2021-29429</cve>
+        <cve>CVE-2021-29428</cve>
+        <cve>CVE-2021-29427</cve>
+        <cve>CVE-2021-37714</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
