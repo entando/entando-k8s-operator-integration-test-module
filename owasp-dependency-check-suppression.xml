@@ -103,4 +103,9 @@
         <cve>CVE-2021-20289</cve>
         <cve>CVE-2021-20293</cve>
     </suppress>
+    <suppress>
+        <packageUrl regex="true">^pkg:maven/log4j/log4j@.*$</packageUrl>
+        <cve>CVE-2020-9488</cve>
+        <cve>CVE-2019-17571</cve>
+    </suppress>
 </suppressions>
