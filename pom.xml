@@ -33,7 +33,7 @@
     <repositories>
         <repository>
             <id>nexus-jx</id>
-            <url>https://nexus-jx.apps.serv.run/repository/maven-releases/</url>
+            <url>${entando.maven.repository.snapshot}</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -63,7 +63,11 @@
         <owaspSuppressionFileLocation>
             https://raw.githubusercontent.com/entando-k8s/${project.parent.artifactId}/v${project.parent.version}/owasp-dependency-check-suppression.xml
         </owaspSuppressionFileLocation>
-        
+
+        <entando.maven.repository.snapshot>
+            https://nexus-jx.apps.serv.run/repository/maven-releases/
+        </entando.maven.repository.snapshot>
+
         <!--dependencies -->
         <resteasy.version>3.15.1.Final</resteasy.version>
         <keycloak.version>9.0.3</keycloak.version>
@@ -684,14 +688,19 @@
                         <testFailureIgnore>${ignoreAllFailures}</testFailureIgnore>
                         <groups>${preDeploymentTestGroups}</groups>
                         <classpathDependencyExcludes>
-                            <classpathDependencyExclude>org.jboss.slf4j:slf4j-jboss-logmanager</classpathDependencyExclude>
+                            <classpathDependencyExclude>org.jboss.slf4j:slf4j-jboss-logmanager
+                            </classpathDependencyExclude>
                         </classpathDependencyExcludes>
-                        <argLine>${argLine} -Dfile.encoding=UTF-8 -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"</argLine>
+                        <argLine>${argLine} -Dfile.encoding=UTF-8
+                            -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        </argLine>
                         <systemPropertyVariables>
                             <allure.results.directory>${allure-maven.resultsDirectory}</allure.results.directory>
-                            <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+                            <junit.jupiter.extensions.autodetection.enabled>true
+                            </junit.jupiter.extensions.autodetection.enabled>
                             <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
-                            <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
+                            <junit.jupiter.execution.parallel.config.strategy>dynamic
+                            </junit.jupiter.execution.parallel.config.strategy>
                         </systemPropertyVariables>
                     </configuration>
                     <dependencies>
@@ -707,7 +716,9 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven-failsafe-plugin.version}</version>
                     <configuration>
-                        <argLine>-Dfile.encoding=UTF-8 -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"</argLine>
+                        <argLine>-Dfile.encoding=UTF-8
+                            -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        </argLine>
                         <testFailureIgnore>${ignoreAllFailures}</testFailureIgnore>
                         <skip>${skipPostDeploymentTests}</skip>
                         <groups>${postDeploymentTestGroups}</groups>
@@ -716,9 +727,11 @@
                         </includes>
                         <systemPropertyVariables>
                             <allure.results.directory>${allure-maven.resultsDirectory}</allure.results.directory>
-                            <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+                            <junit.jupiter.extensions.autodetection.enabled>true
+                            </junit.jupiter.extensions.autodetection.enabled>
                             <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
-                            <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
+                            <junit.jupiter.execution.parallel.config.strategy>dynamic
+                            </junit.jupiter.execution.parallel.config.strategy>
                         </systemPropertyVariables>
                     </configuration>
                     <executions>
@@ -912,7 +925,8 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
             <properties>
                 <skipPreDeploymentTests>false</skipPreDeploymentTests>
                 <allure-maven.resultsDirectory>${project.build.directory}/allure-results</allure-maven.resultsDirectory>
-                <allure-maven.reportDirectory>${project.build.directory}/site/allure-reports</allure-maven.reportDirectory>
+                <allure-maven.reportDirectory>${project.build.directory}/site/allure-reports
+                </allure-maven.reportDirectory>
             </properties>
             <build>
                 <plugins>
@@ -966,8 +980,10 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
             <id>post-deployment-verification</id>
             <properties>
                 <skipPostDeploymentTests>false</skipPostDeploymentTests>
-                <allure-maven.resultsDirectory>${project.build.directory}/allure-smoke-results</allure-maven.resultsDirectory>
-                <allure-maven.reportDirectory>${project.build.directory}/site/allure-smoke-reports</allure-maven.reportDirectory>
+                <allure-maven.resultsDirectory>${project.build.directory}/allure-smoke-results
+                </allure-maven.resultsDirectory>
+                <allure-maven.reportDirectory>${project.build.directory}/site/allure-smoke-reports
+                </allure-maven.reportDirectory>
             </properties>
             <build>
                 <plugins>
