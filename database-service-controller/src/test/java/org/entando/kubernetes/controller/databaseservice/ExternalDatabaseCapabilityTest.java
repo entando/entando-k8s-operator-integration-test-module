@@ -140,7 +140,7 @@ class ExternalDatabaseCapabilityTest extends DatabaseServiceControllerTestBase {
             });
             step("and a hostname that reflects the previously inspected ExternalName service", () -> {
                 assertThat(providedDatabase.getInternalServiceHostname())
-                        .isEqualTo("specified-dbms-service.my-namespace.svc.cluster.local");
+                        .isEqualTo("specified-dbms-service." + MY_NAMESPACE + ".svc.cluster.local");
             });
             step("and previously configured JDBC parameters", () -> {
                 assertThat(providedDatabase.getJdbcParameters()).containsAllEntriesOf(Map.of("disconnectOnExpiredPasswords", "true"));

@@ -111,7 +111,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
         step("And the provided DatabaseService connection info reflects the external service", () -> {
             assertThat(providedDatabaseService.getPort()).isEqualTo("5432");
             assertThat(providedDatabaseService.getInternalServiceHostname())
-                    .isEqualTo("my-external-dbms-service.my-namespace.svc.cluster.local");
+                    .isEqualTo("my-external-dbms-service." + MY_NAMESPACE + ".svc.cluster.local");
             assertThat(providedDatabaseService.getDatabaseName()).isEqualTo("my_db");
             assertThat(providedDatabaseService.getAdminSecretName()).isEqualTo("my-existing-dbms-admin-secret");
         });
@@ -174,7 +174,7 @@ class ExternalDatabaseServiceTest extends DatabaseServiceControllerTestBase {
         step("And the provided DatabaseService connection info reflects the external service", () -> {
             assertThat(providedDatabaseService.getPort()).isEqualTo("1521");
             assertThat(providedDatabaseService.getInternalServiceHostname())
-                    .isEqualTo("my-external-dbms-service.my-namespace.svc.cluster.local");
+                    .isEqualTo("my-external-dbms-service." + MY_NAMESPACE + ".svc.cluster.local");
             assertThat(providedDatabaseService.getDatabaseName()).isEqualTo("my_db");
             assertThat(providedDatabaseService.getAdminSecretName()).isEqualTo("my-existing-dbms-admin-secret");
         });
