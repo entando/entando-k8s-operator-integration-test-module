@@ -193,7 +193,7 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
             assertThat(connectionInfo.getDatabaseName()).isEqualTo("default_dbms_in_namespace_db");
             assertThat(connectionInfo.getPort()).isEqualTo("5432");
             assertThat(connectionInfo.getInternalServiceHostname())
-                    .isEqualTo("default-dbms-in-namespace-service.my-namespace.svc.cluster.local");
+                    .isEqualTo("default-dbms-in-namespace-service." + MY_NAMESPACE + ".svc.cluster.local");
             assertThat(connectionInfo.getVendor()).isEqualTo(DbmsVendorConfig.POSTGRESQL);
         });
         attachKubernetesState();
@@ -329,7 +329,7 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
             assertThat(connectionInfo.getDatabaseName()).isEqualTo("my_db");
             assertThat(connectionInfo.getPort()).isEqualTo("3306");
             assertThat(connectionInfo.getInternalServiceHostname())
-                    .isEqualTo(providedCapability.getMetadata().getName() + "-service.my-namespace.svc.cluster.local");
+                    .isEqualTo(providedCapability.getMetadata().getName() + "-service." + MY_NAMESPACE + ".svc.cluster.local");
             assertThat(connectionInfo.getVendor()).isEqualTo(DbmsVendorConfig.MYSQL);
             assertThat(connectionInfo.getJdbcParameters()).containsEntry("disconnectOnExpiredPasswords", "true");
         });
