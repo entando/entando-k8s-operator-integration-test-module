@@ -23,41 +23,13 @@
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
         <cve>CVE-2020-8555</cve>
         <cve>CVE-2019-11254</cve>
-        <cve>CVE-2019-1002100</cve>
         <cve>CVE-2020-8552</cve>
         <cve>CVE-2020-8563</cve>
         <cve>CVE-2019-11248</cve>
-        <cve>CVE-2019-9946</cve>
         <cve>CVE-2019-11250</cve>
         <cve>CVE-2020-8557</cve>
         <cve>CVE-2020-8570</cve>
         <cve>CVE-2021-25738</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-        These are generally serverside vulnerabilities. The entando-k8s containers that use Keycloak run as
-        background processes that do not expose services. We also do not have a version of Keycloak to upgrade to
-        beyond 9.0.3 because this is the official version used in Red Hat SSO
-      ]]></notes>
-        <gav regex="true">org\.keycloak:keycloak-.*:9\.0\.3</gav>
-        <cve>CVE-2020-27838</cve>
-        <cve>CVE-2020-10758</cve>
-        <cve>CVE-2020-1728</cve>
-        <cve>CVE-2020-14359</cve>
-        <cve>CVE-2020-10776</cve>
-        <cve>CVE-2020-1714</cve>
-        <cve>CVE-2020-1725</cve>
-        <cve>CVE-2020-1758</cve>
-        <cve>CVE-2020-14366</cve>
-        <cve>CVE-2020-14389</cve>
-        <cve>CVE-2020-14302</cve>
-        <cve>CVE-2020-10770</cve>
-        <cve>CVE-2020-1694</cve>
-        <cve>CVE-2021-20202</cve>
-        <cve>CVE-2021-20222</cve>
-        <cve>CVE-2020-27826</cve>
-        <cve>CVE-2021-20195</cve>
-        <cve>CVE-2021-3637</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
@@ -108,4 +80,12 @@
         <cve>CVE-2020-9488</cve>
         <cve>CVE-2019-17571</cve>
     </suppress>
+    <suppress>
+        <cve>CVE-2021-40111</cve>
+        <cve>CVE-2021-40110</cve>
+        <cve>CVE-2021-38542</cve>
+        <cve>CVE-2021-40525</cve>
+        <cve>CVE-2021-4104</cve>
+    </suppress>
 </suppressions>
+
