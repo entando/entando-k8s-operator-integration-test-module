@@ -43,6 +43,7 @@
         <name>Entando Inc.</name>
         <url>http://www.entando.com/</url>
     </organization>
+
     <repositories>
         <repository>
             <id>jx-releases</id>
@@ -67,6 +68,10 @@
         <github.organization>entando-k8s</github.organization>
         <sonar.projectKey>${github.organization}_${project.artifactId}</sonar.projectKey>
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
+        <owaspSuppressionFileLocation>
+            https://raw.githubusercontent.com/entando-k8s/${project.parent.artifactId}/v${project.parent.version}/owasp-dependency-check-suppression.xml
+        </owaspSuppressionFileLocation>
+
     </properties>
     <issueManagement>
         <system>Github</system>
