@@ -23,7 +23,7 @@
     <repositories>
         <repository>
             <id>nexus-jx</id>
-            <url>${entando.maven.repository.snapshot}</url>
+            <url>https://nexus-jx.apps.serv.run/repository/maven-releases/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
