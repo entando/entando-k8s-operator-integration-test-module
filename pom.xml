@@ -66,7 +66,7 @@
         <maven.javadoc.source>11</maven.javadoc.source>
         <skipLicenseDownload>false</skipLicenseDownload>
         <checkstyleConfigLocation>
-            https://raw.githubusercontent.com/entando-k8s/entando-quarkus-parent/v${project.parent.version}/checkstyle.xml
+            https://raw.githubusercontent.com/entando-k8s/entando-quarkus-parent/ACTIVE-CHECKSTYLE/checkstyle.xml
         </checkstyleConfigLocation>
         <owaspSuppressionFileLocation>
             owasp-dependency-check-suppression.xml
