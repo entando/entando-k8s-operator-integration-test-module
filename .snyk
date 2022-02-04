@@ -38,6 +38,3 @@ ignore:
   SNYK-JAVA-ORGKEYCLOAK-1085642:
     - '*':
         reason: '.'
-  SNYK-JAVA-ORGPOSTGRESQL-2390459:
-    - '*':
-        reason: '.'
