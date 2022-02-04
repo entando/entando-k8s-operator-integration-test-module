@@ -26,7 +26,6 @@ ignore:
   SNYK-JAVA-ORGJBOSSRESTEASY-1009963:
     - '*':
         reason: '.'
-
   SNYK-JAVA-ORGKEYCLOAK-1061996:
     - '*':
         reason: '.'
@@ -37,5 +36,8 @@ ignore:
     - '*':
         reason: '.'
   SNYK-JAVA-ORGKEYCLOAK-1085642:
+    - '*':
+        reason: '.'
+  SNYK-JAVA-ORGPOSTGRESQL-2390459:
     - '*':
         reason: '.'
