@@ -278,11 +278,11 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                                     + "/usr/libexec/check-container",
                             () -> {
                                 assertThat(thePrimaryContainerOn(deployment).getLivenessProbe().getExec().getCommand())
-                                        .contains("MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -h 127.0.0.1 -u root -e 'SELECT 1'");
+                                        .contains("MYSQL_PWD=\"${MYSQL_ROOT_PASSWORD}\" mysql -h 127.0.0.1 -u root -e 'SELECT 1'");
                                 assertThat(thePrimaryContainerOn(deployment).getReadinessProbe().getExec().getCommand())
-                                        .contains("MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -h 127.0.0.1 -u root -e 'SELECT 1'");
+                                        .contains("MYSQL_PWD=\"${MYSQL_ROOT_PASSWORD}\" mysql -h 127.0.0.1 -u root -e 'SELECT 1'");
                                 assertThat(thePrimaryContainerOn(deployment).getStartupProbe().getExec().getCommand())
-                                        .contains("MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -h 127.0.0.1 -u root -e 'SELECT 1'");
+                                        .contains("MYSQL_PWD=\"${MYSQL_ROOT_PASSWORD}\" mysql -h 127.0.0.1 -u root -e 'SELECT 1'");
                             });
 
                     step("And the File System User/Group override " + expectedDbmsStrategy.getFileSystemUserGroupid().get()
