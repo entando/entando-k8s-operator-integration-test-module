@@ -85,7 +85,6 @@
         <jcabi.version>1.1</jcabi.version>
         <commons-lang.version>3.9</commons-lang.version>
         <fabric8.version>5.3.2</fabric8.version>
-        <prometheus.metrics.version>0.6.0</prometheus.metrics.version>
         <guava.version>30.1-jre</guava.version>
         <snakeyaml.version>1.27</snakeyaml.version>
         <slf4j.version>1.7.16</slf4j.version>
@@ -258,26 +257,6 @@
                 <groupId>io.fabric8</groupId>
                 <artifactId>openshift-client</artifactId>
                 <version>${fabric8.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient</artifactId>
-                <version>${prometheus.metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_httpserver</artifactId>
-                <version>${prometheus.metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_hotspot</artifactId>
-                <version>${prometheus.metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_log4j</artifactId>
-                <version>${prometheus.metrics.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
@@ -560,26 +539,6 @@
             <groupId>io.fabric8</groupId>
             <artifactId>openshift-client</artifactId>
             <version>${fabric8.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient</artifactId>
-            <version>${prometheus.metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_httpserver</artifactId>
-            <version>${prometheus.metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_hotspot</artifactId>
-            <version>${prometheus.metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_log4j</artifactId>
-            <version>${prometheus.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
