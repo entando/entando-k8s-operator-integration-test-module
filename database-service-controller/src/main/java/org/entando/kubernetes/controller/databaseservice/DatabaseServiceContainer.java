@@ -56,7 +56,24 @@ public class DatabaseServiceContainer implements ConfigurableResourceContainer, 
 
     @Override
     public DockerImageInfo getDockerImageInfo() {
-        return new DockerImageInfo(dbmsVendorDockerStrategy);
+        var key = "";
+        switch (dbmsVendorDockerStrategy) {
+            case CENTOS_MYSQL:
+                key = "entando/mysql-80-centos7";
+                break;
+            case CENTOS_POSTGRESQL:
+                key = "entando/postgresql-12-centos7";
+                break;
+            case RHEL_MYSQL:
+                key = "entando/rhel8-mysql-80";
+                break;
+            case RHEL_POSTGRESQL:
+                key = "entando/rhel8-postgresql-12";
+                break;
+            default:
+                return new DockerImageInfo(dbmsVendorDockerStrategy.getImageRepository());
+        }
+        return new DockerImageInfo(key);
     }
 
     @Override

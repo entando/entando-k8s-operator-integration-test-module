@@ -3,6 +3,7 @@ package org.entando.kubernetes.controller.databaseservice;
 import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.Service;
@@ -33,6 +34,7 @@ import org.entando.kubernetes.model.common.DbmsVendor;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseService;
 import org.entando.kubernetes.model.externaldatabase.EntandoDatabaseServiceBuilder;
 import org.entando.kubernetes.test.common.SourceLink;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -40,6 +42,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,6 +65,25 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                 Arguments.of(EntandoOperatorComplianceMode.REDHAT, DbmsDockerVendorStrategy.RHEL_MYSQL),
                 Arguments.of(EntandoOperatorComplianceMode.COMMUNITY, DbmsDockerVendorStrategy.CENTOS_MYSQL)
         );
+    }
+
+    @BeforeEach
+    void mockImageInfoConfigMap() {
+        var mockedConfigMap = new ConfigMapBuilder()
+                .addToData("mysql-80-centos7",
+                        "{\"version\":\"1.1.1\",\"executable-type\":\"jvm\",\"registry\":\"registry.hub.docker.com\""
+                                + ",\"organization\":\"entando\",\"repository\":\"entando-mysql-rocky\"}")
+                .addToData("postgresql-12-centos7",
+                        "{\"version\":\"2.2.2\",\"executable-type\":\"jvm\",\"registry\":\"registry.hub.docker.com\""
+                                + ",\"organization\":\"entando\",\"repository\":\"entando-postgres-rocky\"}")
+                .addToData("rhel8-mysql-80",
+                        "{\"version\":\"3.3.3\",\"executable-type\":\"jvm\",\"registry\":\"registry.hub.docker.com\""
+                                + ",\"organization\":\"entando\",\"repository\":\"entando-mysql-ubi\"}")
+                .addToData("rhel8-postgresql-12",
+                        "{\"version\":\"4.4.4\",\"executable-type\":\"jvm\",\"registry\":\"registry.hub.docker.com\""
+                                + ",\"organization\":\"entando\",\"repository\":\"entando-postgres-ubi\"}")
+                .build();
+        Mockito.doReturn(mockedConfigMap).when(getClient().entandoResources()).loadDockerImageInfoConfigMap();
     }
 
     @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER + ": [" + ParameterizedTest.ARGUMENTS_WITH_NAMES_PLACEHOLDER + "]")
@@ -110,13 +132,17 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     final Deployment deployment = client.deployments()
                             .loadDeployment(entandoDatabaseService, NameUtils.standardDeployment(entandoDatabaseService));
                     attachKubernetesResource("Deployment", deployment);
-                    step("using the PostgreSQL Image " + expectedDbmsStrategy.getOrganization() + "/" + expectedDbmsStrategy
+                    step("using the PostgreSQL Image " + expectedDbmsStrategy.getOrganization() + "/"
+                                    + expectedDbmsStrategy
                                     .getImageRepository(),
-                            () -> assertThat(thePrimaryContainerOn(deployment).getImage())
-                                    .contains(expectedDbmsStrategy.getOrganization() + "/" + expectedDbmsStrategy.getImageRepository()));
+                            () -> assertThat(thePrimaryContainerOn(deployment).getImage()).isEqualTo(
+                                    (complianceMode == EntandoOperatorComplianceMode.REDHAT)
+                                            ? "registry.hub.docker.com/entando/entando-postgres-ubi:4.4.4"
+                                            : "registry.hub.docker.com/entando/entando-postgres-rocky:2.2.2"));
                     step("With a volume mounted to the standard data directory /var/lib/pgsql/data",
                             () -> assertThat(
-                                    theVolumeMountNamed("default-dbms-in-namespace-db-volume").on(thePrimaryContainerOn(deployment))
+                                    theVolumeMountNamed("default-dbms-in-namespace-db-volume").on(
+                                                    thePrimaryContainerOn(deployment))
                                             .getMountPath()).isEqualTo("/var/lib/pgsql/data"));
                     step("Which is bound to a PersistentVolumeClain", () -> {
                         final PersistentVolumeClaim pvc = client.persistentVolumeClaims()
@@ -258,12 +284,15 @@ class DeployedDatabaseServiceTest extends DatabaseServiceControllerTestBase {
                     attachKubernetesResource("Deployment", deployment);
                     step("using the MySQL Image " + expectedDbmsStrategy.getOrganization() + "/" + expectedDbmsStrategy
                                     .getImageRepository(),
-                            () -> assertThat(thePrimaryContainerOn(deployment).getImage())
-                                    .contains(expectedDbmsStrategy.getOrganization() + "/" + expectedDbmsStrategy.getImageRepository()));
+                            () -> assertThat(thePrimaryContainerOn(deployment).getImage()).isEqualTo(
+                                    (complianceMode == EntandoOperatorComplianceMode.REDHAT)
+                                            ? "registry.hub.docker.com/entando/entando-mysql-ubi:3.3.3"
+                                            : "registry.hub.docker.com/entando/entando-mysql-rocky:1.1.1"));
                     step("With a volume mounted to the standard data directory /var/lib/mysql/data",
-                            () -> assertThat(theVolumeMountNamed(providedCapability.getMetadata().getName() + "-db-volume")
-                                    .on(thePrimaryContainerOn(deployment))
-                                    .getMountPath()).isEqualTo("/var/lib/mysql/data"));
+                            () -> assertThat(
+                                    theVolumeMountNamed(providedCapability.getMetadata().getName() + "-db-volume")
+                                            .on(thePrimaryContainerOn(deployment))
+                                            .getMountPath()).isEqualTo("/var/lib/mysql/data"));
                     step("Which is bound to a PersistentVolumeClain", () -> {
                         final PersistentVolumeClaim pvc = client.persistentVolumeClaims()
                                 .loadPersistentVolumeClaim(entandoDatabaseService, "default-dbms-in-namespace-db-pvc");
