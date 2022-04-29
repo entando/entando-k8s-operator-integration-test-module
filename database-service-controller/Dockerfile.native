@@ -3,7 +3,7 @@ ARG VERSION
 LABEL name="Entando K8S Database Service Controller" \
       vendor="Entando" \
       version="v${VERSION}" \
-      release="6" \
+      release="7.0" \
       summary="This container processes the EntandoDatabaseService custom resource and makes the database service available." \
       description="This is a run-to-completion container. It processes new EntandoDatabaseService Custom \
                    Resources. If the EntandoDatbaseService specifies that a deployment should be created, \
