@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <name>Entando Quarkus Parent POM</name>
-    <description>Entando Qaurkus Parent POM</description>
+    <description>Entando Quarkus Parent POM</description>
     <inceptionYear>2019</inceptionYear>
     <url>https://central.entando.com</url>
 
