@@ -55,6 +55,7 @@ public class EntandoPluginSpec extends KeycloakAwareSpec {
     private List<ExpectedRole> roles = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
     private String ingressPath;
+    private String customIngressPath;
     private String healthCheckPath;
     private List<String> companionContainers = new ArrayList<>();
 
@@ -72,6 +73,7 @@ public class EntandoPluginSpec extends KeycloakAwareSpec {
             @JsonProperty("dbms") DbmsVendor dbms,
             @JsonProperty("replicas") Integer replicas,
             @JsonProperty("ingressPath") String ingressPath,
+            @JsonProperty("customIngressPath") String customIngressPath,
             @JsonProperty("keycloakToUse") KeycloakToUse keycloakToUse,
             @JsonProperty("healthCheckPath") String healthCheckPath,
             @JsonProperty("securityLevel") PluginSecurityLevel securityLevel,
@@ -90,6 +92,7 @@ public class EntandoPluginSpec extends KeycloakAwareSpec {
                 keycloakToUse, storageClass);
         this.image = image;
         this.ingressPath = ingressPath;
+        this.customIngressPath = customIngressPath;
         this.keycloakToUse = keycloakToUse;
         this.healthCheckPath = healthCheckPath;
         this.roles = coalesce(roles, this.roles);
@@ -117,6 +120,10 @@ public class EntandoPluginSpec extends KeycloakAwareSpec {
 
     public String getIngressPath() {
         return ingressPath;
+    }
+
+    public String getCustomIngressPath() {
+        return customIngressPath;
     }
 
     public String getHealthCheckPath() {
