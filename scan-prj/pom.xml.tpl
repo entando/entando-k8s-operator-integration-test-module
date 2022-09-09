@@ -10,7 +10,7 @@
         <groupId>org.entando</groupId>
         <artifactId>entando-quarkus-parent</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>7.1.0-SNAPSHOT</version>
+        <version>7.2.0-SNAPSHOT</version>
     </parent>
     
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -19,7 +19,7 @@
     <groupId>org.entando.entando</groupId>
     <artifactId>entando-quarkus-parent-pom-tester</artifactId>
     <packaging>jar</packaging>
-    <version>7.1.0-SNAPSHOT</version>
+    <version>7.2.0-SNAPSHOT</version>
     <name>Entando Quarkus Parent Pom Tester</name>
     <description>Test project for the Entando Quarkus Parent</description>
     <url>http://www.entando.com/</url>

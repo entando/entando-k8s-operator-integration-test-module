@@ -95,7 +95,7 @@
         <commons-compress.version>1.21</commons-compress.version>
         <jaxp-ri.version>1.4</jaxp-ri.version>
         <protobuf-java.version>3.16.1</protobuf-java.version>
-        <graal-sdk.version>21.3.1</graal-sdk.version>
+        <graal-sdk.version>21.3.2</graal-sdk.version>
 
         <!-- test dependencies -->
         <junit.version>5.7.0</junit.version>
