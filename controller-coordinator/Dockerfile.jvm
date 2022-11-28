@@ -1,0 +1,18 @@
+FROM entando/entando-k8s-operator-common:7.2.0-ENG-3907-PR-117
+ARG VERSION
+
+LABEL name="Entando K8S Controller Coordinator" \
+      vendor="Entando" \
+      version="v${VERSION}" \
+      release="7.0" \
+      summary="This container is the entrypoint for the Entando Operator and launches delegate containers to process Entando custom resources." \
+      description="This is container runs background threads that observe events occurring against Entando custom resources. \
+                   When it detects an event against a known Entando custom resource, it spawns the appropriate run-to-completion \
+                   container to process the event in question."
+ENV JAVA_OPTIONS="-Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+ENV AB_ENABLED=jmx_exporter
+COPY target/quarkus-app/lib/main/*.jar /deployments/lib/main/
+COPY target/quarkus-app/*.* /deployments/
+COPY target/quarkus-app/app/ /deployments/app/
+COPY target/quarkus-app/quarkus/ /deployments/quarkus/
+ENTRYPOINT [ "/deployments/run-java.sh" ]
