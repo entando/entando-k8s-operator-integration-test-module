@@ -1,0 +1,14 @@
+.idea/*
+!.idea/runConfigurations
+!.idea/sonarlint.xml
+!.idea/codeStyles
+!.idea/copyright
+target/
+*.iml
+.classpath
+.project
+.allure
+.settings/
+classes/
+/src/test/resources/crd/examples/
+allure-results
