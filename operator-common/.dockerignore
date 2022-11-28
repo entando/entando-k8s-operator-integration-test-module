@@ -1,0 +1,6 @@
+draft.toml
+charts/
+NOTICE
+LICENSE
+README.md
+**/entando-k8s-*.jar
