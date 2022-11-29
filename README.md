@@ -13,6 +13,7 @@ mvn clean package -Pjvm,license
 **Notes:**
 * `jvm` is the standard profile
 * you can omit `license` profile if you want just compile or test, it is jus needed by image build
+
 ## Image build
 
 From project base dir:
@@ -29,6 +30,14 @@ cd ../controller-coordinator && docker build . -f Dockerfile.jvm -t {image}
 # How to test
 
 ```
-ENTANDO_DEFAULT_ROUTING_SUFFIX=apps.autotest.eng-entando.com   mvn -DpreDeploymentTestGroups=unit  -Ppre-deployment-verification,jvm clean test
+mvn 
+  \ -DpreDeploymentTestGroups=unit  
+  \ -Ppre-deployment-verification,jvm 
+  \ clean test
 ```
 
+**Notes:**
+* To activate mvn test plugin you need to use a specific profile
+* the profile `pre-deployment-verification` is used to execute test without deploy artifacts, but for some test you need a working kubeconfig
+* the profile `post-deployment-verification` is used to execute integration tests which need a deployed artificats
+* environment varible ENTANDO_DEFAULT_ROUTING_SUFFIX to use a selected hostname as prefix in differente test about ingress and other components

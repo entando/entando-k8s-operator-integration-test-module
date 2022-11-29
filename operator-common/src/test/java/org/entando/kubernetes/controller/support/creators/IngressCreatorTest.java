@@ -39,6 +39,7 @@ import org.entando.kubernetes.controller.support.client.IngressClient;
 import org.entando.kubernetes.controller.support.client.SimpleK8SClient;
 import org.entando.kubernetes.controller.support.client.doubles.SimpleK8SClientDouble;
 import org.entando.kubernetes.controller.support.common.EntandoOperatorConfigProperty;
+import org.entando.kubernetes.model.DefaultTestInputConfig;
 import org.entando.kubernetes.model.app.EntandoApp;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.app.EntandoAppSpec;
@@ -133,7 +134,8 @@ class IngressCreatorTest implements InProcessTestData {
         creator.createIngress(client.ingresses(), deployable, serviceCreator.getService(),
                 new ServerStatus(NameUtils.MAIN_QUALIFIER));
 
-        String hostName = Optional.ofNullable(System.getenv("ENTANDO_DEFAULT_ROUTING_SUFFIX")).orElse("somehost.com");
+        String hostName = Optional.ofNullable(System.getenv("ENTANDO_DEFAULT_ROUTING_SUFFIX")).orElse(
+                DefaultTestInputConfig.TEST_ROUTING_SUFFIX);
         String expectedHost = "my-app-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-my-app-namespace." + hostName;
         assertThat(creator.getIngress().getSpec().getRules().get(0).getHost(), is(expectedHost));
         assertThat(creator.getIngress().getSpec().getTls().get(0).getHosts().get(0), is(expectedHost));

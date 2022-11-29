@@ -20,13 +20,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressBuilder;
-import io.fabric8.kubernetes.api.model.networking.v1.ServiceBackendPort;
 import io.fabric8.kubernetes.api.model.networking.v1.ServiceBackendPortBuilder;
-import org.entando.kubernetes.controller.support.client.impl.EntandoOperatorTestConfig;
+import org.entando.kubernetes.controller.support.common.EntandoOperatorConfig;
 import org.entando.kubernetes.controller.support.common.EntandoOperatorConfigProperty;
+import org.entando.kubernetes.model.DefaultTestInputConfig;
 import org.entando.kubernetes.test.common.ControllerTestHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,7 +64,7 @@ class ExposedServiceTest {
                 new IngressBuilder()
                         .withNewSpec()
                         .addNewRule()
-                        .withHost("test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "")
+                        .withHost("test." + fetchOrDefaultRoutingSuffix())
                         .withNewHttp()
                         .addNewPath()
                         .withPath("/path1")
@@ -93,9 +92,9 @@ class ExposedServiceTest {
                         .build());
         assertThrows(IllegalStateException.class, () -> actual.getExternalBaseUrl());
         assertThat(actual.getExternalBaseUrlForPort("port1"),
-                is("http://test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "/path1"));
+                is("http://test." + fetchOrDefaultRoutingSuffix() + "/path1"));
         assertThat(actual.getExternalBaseUrlForPort("port2"),
-                is("http://test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "/path2"));
+                is("http://test." + fetchOrDefaultRoutingSuffix() + "/path2"));
         assertThrows(IllegalStateException.class, () -> actual.getInternalBaseUrl());
         assertThat(actual.getInternalBaseUrlForPort("port1"),
                 is("http://my-service." + ControllerTestHelper.MY_NAMESPACE + ".svc.cluster.local:4545/path1"));
@@ -120,7 +119,7 @@ class ExposedServiceTest {
                 new IngressBuilder()
                         .withNewSpec()
                         .addNewRule()
-                        .withHost("test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "")
+                        .withHost("test." + fetchOrDefaultRoutingSuffix() + "")
                         .withNewHttp()
                         .addNewPath()
                         .withPath("/path1")
@@ -137,7 +136,7 @@ class ExposedServiceTest {
                         .endSpec()
                         .build());
         assertThat(actual.getExternalBaseUrl(),
-                is("http://test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "/path1"));
+                is("http://test." + fetchOrDefaultRoutingSuffix() + "/path1"));
         assertThat(actual.getInternalBaseUrl(),
                 is("http://my-service." + ControllerTestHelper.MY_NAMESPACE + ".svc.cluster.local:4545/path1"));
     }
@@ -159,7 +158,7 @@ class ExposedServiceTest {
                 new IngressBuilder()
                         .withNewSpec()
                         .addNewRule()
-                        .withHost("test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "")
+                        .withHost("test." + fetchOrDefaultRoutingSuffix() + "")
                         .withNewHttp()
                         .addNewPath()
                         .withPath("/path1")
@@ -176,7 +175,7 @@ class ExposedServiceTest {
                         .endSpec()
                         .build());
         assertThat(actual.getExternalBaseUrl(),
-                is("http://test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "/path1"));
+                is("http://test." + fetchOrDefaultRoutingSuffix() + "/path1"));
         assertThat(actual.getInternalBaseUrl(), is("http://my-service.another-namespace.svc.cluster.local:4545/path1"));
     }
 
@@ -197,10 +196,10 @@ class ExposedServiceTest {
                 new IngressBuilder()
                         .withNewSpec()
                         .addNewTl()
-                        .addNewHost("test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "")
+                        .addNewHost("test." + fetchOrDefaultRoutingSuffix())
                         .endTl()
                         .addNewRule()
-                        .withHost("test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "")
+                        .withHost("test." + fetchOrDefaultRoutingSuffix())
                         .withNewHttp()
                         .addNewPath()
                         .withPath("/path1")
@@ -217,7 +216,7 @@ class ExposedServiceTest {
                         .endSpec()
                         .build());
         assertThat(actual.getExternalBaseUrl(),
-                is("https://test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "/path1"));
+                is("https://test." + fetchOrDefaultRoutingSuffix() + "/path1"));
         assertThat(actual.getInternalBaseUrl(),
                 is("http://my-service." + ControllerTestHelper.MY_NAMESPACE + ".svc.cluster.local:4545/path1"));
     }
@@ -242,7 +241,7 @@ class ExposedServiceTest {
                 new IngressBuilder()
                         .withNewSpec()
                         .addNewRule()
-                        .withHost("test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "")
+                        .withHost("test." + fetchOrDefaultRoutingSuffix())
                         .withNewHttp()
                         .addNewPath()
                         .withPath("/path1")
@@ -259,8 +258,12 @@ class ExposedServiceTest {
                         .endSpec()
                         .build());
         assertThat(actual.getExternalBaseUrl(),
-                is("https://test." + EntandoOperatorTestConfig.mustGetDefaultRoutingSuffix() + "/path1"));
+                is("https://test." + fetchOrDefaultRoutingSuffix() + "/path1"));
         assertThat(actual.getInternalBaseUrl(),
                 is("http://my-service." + ControllerTestHelper.MY_NAMESPACE + ".svc.cluster.local:4545/path1"));
+    }
+
+    private String fetchOrDefaultRoutingSuffix() {
+        return EntandoOperatorConfig.getDefaultRoutingSuffix().orElse(DefaultTestInputConfig.TEST_ROUTING_SUFFIX);
     }
 }

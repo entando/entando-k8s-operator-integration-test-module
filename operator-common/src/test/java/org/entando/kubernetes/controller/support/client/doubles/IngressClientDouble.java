@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.entando.kubernetes.controller.support.client.DoneableIngress;
 import org.entando.kubernetes.controller.support.client.IngressClient;
+import org.entando.kubernetes.model.DefaultTestInputConfig;
 import org.entando.kubernetes.model.common.EntandoCustomResource;
 
 public class IngressClientDouble extends AbstractK8SClientDouble implements IngressClient {
@@ -83,6 +84,6 @@ public class IngressClientDouble extends AbstractK8SClientDouble implements Ingr
 
     @Override
     public String getMasterUrlHost() {
-        return "somehost.com";
+        return DefaultTestInputConfig.TEST_ROUTING_SUFFIX;
     }
 }
