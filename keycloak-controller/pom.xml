@@ -128,15 +128,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>native</id>
-            <properties>
-                <!--NB!!! the format of this property value is extremely important: comma separated, no spaces, no linebreaks -->
-                <quarkus.native.additional-build-args>
-                    --report-unsupported-elements-at-runtime,-H:ReflectionConfigurationFiles=reflection-config.json,-H:ResourceConfigurationFiles=resources-config.json,-H:DynamicProxyConfigurationFiles=proxy-config.json
-                </quarkus.native.additional-build-args>
-            </properties>
-        </profile>
-    </profiles>
 </project>

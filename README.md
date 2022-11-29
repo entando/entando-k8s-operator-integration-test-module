@@ -7,9 +7,12 @@ This project produces the Entando Kubernetes Operator images.
 ## Compile
 
 ```
-mvn clean package -Pjvm
+mvn clean package -Pjvm,license
 ```
 
+**Notes:**
+* `jvm` is the standard profile
+* you can omit `license` profile if you want just compile or test, it is jus needed by image build
 ## Image build
 
 From project base dir:

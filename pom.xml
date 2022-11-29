@@ -804,50 +804,12 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
             </build>
         </profile>
         <profile>
-            <!--
-            This profile executes the GraalVM compiler using Quarkus. The GraalVM build can be
-            customized in child pom's by means of the 'quarkus.native.additional-build-args' maven property
-            Please not that ! the format of this property value is extremely important:
-             comma separated, no spaces, no linebreaks
-            -->
-            <id>native</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>io.quarkus</groupId>
-                        <artifactId>quarkus-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>native-image</goal>
-                                </goals>
-                                <configuration>
-                                    <enableHttpUrlHandler>true</enableHttpUrlHandler>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <!--This profile uses Quarkus to place dependencies in target/lib. These can then
             be added to a Dockerfile if needed to ensure the application can run as expected.
             -->
             <id>jvm</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <configuration>
-                            <executeOnlyOnRootModule>false</executeOnlyOnRootModule>
-                        </configuration>
-                    </plugin>
                     <plugin>
                         <groupId>io.quarkus</groupId>
                         <artifactId>quarkus-maven-plugin</artifactId>
@@ -861,6 +823,23 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!--This profile uses License plugin to place LICENSES in target/generated-resources/licenses. 
+            These can then be added to the Dockerfile (image directory /licenses).
+            -->
+            <id>license</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <configuration>
+                            <executeOnlyOnRootModule>false</executeOnlyOnRootModule>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

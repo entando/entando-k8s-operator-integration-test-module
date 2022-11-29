@@ -1,4 +1,4 @@
-FROM entando/entando-k8s-operator-common:7.2.0-ENG-3907-PR-117
+FROM entando/entando-ubi8-java11-base:6.4.0
 
 ARG VERSION
 LABEL name="Entando K8S Keycloak Controller" \
@@ -9,9 +9,17 @@ LABEL name="Entando K8S Keycloak Controller" \
       description="This is a run-to-completion container. It will deploy a Keycloak or RedHat SSO service to your cluster \
                    Subsequent executions of this container against the same EntandoKeycloakServer will patch the existing \
                    deployment resources"
+
+COPY target/generated-resources/licenses /licenses
+COPY target/quarkus-app/lib /deployments/lib
+USER root
+RUN chmod ug+rw -R /deployments/ && chown 185:root -R /deployments/
+USER 185
+
 ENV JAVA_OPTIONS="-Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 COPY target/quarkus-app/lib/main/org.entando.*.jar /deployments/lib/main/
 COPY target/quarkus-app/*.jar /deployments/
 COPY target/quarkus-app/app/ /deployments/app/
 COPY target/quarkus-app/quarkus/ /deployments/quarkus/
+
 ENTRYPOINT [ "/deployments/run-java.sh" ]
