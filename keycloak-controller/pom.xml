@@ -20,66 +20,23 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.entando</groupId>
-        <artifactId>entando-quarkus-parent</artifactId>
-        <version>7.2.0-ENG-3907-PR-41</version>
-        <relativePath/>
+        <artifactId>entando-k8s-operator</artifactId>
+        <version>7.2.0-SNAPSHOT</version>
     </parent>
-    <version>7.2.0-SNAPSHOT</version>
     <artifactId>entando-k8s-keycloak-controller</artifactId>
     <name>Entando K8S Controller for Keycloak</name>
     <description>Entando's K8S Controller for Keycloak</description>
-    <inceptionYear>2019</inceptionYear>
-    <url>https://central.entando.com</url>
-
-    <licenses>
-        <license>
-            <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1, February 1999</name>
-            <url>https://www.gnu.org/licenses/lgpl-2.1.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <organization>
-        <name>Entando Inc.</name>
-        <url>http://www.entando.com/</url>
-    </organization>
-    <repositories>
-        <repository>
-            <id>jx-releases</id>
-            <url>https://nexus-jx.apps.serv.run/repository/maven-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <scm>
-        <connection>scm:git:git@github.com:${github.organization}/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:git@github.com:${github.organization}//${project.artifactId}.git
-        </developerConnection>
-        <url>https://github.com/${github.organization}/${project.artifactId}/</url>
-        <tag>HEAD</tag>
-    </scm>
     <properties>
-        <github.organization>entando-k8s</github.organization>
-        <sonar.projectKey>${github.organization}_${project.artifactId}</sonar.projectKey>
-        <entando-k8s-operator-common.version>7.2.0-ENG-3907-PR-117</entando-k8s-operator-common.version>
-        <skipLicenseDownload>true</skipLicenseDownload>
+        <skipLicenseDownload>false</skipLicenseDownload>
+        <docker.skipimage>false</docker.skipimage>
         <preDeploymentTestGroups>in-process</preDeploymentTestGroups>
         <postDeploymentTestGroups>smoke</postDeploymentTestGroups>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
     </properties>
-    <issueManagement>
-        <system>Github</system>
-        <url>https://github.com/${github.organization}/${project.artifactId}/issues/</url>
-    </issueManagement>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>entando-k8s-operator-common</artifactId>
-            <version>${entando-k8s-operator-common.version}</version>
+            <artifactId>operator-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -159,8 +116,8 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>entando-k8s-operator-common</artifactId>
-            <version>${entando-k8s-operator-common.version}</version>
+            <artifactId>operator-common</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
             <classifier>tests</classifier>
@@ -182,14 +139,4 @@
             </properties>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-            </plugin>
-        </plugins>
-    </build>
 </project>

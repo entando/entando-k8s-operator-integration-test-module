@@ -5,20 +5,42 @@
     <parent>
         <groupId>org.entando</groupId>
         <artifactId>entando-maven-root</artifactId>
-        <version>7.2.0-ENG-4134-PR-14</version>
+        <version>7.2.0-ENG-4226-PR-18</version>
         <relativePath/>
     </parent>
     <groupId>org.entando</groupId>
-    <artifactId>entando-quarkus-parent</artifactId>
+    <artifactId>entando-k8s-operator</artifactId>
     <version>7.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Entando Quarkus Parent POM</name>
-    <description>Entando Quarkus Parent POM</description>
+    <modules>
+        <module>build-tool</module>
+        <module>custom-model</module>
+        <module>operator-common</module>
+        <module>app-controller</module>
+        <module>app-plugin-link-controller</module>
+        <module>database-service-controller</module>
+        <module>dbjob</module>
+        <module>keycloak-controller</module>
+        <module>plugin-controller</module>
+        <module>controller-coordinator</module>
+    </modules>
+
+    <name>Entando K8s Operator Parent POM</name>
+    <description>Entando K8s Operator Quarkus based Parent POM</description>
     <inceptionYear>2019</inceptionYear>
     <url>https://central.entando.com</url>
-
-    <!-- REPOSITORIES -->
+    <licenses>
+        <license>
+            <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <organization>
+        <name>Entando Inc.</name>
+        <url>http://www.entando.com/</url>
+    </organization>
     <repositories>
         <repository>
             <id>nexus-jx</id>
@@ -31,46 +53,26 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <!-- LICENSE AND INFO -->
-    <organization>
-        <name>Entando Inc.</name>
-        <url>http://www.entando.com/</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007</name>
-            <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <!-- SCM & ISSUES -->
     <scm>
-        <connection>scm:git:git@github.com:${github.organization}/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:git@github.com:${github.organization}/${project.artifactId}.git
+        <connection>scm:git:git@github.com:${github.organization}/entando-k8s-operator.git</connection>
+        <developerConnection>scm:git:git@github.com:${github.organization}/entando-k8s-operator.git
         </developerConnection>
-        <url>https://github.com/${github.organization}/${project.artifactId}/</url>
+        <url>https://github.com/${github.organization}/entando-k8s-operator/</url>
         <tag>HEAD</tag>
     </scm>
     
-    <!-- PROPERTIES -->
     <properties>
+        <skipLicenseDownload>true</skipLicenseDownload>
         <github.organization>entando-k8s</github.organization>
+        <sonar.projectKey>${github.organization}_entando-k8s-operator</sonar.projectKey>
+        <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
+        <docker.skipimage>true</docker.skipimage>        
+        <docker.organization>entando</docker.organization>
         <preDeploymentTestGroups></preDeploymentTestGroups>
         <postDeploymentTestGroups></postDeploymentTestGroups>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.javadoc.source>11</maven.javadoc.source>
-        <skipLicenseDownload>false</skipLicenseDownload>
-        <checkstyleConfigLocation>
-            https://raw.githubusercontent.com/entando-k8s/entando-quarkus-parent/ACTIVE-CHECKSTYLE/checkstyle.xml
-        </checkstyleConfigLocation>
-        <owaspSuppressionFileLocation>
-            owasp-dependency-check-suppression.xml
-        </owaspSuppressionFileLocation>
-
         <entando.maven.repository.snapshot>
             https://nexus-jx.apps.serv.run/repository/maven-releases/
         </entando.maven.repository.snapshot>
@@ -95,7 +97,7 @@
         <commons-compress.version>1.21</commons-compress.version>
         <jaxp-ri.version>1.4</jaxp-ri.version>
         <protobuf-java.version>3.16.1</protobuf-java.version>
-        <graal-sdk.version>21.3.2</graal-sdk.version>
+        <graal-sdk.version>21.3.1</graal-sdk.version>
 
         <!-- test dependencies -->
         <junit.version>5.7.0</junit.version>
@@ -115,7 +117,7 @@
     </properties>
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/${github.organization}/${project.artifactId}/issues/</url>
+        <url>https://github.com/${github.organization}/entando-k8s-operator/issues/</url>
     </issueManagement>
     <dependencyManagement>
         <dependencies>
@@ -658,13 +660,10 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
                 <allure-maven.resultsDirectory>${project.build.directory}/allure-results</allure-maven.resultsDirectory>
                 <allure-maven.reportDirectory>${project.build.directory}/site/allure-reports
                 </allure-maven.reportDirectory>
+                <dependency-check.skip>true</dependency-check.skip>
             </properties>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.owasp</groupId>
-                        <artifactId>dependency-check-maven</artifactId>
-                    </plugin>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
@@ -682,12 +681,23 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
                         <artifactId>maven-compiler-plugin</artifactId>
                     </plugin>
                     <plugin>
+                        <!--https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/multi-module-config.html-->
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>build-tool</artifactId>
+                                <version>7.2.0-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <configLocation>checkstyle.xml</configLocation>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <artifactId>maven-jar-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -696,6 +706,70 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                        <execution>
+                            <id>unpack</id>
+                                <phase>package</phase>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <configuration>
+                                <skip>!false</skip>
+                            <artifactItems>
+                                <artifactItem>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>build-tool</artifactId>
+                                <version>${project.version}</version>
+                                <type>jar</type>
+                                <overWrite>false</overWrite>
+                                <outputDirectory>${project.build.directory}/scripts</outputDirectory>
+                                <includes>**/*.sh</includes>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/*.sh</includes>
+                            <excludes>**/*.properties</excludes>
+                            <outputDirectory>${project.build.directory}/scripts</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            </configuration>
+                        </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+                        <execution>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${docker.skipimage}</skip>
+                                <executable>${project.build.directory}/scripts/build-docker.sh</executable>
+                                <workingDirectory>${project.basedir}</workingDirectory>
+                                <arguments>
+                                    <argument>${docker.organization}</argument>
+                                    <argument>${project.artifactId}</argument>
+                                    <argument>${project.version}</argument>
+                                    <argument>${project.basedir}</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -770,6 +844,9 @@ mvn clean verify -DpreDeploymentTestGroups=in-process -Ppre-deployment-verificat
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>license-maven-plugin</artifactId>
+                        <configuration>
+                            <executeOnlyOnRootModule>false</executeOnlyOnRootModule>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>io.quarkus</groupId>
