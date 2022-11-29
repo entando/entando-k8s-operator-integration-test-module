@@ -4,19 +4,13 @@ This project produces the Entando Kubernetes Operator images.
 
 # How to build
 
-## Base Compile
+## Compile
 
 ```
 mvn clean package -Pjvm
 ```
 
-## Base Test
-
-```
-ENTANDO_DEFAULT_ROUTING_SUFFIX=apps.autotest.eng-entando.com   mvn -DpreDeploymentTestGroups=unit  -Ppre-deployment-verification,jvm clean test
-```
-
-## Base Image build
+## Image build
 
 From project base dir:
 
@@ -28,5 +22,10 @@ cd ../dbjob && docker build . -f Dockerfile.jvm -t {image}
 cd ../keycloak-controller && docker build . -f Dockerfile.jvm -t {image}
 cd ../plugin-controller && docker build . -f Dockerfile.jvm -t {image}
 cd ../controller-coordinator && docker build . -f Dockerfile.jvm -t {image}
+```
+# How to test
+
+```
+ENTANDO_DEFAULT_ROUTING_SUFFIX=apps.autotest.eng-entando.com   mvn -DpreDeploymentTestGroups=unit  -Ppre-deployment-verification,jvm clean test
 ```
 
