@@ -29,9 +29,11 @@ cd ../controller-coordinator && docker build . -f Dockerfile.jvm -t {image}
 ```
 # How to test
 
+You can use the following command **preferably** in an environment **without** kubeconfig or similar
 ```
-mvn 
-  \ -DpreDeploymentTestGroups=unit  
+ ENTANDO_DEFAULT_ROUTING_SUFFIX={hostname}
+  \ mvn
+  \ -DpreDeploymentTestGroups=unit,in-process
   \ -Ppre-deployment-verification,jvm 
   \ clean test
 ```
