@@ -12,7 +12,7 @@ mvn clean package -Pjvm,license
 
 **Notes:**
 * `jvm` is the standard profile
-* you can omit `license` profile if you want just compile or test, it is jus needed by image build
+* you can omit `license` profile if you want just compile or test, it is needed by image build
 
 ## Image build
 
@@ -29,7 +29,7 @@ cd ../controller-coordinator && docker build . -f Dockerfile.jvm -t {image}
 ```
 # How to test
 
-You can use the following command **preferably** in an environment **without** kubeconfig or similar
+You can use the following command **preferably** in an environment **without** KUBECONFIG or similar configuration
 ```
  ENTANDO_DEFAULT_ROUTING_SUFFIX={hostname}
   \ mvn
@@ -39,7 +39,7 @@ You can use the following command **preferably** in an environment **without** k
 ```
 
 **Notes:**
-* To activate mvn test plugin you need to use a specific profile
-* the profile `pre-deployment-verification` is used to execute test without deploy artifacts, but for some test you need a working kubeconfig
+* To activate mvn test plugin you need to use a specific profile (`pre-deployment-verification`)
+* the profile `pre-deployment-verification` is used to execute test without deploy artifacts, but for some test you need a working kubernetes configuration
 * the profile `post-deployment-verification` is used to execute integration tests which need a deployed artificats
-* environment varible ENTANDO_DEFAULT_ROUTING_SUFFIX to use a selected hostname as prefix in differente test about ingress and other components
+* the environment varible ENTANDO_DEFAULT_ROUTING_SUFFIX is used to select an hostname as prefix in tests about ingress and other components
