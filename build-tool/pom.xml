@@ -35,4 +35,35 @@
         </plugin>
       </plugins>
     </build>
+    <profiles>
+      <profile>
+        <id>build-pom-snyk</id>
+        <build>
+          <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                <execution>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>${project.basedir}/src/main/resources/scan-prj/build-pom.sh</executable>
+                        <workingDirectory>${project.basedir}</workingDirectory>
+                        <arguments>
+                            <argument>${project.basedir}/../pom.xml</argument>
+                            <argument>${project.basedir}/src/main/resources/scan-prj/pom.xml.tpl</argument>
+                            <argument>${project.basedir}/..</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+                </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+    </profiles>
 </project>

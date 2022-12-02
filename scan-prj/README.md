@@ -1,0 +1,1 @@
+PLEASE **read** [build tool readme](../build-tool/README.md) and **use it** to generate the pom.xml usefull for snyl scans 
