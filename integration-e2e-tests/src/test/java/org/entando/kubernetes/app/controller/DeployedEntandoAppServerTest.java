@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.app;
+package org.entando.kubernetes.app.controller;
 
 import static io.qameta.allure.Allure.step;
 import static java.lang.String.format;
@@ -44,6 +44,10 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import java.util.HashMap;
 import java.util.Map;
+import org.entando.kubernetes.controller.app.ComponentManagerDeployable;
+import org.entando.kubernetes.controller.app.EntandoAppConfigProperty;
+import org.entando.kubernetes.controller.app.EntandoAppController;
+import org.entando.kubernetes.controller.app.EntandoAppServerDeployable;
 import org.entando.kubernetes.controller.spi.common.DbmsVendorConfig;
 import org.entando.kubernetes.controller.spi.common.EntandoOperatorComplianceMode;
 import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfigProperty;
@@ -70,7 +74,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@Tags({@Tag("component"), @Tag("in-process"), @Tag("allure"), @Tag("inner-hexagon")})
+@Tags({@Tag("component"), @Tag("in-process"), @Tag("allure"), @Tag("inner-hexagon"), @Tag("pre-deployment")})
 @Feature("As a deployer, I would like to deploy an EntandoApp directly so that I have more granular control over the "
         + "configuration settings")
 @Issue("ENG-2284")

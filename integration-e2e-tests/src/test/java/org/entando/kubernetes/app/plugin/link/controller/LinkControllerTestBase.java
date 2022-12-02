@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.link;
+package org.entando.kubernetes.app.plugin.link.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import org.entando.kubernetes.controller.link.EntandoAppPluginLinkController;
 import org.entando.kubernetes.controller.link.support.InProcessDeploymentLinker;
 import org.entando.kubernetes.controller.spi.capability.CapabilityProvider;
 import org.entando.kubernetes.controller.spi.client.KubernetesClientForControllers;

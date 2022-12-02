@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.app;
+package org.entando.kubernetes.app.controller;
 
 import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
@@ -57,7 +58,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import picocli.CommandLine;
 
 @ExtendWith(MockitoExtension.class)
-@Tags({@Tag("component"), @Tag("in-process"), @Tag("allure"), @Tag("inner-hexagon")})
+@Tags({@Tag("component"), @Tag("in-process"), @Tag("allure"), @Tag("inner-hexagon"), @Tag("pre-deployment")})
 @Feature("As a deployer, I would like to deploy an EntandoApp directly so that I have more granular control over the "
         + "configuration settings")
 @Issue("ENG-2284")
@@ -102,7 +103,7 @@ class FailureTests extends EntandoAppTestBase {
                     .endSpec()
                     .build();
         });
-        step("And there is a controller to process requests for the SSO capability",
+        Allure.step("And there is a controller to process requests for the SSO capability",
                 () -> doAnswer(withAnSsoCapabilityStatus("mykeycloak.apps.serv.run", "my-realm")).when(client.capabilities())
                         .waitForCapabilityCompletion(argThat(matchesCapability(StandardCapability.SSO)), anyInt()));
         step("And the pod completion and pod readiness timeouts are set to 1  giving the total deployment 3 seconds "
@@ -154,10 +155,10 @@ class FailureTests extends EntandoAppTestBase {
                 .withDbms(DbmsVendor.EMBEDDED)
                 .endSpec()
                 .build();
-        step("Given that there is a controller to process requests for the DBMS capability",
+        Allure.step("Given that there is a controller to process requests for the DBMS capability",
                 () -> doAnswer(withADatabaseCapabilityStatus(DbmsVendor.MYSQL, "my_db")).when(client.capabilities())
                         .waitForCapabilityCompletion(argThat(matchesCapability(StandardCapability.DBMS)), anyInt()));
-        step("And there is a controller to process requests for the SSO capability",
+        Allure.step("And there is a controller to process requests for the SSO capability",
                 () -> doAnswer(withAnSsoCapabilityStatus("mykeycloak.apps.serv.run", "my-realm")).when(client.capabilities())
                         .waitForCapabilityCompletion(argThat(matchesCapability(StandardCapability.SSO)), anyInt()));
         step("And the DeploymentProcessor throws a KubernetesClientException when processing the AppBuilder Deployable", () -> {
@@ -207,7 +208,7 @@ class FailureTests extends EntandoAppTestBase {
                     .endSpec()
                     .build();
         });
-        step("But the controller to process requests for the DBMS capability provides a capability in 'FAILED' state",
+        Allure.step("But the controller to process requests for the DBMS capability provides a capability in 'FAILED' state",
                 () -> doAnswer(withFailedServerStatus(NameUtils.MAIN_QUALIFIER, new NullPointerException()))
                         .when(client.capabilities())
                         .waitForCapabilityCompletion(argThat(matchesCapability(StandardCapability.DBMS)), anyInt()));
@@ -256,7 +257,7 @@ class FailureTests extends EntandoAppTestBase {
                     .endSpec()
                     .build();
         });
-        step("But the controller to process requests for the SSO capability provides a capability in 'FAILED' state",
+        Allure.step("But the controller to process requests for the SSO capability provides a capability in 'FAILED' state",
                 () -> doAnswer(withFailedServerStatus(NameUtils.MAIN_QUALIFIER, new NullPointerException()))
                         .when(client.capabilities())
                         .waitForCapabilityCompletion(argThat(matchesCapability(StandardCapability.SSO)), anyInt()));

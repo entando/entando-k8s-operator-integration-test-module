@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.app.testutils;
+package org.entando.kubernetes.app.controller.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

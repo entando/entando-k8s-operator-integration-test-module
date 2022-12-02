@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.app;
+package org.entando.kubernetes.app.controller;
 
 import static io.qameta.allure.Allure.attachment;
 import static io.qameta.allure.Allure.step;
@@ -29,6 +29,7 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.entando.kubernetes.controller.app.EntandoAppController;
 import org.entando.kubernetes.controller.spi.common.EntandoOperatorSpiConfigProperty;
 import org.entando.kubernetes.controller.spi.common.TrustStoreHelper;
 import org.entando.kubernetes.controller.support.client.impl.DefaultSimpleK8SClient;

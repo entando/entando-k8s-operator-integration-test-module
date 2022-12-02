@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.link;
+package org.entando.kubernetes.app.plugin.link.controller;
 
 import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,10 +22,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import java.util.Collections;
+import org.entando.kubernetes.controller.link.AppToPluginLinkable;
 import org.entando.kubernetes.controller.spi.common.NameUtils;
 import org.entando.kubernetes.model.app.EntandoAppBuilder;
 import org.entando.kubernetes.model.capability.ProvidedCapabilityBuilder;
@@ -140,11 +142,11 @@ class LinkControllerTest extends LinkControllerTestBase {
     }
 
     private void processLink() {
-        step("I schedule the completion of the EntandoApp custom resource", () ->
+        Allure.step("I schedule the completion of the EntandoApp custom resource", () ->
                 getScheduler().submit(() -> {
                     this.entandoApp = getClient().entandoResources().updatePhase(this.entandoApp, EntandoDeploymentPhase.SUCCESSFUL);
                 }));
-        step("I schedule the completion of the EntandoPlugin custom resource", () ->
+        Allure.step("I schedule the completion of the EntandoPlugin custom resource", () ->
                 getScheduler().submit(() -> {
                     this.entandoPlugin = getClient().entandoResources().updatePhase(this.entandoPlugin, EntandoDeploymentPhase.SUCCESSFUL);
                 }));

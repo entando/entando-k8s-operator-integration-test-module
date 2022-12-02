@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.app;
+package org.entando.kubernetes.app.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import org.entando.kubernetes.controller.app.ComponentManagerDeployableContainer;
+import org.entando.kubernetes.controller.app.EntandoAppController;
 import org.entando.kubernetes.controller.spi.capability.CapabilityProvider;
 import org.entando.kubernetes.controller.spi.client.KubernetesClientForControllers;
 import org.entando.kubernetes.controller.spi.command.DeploymentProcessor;

@@ -14,7 +14,7 @@
  *
  */
 
-package org.entando.kubernetes.controller.link;
+package org.entando.kubernetes.app.plugin.link.controller;
 
 import static io.qameta.allure.Allure.attachment;
 import static io.qameta.allure.Allure.step;

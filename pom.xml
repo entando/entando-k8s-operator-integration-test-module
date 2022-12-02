@@ -24,6 +24,7 @@
         <module>dbjob</module>
         <module>keycloak-controller</module>
         <module>controller-coordinator</module>
+        <module>integration-e2e-tests</module>
     </modules>
 
     <name>Entando K8s Operator Parent POM</name>
